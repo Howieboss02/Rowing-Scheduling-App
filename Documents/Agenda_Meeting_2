@@ -17,7 +17,23 @@ Note taker: Violeta Macsim
 * Added template to project structure
 
 ##NOTES:
-(TO BE ADDED)
-
+* Change name of draft assignment - ROW instead of Rowing
+* Not take into consideration "subscription"
+* Anyone can add events
+* Person that created event will accept/reject
+* Not necessary to keep the history of events 
+* Logging out shouldn't be a *must have*
+* *Moscow diagram* to be changed
+* Notifications to be a *could have* & create a single line about it 
+* Rephrase the first *should have* feature & the feature about password storage
+* Storing passwords is non-functional 
+* Specify test coverage
+* Specify we are using Scrum methodology & we are using microservices and API
+* Typos
+* Argument why we have chosen this microservice
+* Not leave *Positions* as bounded context - not a microservice
+* Think of refactoring of context map
+* Can we use other design pattern from the ones inside the lectures 
+* Change UML 
 
 
