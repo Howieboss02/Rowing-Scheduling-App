@@ -10,6 +10,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
+@Entity
+@Table(name = "User")
 public class User {
 
   @Id
@@ -21,11 +23,15 @@ public class User {
   public String organization;
   public String email;
   public String gender;
-  public String certificate;
-  public List<String> positions;
+  public Certificate certificate;
+  public List<Position> positions;
   public List<String> notifications = new ArrayList<>();
 
   /*TODO: add schedule structure
+   */
+
+  /*
+  TODO: add enqueued activities list
    */
 
   @SuppressWarnings("unused")
@@ -42,7 +48,7 @@ public class User {
    * @param certificate the biggest certificate it holds
    * @param positions the list of positions it can handle
    */
-  public User(Long id, String name, String organization, String email, String gender,String certificate, List<String> positions){
+  public User(Long id, String name, String organization, String email, String gender, Certificate certificate, List<Position> positions){
     this.id = id;
     this.name = name;
     this.organization = organization;
@@ -141,14 +147,14 @@ public class User {
    * @return the biggest certificate the user has obtained
    */
   public String getCertificate() {
-    return certificate;
+    return certificate.toString();
   }
 
   /**
    * Setter to edit the certificate
    * @param certificate the new certificate
    */
-  public void setCertificate(String certificate) {
+  public void setCertificate(Certificate certificate) {
     this.certificate = certificate;
   }
 
@@ -156,7 +162,7 @@ public class User {
    * Getter for the list of positions
    * @return the list of all possible positions to fill
    */
-  public List<String> getPositions() {
+  public List<Position> getPositions() {
     return positions;
   }
 
@@ -164,7 +170,7 @@ public class User {
    * Setter for the list of possible positions to fill
    * @param positions the list of positions
    */
-  public void setPositions(List<String> positions) {
+  public void setPositions(List<Position> positions) {
     this.positions = positions;
   }
 
@@ -172,7 +178,7 @@ public class User {
    * Method to add another position to the list (for editing)
    * @param position the new position
    */
-  public void addPositions(String position){
+  public void addPositions(Position position){
     this.positions.add(position);
   }
 

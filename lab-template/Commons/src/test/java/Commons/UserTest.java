@@ -1,6 +1,7 @@
 package Commons;
 
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+@SpringBootTest
 public class UserTest {
 
   @Test
@@ -26,13 +28,14 @@ public class UserTest {
 
   @Test
   public void testConstructorFull(){
-    List<String> pos = new ArrayList<String>();
-    pos.add("Cox");
-    pos.add("Coach");
-    User u = new User(1L, "Bob", "Bob's Organization", "Bob@b.ob", "Male", "B1", pos);
+    List<Position> pos = new ArrayList<>();
+    pos.add(new Position(PositionName.Cox, false));
+    pos.add(new Position(PositionName.Coach, true));
+    User u = new User(1L, "Bob", "Bob's Organization", "Bob@b.ob", "Male", Certificate.B1, pos);
     assertEquals(u.getOrganization(), "Bob's Organization");
     assertEquals(u.getCertificate(), "B1");
     assertEquals(u.getPositions(), pos);
+    assertEquals(u.getPositions().get(0).getName(), "Coach");
     assertEquals(u.getGender(), "Male");
   }
 
@@ -48,7 +51,8 @@ public class UserTest {
   public void testAddNotification(){
     User u = new User();
     u.addNotification("You have been REJECTED.");
-    assertEquals(u.getNotifications().toString(), "You have been REJECTED.");
+    int size = u.getNotifications().size();
+    assertEquals(u.getNotifications().get(size - 1).toString(), "You have been REJECTED.");
   }
 
 }
