@@ -10,6 +10,8 @@
         <option name="modules">
           <set>
             <option value="$PROJECT_DIR$/lab-template" />
+            <option value="$PROJECT_DIR$/lab-template/Commons" />
+            <option value="$PROJECT_DIR$/lab-template/Server" />
             <option value="$PROJECT_DIR$/lab-template/authentication-microservice" />
             <option value="$PROJECT_DIR$/lab-template/example-microservice" />
           </set>
