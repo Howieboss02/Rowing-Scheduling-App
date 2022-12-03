@@ -11,6 +11,13 @@
         <module name="template.example-microservice.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="11" />
+    <bytecodeTargetLevel target="11">
+      <module name="SEM29a.template.Commons" target="16" />
+      <module name="SEM29a.template.Commons.main" target="16" />
+      <module name="SEM29a.template.Commons.test" target="16" />
+      <module name="SEM29a.template.Server" target="16" />
+      <module name="SEM29a.template.Server.main" target="16" />
+      <module name="SEM29a.template.Server.test" target="16" />
+    </bytecodeTargetLevel>
   </component>
 </project>
