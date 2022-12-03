@@ -2,6 +2,6 @@ rootProject.name = 'template'
 
 include 'authentication-microservice'
 include 'example-microservice'
-include 'Commons'
-include 'Server'
+include 'user-microservice'
+include 'shared'
 
