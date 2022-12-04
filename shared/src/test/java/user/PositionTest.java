@@ -13,7 +13,7 @@ public class PositionTest {
   public void testConstructor(){
     Position p = new Position(PositionName.Cox, false);
     assertNotNull(p);
-    assertEquals(p.getName(), "Cox");
+    assertEquals(PositionName.Cox, p.getName());
     assertFalse(p.isCompetitive());
   }
 

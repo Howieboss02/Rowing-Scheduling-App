@@ -38,7 +38,7 @@ public class UserTest {
     assertEquals(u.getOrganization(), "Bob's Organization");
     assertEquals(u.getCertificate().toString(), "B1");
     assertEquals(u.getPositions(), pos);
-    assertEquals(u.getPositions().get(0).getName(), "Cox");
+    assertEquals(u.getPositions().get(0).getName(), PositionName.Cox);
     assertEquals(u.getGender(), "Male");
   }
 
