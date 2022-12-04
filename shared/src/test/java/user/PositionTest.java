@@ -8,7 +8,7 @@ import shared.enums.PositionName;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@SpringBootTest
+
 public class PositionTest {
 
   @Test

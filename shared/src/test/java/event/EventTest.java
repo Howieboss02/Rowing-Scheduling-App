@@ -14,7 +14,6 @@ public class EventTest {
     public void testConstructor(){
         Event e = new Event();
         assertNotNull(e);
-        assertNotNull(e.getPositions());
     }
 
 }

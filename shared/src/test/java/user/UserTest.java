@@ -13,7 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@SpringBootTest
+
 public class UserTest {
 
   @Test
@@ -39,7 +39,7 @@ public class UserTest {
     assertEquals(u.getOrganization(), "Bob's Organization");
     assertEquals(u.getCertificate(), "B1");
     assertEquals(u.getPositions(), pos);
-    assertEquals(u.getPositions().get(0).getName(), "Coach");
+    assertEquals(u.getPositions().get(0).getName(), "Cox");
     assertEquals(u.getGender(), "Male");
   }
 
