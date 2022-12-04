@@ -1,16 +1,20 @@
-package shared.enities;
+package nl.tudelft.cse.sem.template.shared.enities;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
-import shared.converters.PositionsToFIllListConverter;
-import shared.domain.Position;
+import lombok.NoArgsConstructor;
+import nl.tudelft.cse.sem.template.shared.converters.PositionsToFIllListConverter;
+import nl.tudelft.cse.sem.template.shared.domain.Position;
 
 import javax.persistence.*;
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @Entity
 @Table(name = "event")
+@AllArgsConstructor
+@NoArgsConstructor
 public class Event {
 
     @Id
@@ -26,12 +30,12 @@ public class Event {
 
     @Column(name = "positions")
     @Convert(converter = PositionsToFIllListConverter.class)
-    private List<Position> positions;
+    private List<Position> positions = new ArrayList<>();
 
-    @Column(name = "startTime", nullable = false)
+    @Column(name = "start-time", nullable = false)
     private String startTime;
 
-    @Column(name = "endTime", nullable = false)
+    @Column(name = "end-time", nullable = false)
     private String endTime;
 
     public void addPosition(Position position) {

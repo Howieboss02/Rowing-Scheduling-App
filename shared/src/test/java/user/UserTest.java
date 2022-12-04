@@ -1,11 +1,10 @@
 package user;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import shared.domain.Position;
-import shared.enities.User;
-import shared.enums.Certificate;
-import shared.enums.PositionName;
+import nl.tudelft.cse.sem.template.shared.domain.Position;
+import nl.tudelft.cse.sem.template.shared.enities.User;
+import nl.tudelft.cse.sem.template.shared.enums.Certificate;
+import nl.tudelft.cse.sem.template.shared.enums.PositionName;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +36,7 @@ public class UserTest {
     pos.add(new Position(PositionName.Coach, true));
     User u = new User(1L, "Bob", "Bob's Organization", "Bob@b.ob", "Male", Certificate.B1, pos);
     assertEquals(u.getOrganization(), "Bob's Organization");
-    assertEquals(u.getCertificate(), "B1");
+    assertEquals(u.getCertificate().toString(), "B1");
     assertEquals(u.getPositions(), pos);
     assertEquals(u.getPositions().get(0).getName(), "Cox");
     assertEquals(u.getGender(), "Male");
@@ -56,7 +55,7 @@ public class UserTest {
     User u = new User();
     u.addNotification("You have been REJECTED.");
     int size = u.getNotifications().size();
-    assertEquals(u.getNotifications().get(size - 1).toString(), "You have been REJECTED.");
+    assertEquals(u.getNotifications().get(size - 1), "You have been REJECTED.");
   }
 
 }

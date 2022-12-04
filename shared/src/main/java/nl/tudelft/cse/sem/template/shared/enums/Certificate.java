@@ -1,4 +1,4 @@
-package shared.enums;
+package nl.tudelft.cse.sem.template.shared.enums;
 
 public enum Certificate {
   B1,
@@ -8,5 +8,5 @@ public enum Certificate {
   B5,
   B6,
   B7,
-  B8;
+  B8
 }

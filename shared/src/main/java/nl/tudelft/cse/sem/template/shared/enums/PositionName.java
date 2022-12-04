@@ -1,4 +1,4 @@
-package shared.enums;
+package nl.tudelft.cse.sem.template.shared.enums;
 
 public enum PositionName {
   Coach,

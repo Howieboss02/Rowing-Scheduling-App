@@ -6,12 +6,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import shared.enities.User;
+import nl.tudelft.cse.sem.template.shared.enities.User;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.function.Function;
 
 public class TestUserRepository implements UserRepository {
 
@@ -79,7 +78,7 @@ public class TestUserRepository implements UserRepository {
   @Override
   public <S extends User> S save(S entity) {
     call("save");
-    entity.id = (long) users.size();
+    entity.setId((long) users.size());
     users.add(entity);
     return entity;
   }

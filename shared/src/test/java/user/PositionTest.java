@@ -1,12 +1,10 @@
 package user;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import shared.domain.Position;
-import shared.enums.PositionName;
+import nl.tudelft.cse.sem.template.shared.domain.Position;
+import nl.tudelft.cse.sem.template.shared.enums.PositionName;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class PositionTest {
@@ -15,8 +13,8 @@ public class PositionTest {
   public void testConstructor(){
     Position p = new Position(PositionName.Cox, false);
     assertNotNull(p);
-    assertEquals(p.getName().toString(), "Cox");
-    assertEquals(p.isCompetitive(), false);
+    assertEquals(p.getName(), "Cox");
+    assertFalse(p.isCompetitive());
   }
 
   @Test
@@ -24,6 +22,6 @@ public class PositionTest {
     Position p = new Position(PositionName.Cox, false);
     assertNotNull(p);
     p.setCompetitive(true);
-    assertEquals(p.isCompetitive(), true);
+    assertTrue(p.isCompetitive());
   }
 }

@@ -1,8 +1,8 @@
-package shared.domain;
+package nl.tudelft.cse.sem.template.shared.domain;
 
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import shared.enums.PositionName;
+import nl.tudelft.cse.sem.template.shared.enums.PositionName;
 
 public class Position {
 

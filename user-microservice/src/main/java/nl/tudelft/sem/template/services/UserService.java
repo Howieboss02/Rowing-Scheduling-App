@@ -1,11 +1,11 @@
-package nl.tudelft.sem.template.database.services;
+package nl.tudelft.sem.template.services;
 
 import nl.tudelft.sem.template.database.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import shared.domain.Position;
-import shared.enities.User;
-import shared.enums.Certificate;
+import nl.tudelft.cse.sem.template.shared.domain.Position;
+import nl.tudelft.cse.sem.template.shared.enities.User;
+import nl.tudelft.cse.sem.template.shared.enums.Certificate;
 
 import java.util.List;
 import java.util.Optional;

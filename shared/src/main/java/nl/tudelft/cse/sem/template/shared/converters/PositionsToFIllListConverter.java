@@ -1,8 +1,8 @@
-package shared.converters;
+package nl.tudelft.cse.sem.template.shared.converters;
 
 
-import shared.domain.Position;
-import shared.enums.PositionName;
+import nl.tudelft.cse.sem.template.shared.domain.Position;
+import nl.tudelft.cse.sem.template.shared.enums.PositionName;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
@@ -17,15 +17,21 @@ public class PositionsToFIllListConverter implements AttributeConverter<List<Pos
 
     @Override
     public String convertToDatabaseColumn(List<Position> positions) {
+        if(positions == null || positions.isEmpty()) {
+            return "";
+        }
         StringBuilder positionsString = new StringBuilder();
         for (Position position : positions) {
-            positionsString.append(position.getName().toString()).append(FIELD_SPLIT_CHAR).append(position.isCompetitive()).append(OBJECT_SPLIT_CHAR);
+            positionsString.append(position.getName()).append(FIELD_SPLIT_CHAR).append(position.isCompetitive()).append(OBJECT_SPLIT_CHAR);
         }
         return positionsString.toString();
     }
 
     @Override
     public List<Position> convertToEntityAttribute(String positions) {
+        if(positions == null || positions.isEmpty()) {
+            return new ArrayList<>();
+        }
         String[] positionsString = positions.split(OBJECT_SPLIT_CHAR);
         List<Position> positionsList = new ArrayList<>();
         for (String positionString : positionsString) {
