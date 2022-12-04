@@ -1,10 +1,15 @@
 package Commons;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.data.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+
+import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
 public class Schedule {
     /**
@@ -48,23 +53,19 @@ public class Schedule {
     /**
      * Temporarily removes slot
      * @param slot the time slot that should be temporarily removed
-     * @return True iff action was successful
      */
-    public boolean removeSlot(TimeSlot slot) {
+    public void removeSlot(TimeSlot slot) {
         // TODO: Only remove parts of slot that were actually filled in recurring table
         removedSlots.add(slot);
-        return true;
     }
 
     /**
      * Temporarily adds slot
      * @param slot the time slot that should be temporarily added
-     * @return True iff action was successful
      */
-    public boolean addSlot(TimeSlot slot) {
+    public void addSlot(TimeSlot slot) {
         // TODO: Only add parts of slot that were not already filled in recurring table
         addedSlots.add(slot);
-        return true;
     }
 
     /**
@@ -79,5 +80,36 @@ public class Schedule {
                 removedSlots.stream().filter(condition).toList();
         addedSlots =
                 addedSlots.stream().filter(condition).toList();
+    }
+
+    /**
+     * A method that uses an API supportive version of the "equals" method.
+     *
+     * @param obj a random type of object to be compared to
+     * @return a boolean whether these 2 objects are the same or not
+     */
+    @Override
+    public boolean equals(Object obj) {
+        return EqualsBuilder.reflectionEquals(this, obj);
+    }
+
+    /**
+     * A method that uses an API supportive version of hashing.
+     *
+     * @return a hash code of the Schedule object
+     */
+    @Override
+    public int hashCode() {
+        return HashCodeBuilder.reflectionHashCode(this);
+    }
+
+    /**
+     * A method that uses an API supportive method of transforming data into a string.
+     *
+     * @return a string containing every detail about the schedule
+     */
+    @Override
+    public String toString() {
+        return ToStringBuilder.reflectionToString(this, MULTI_LINE_STYLE);
     }
 }

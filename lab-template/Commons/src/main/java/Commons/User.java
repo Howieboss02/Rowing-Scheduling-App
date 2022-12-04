@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.springframework.data.util.Pair;
 
 import static org.apache.commons.lang3.builder.ToStringStyle.MULTI_LINE_STYLE;
 
@@ -27,8 +28,7 @@ public class User {
   public List<Position> positions;
   public List<String> notifications = new ArrayList<>();
 
-  /*TODO: add schedule structure
-   */
+  public Schedule schedule;
 
   /*
   TODO: add enqueued activities list
@@ -48,7 +48,8 @@ public class User {
    * @param certificate the biggest certificate it holds
    * @param positions the list of positions it can handle
    */
-  public User(Long id, String name, String organization, String email, String gender, Certificate certificate, List<Position> positions){
+  public User(Long id, String name, String organization, String email, String gender, Certificate certificate,
+              List<Position> positions, Schedule schedule){
     this.id = id;
     this.name = name;
     this.organization = organization;
@@ -56,6 +57,7 @@ public class User {
     this.certificate = certificate;
     this.gender = gender;
     this.positions = positions;
+    this.schedule = schedule;
   }
 
   /**
@@ -198,6 +200,30 @@ public class User {
     this.notifications.add(notifications);
   }
 
+  /**
+   * Add a recurring slot
+   * @param day the day of the slot (values from 0 to 6)
+   * @param time the time interval in seconds of the slot
+   */
+  public void addRecurringSlot(Integer day, Pair<Integer, Integer> time) {
+    schedule.addRecurringSlot(day, time);
+  }
+
+  /**
+   * Temporarily removes slot
+   * @param slot the time slot that should be temporarily removed
+   */
+  public void removeSlot(TimeSlot slot) {
+    schedule.removeSlot(slot);
+  }
+
+  /**
+   * Temporarily adds slot
+   * @param slot the time slot that should be temporarily added
+   */
+  public void addSlot(TimeSlot slot) {
+    schedule.addSlot(slot);
+  }
   /**
    * A method that uses an API supportive version of the "equals" method.
    *
