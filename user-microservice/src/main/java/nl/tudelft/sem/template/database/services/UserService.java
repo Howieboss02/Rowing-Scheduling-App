@@ -28,7 +28,7 @@ public class UserService {
         if (id < 0 || !userRepo.existsById(id)) {
             return Optional.empty();
         } else {
-            return Optional.of(userRepo.findById(id).get());
+            return userRepo.findById(id);
         }
     }
 
@@ -54,9 +54,7 @@ public class UserService {
 
         Optional<User> toUpdate = getById(id);
 
-        if (toUpdate.isEmpty()) {
-            return toUpdate;
-        } else {
+        if (toUpdate.isPresent()) {
             toUpdate.get().setName(name);
             toUpdate.get().setOrganization(organization);
             toUpdate.get().setEmail(email);
@@ -65,8 +63,8 @@ public class UserService {
             toUpdate.get().setPositions(positions);
 
             userRepo.save(toUpdate.get());
-            return toUpdate;
         }
+        return toUpdate;
     }
 
     public Optional<List<String>> getNotifications(Long id) {
