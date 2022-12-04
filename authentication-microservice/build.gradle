@@ -17,7 +17,9 @@ plugins {
 	id 'jacoco'
 
 	// Code style
+	/*
 	id 'checkstyle'
+	 */
 
 	// PMD
 	id 'pmd'
@@ -91,6 +93,7 @@ jacocoTestCoverageVerification() {
 	}
 }
 
+/*
 checkstyle {
 	toolVersion "8.37"
 	configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
@@ -98,6 +101,7 @@ checkstyle {
 	maxErrors = 0
 	maxWarnings = 0
 }
+*/
 
 pmd {
 	incrementalAnalysis = true
