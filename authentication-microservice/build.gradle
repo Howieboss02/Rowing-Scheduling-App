@@ -17,7 +17,9 @@ plugins {
 	id 'jacoco'
 
 	// Code style
+	/*
 	id 'checkstyle'
+	 */
 
 	// PMD
 	id 'pmd'
