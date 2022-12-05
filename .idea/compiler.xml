@@ -7,10 +7,25 @@
         <processorPath useClasspath="false">
           <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.24/13a394eed5c4f9efb2a6d956e2086f1d81e857d9/lombok-1.18.24.jar" />
         </processorPath>
-        <module name="template.authentication-microservice.main" />
         <module name="template.example-microservice.main" />
+        <module name="template.authentication-microservice.main" />
+        <module name="template.shared.main" />
+        <module name="template.user-microservice.main" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel target="11" />
+    <bytecodeTargetLevel target="11">
+      <module name="SEM29a.template.shared" target="16" />
+      <module name="SEM29a.template.shared.main" target="16" />
+      <module name="SEM29a.template.shared.test" target="16" />
+      <module name="SEM29a.template.user-microservice" target="16" />
+      <module name="SEM29a.template.user-microservice.main" target="16" />
+      <module name="SEM29a.template.user-microservice.test" target="16" />
+      <module name="template.Commons" target="16" />
+      <module name="template.Commons.main" target="16" />
+      <module name="template.Commons.test" target="16" />
+      <module name="template.Server" target="16" />
+      <module name="template.Server.main" target="16" />
+      <module name="template.Server.test" target="16" />
+    </bytecodeTargetLevel>
   </component>
 </project>
