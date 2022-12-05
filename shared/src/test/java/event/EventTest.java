@@ -19,7 +19,7 @@ public class EventTest {
         e.addPosition(new Position(PositionName.Coach, false));
         assertNotNull(e.getPositions());
         Position p = e.getPositions().get(0);
-        assertEquals( "Coach", p.getName());
+        assertEquals( PositionName.Coach, p.getName());
     }
 
     @Test
