@@ -1,4 +1,4 @@
-package nl.tudelft.cse.sem.template.shared.enities;
+package nl.tudelft.sem.template.shared.enities;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -6,14 +6,14 @@ import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import nl.tudelft.cse.sem.template.shared.domain.Schedule;
-import nl.tudelft.cse.sem.template.shared.domain.TimeSlot;
+import nl.tudelft.sem.template.shared.domain.Schedule;
+import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import nl.tudelft.cse.sem.template.shared.domain.Position;
-import nl.tudelft.cse.sem.template.shared.enums.Certificate;
+import nl.tudelft.sem.template.shared.domain.Position;
+import nl.tudelft.sem.template.shared.enums.Certificate;
 import org.springframework.data.util.Pair;
 
 @Entity

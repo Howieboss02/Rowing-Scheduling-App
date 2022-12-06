@@ -4,9 +4,9 @@ import nl.tudelft.sem.template.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import nl.tudelft.cse.sem.template.shared.domain.Position;
-import nl.tudelft.cse.sem.template.shared.enities.User;
-import nl.tudelft.cse.sem.template.shared.enums.Certificate;
+import nl.tudelft.sem.template.shared.domain.Position;
+import nl.tudelft.sem.template.shared.enities.User;
+import nl.tudelft.sem.template.shared.enums.Certificate;
 
 import java.util.List;
 

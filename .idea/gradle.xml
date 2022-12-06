@@ -14,6 +14,7 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/authentication-microservice" />
+            <option value="$PROJECT_DIR$/event-microservice" />
             <option value="$PROJECT_DIR$/example-microservice" />
             <option value="$PROJECT_DIR$/shared" />
             <option value="$PROJECT_DIR$/user-microservice" />
