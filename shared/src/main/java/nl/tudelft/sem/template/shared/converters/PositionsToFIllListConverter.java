@@ -1,8 +1,8 @@
-package nl.tudelft.cse.sem.template.shared.converters;
+package nl.tudelft.sem.template.shared.converters;
 
 
-import nl.tudelft.cse.sem.template.shared.domain.Position;
-import nl.tudelft.cse.sem.template.shared.enums.PositionName;
+import nl.tudelft.sem.template.shared.domain.Position;
+import nl.tudelft.sem.template.shared.enums.PositionName;
 
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;

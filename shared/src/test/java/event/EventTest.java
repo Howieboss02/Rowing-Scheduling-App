@@ -1,11 +1,11 @@
 package event;
 
 
-import nl.tudelft.cse.sem.template.shared.domain.Position;
-import nl.tudelft.cse.sem.template.shared.enums.PositionName;
+import nl.tudelft.sem.template.shared.domain.Position;
+import nl.tudelft.sem.template.shared.enums.PositionName;
 import org.junit.jupiter.api.Test;
 
-import nl.tudelft.cse.sem.template.shared.enities.Event;
+import nl.tudelft.sem.template.shared.enities.Event;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

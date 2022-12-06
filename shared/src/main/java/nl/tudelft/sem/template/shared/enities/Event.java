@@ -1,10 +1,12 @@
-package nl.tudelft.cse.sem.template.shared.enities;
+package nl.tudelft.sem.template.shared.enities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nl.tudelft.cse.sem.template.shared.converters.PositionsToFIllListConverter;
-import nl.tudelft.cse.sem.template.shared.domain.Position;
+import nl.tudelft.sem.template.shared.converters.PositionsToFIllListConverter;
+import nl.tudelft.sem.template.shared.domain.Position;
+import nl.tudelft.sem.template.shared.enums.Certificate;
+import nl.tudelft.sem.template.shared.enums.EventType;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -37,6 +39,16 @@ public class Event {
 
     @Column(name = "end-time", nullable = false)
     private String endTime;
+
+    @Column(name = "certificate", nullable = false)
+    private Certificate certificate;
+
+    private boolean isCompetitive;
+
+    private EventType type;
+
+
+
 
     public void addPosition(Position position) {
         positions.add(position);

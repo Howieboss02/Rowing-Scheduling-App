@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import nl.tudelft.cse.sem.template.shared.enities.User;
+import nl.tudelft.sem.template.shared.enities.User;
 
 import java.util.ArrayList;
 import java.util.List;

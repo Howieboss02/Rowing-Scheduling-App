@@ -1,10 +1,10 @@
-package nl.tudelft.cse.sem.template.shared.domain;
+package nl.tudelft.sem.template.shared.domain;
 
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import nl.tudelft.cse.sem.template.shared.enums.PositionName;
+import nl.tudelft.sem.template.shared.enums.PositionName;
 
 @Data
 @AllArgsConstructor
