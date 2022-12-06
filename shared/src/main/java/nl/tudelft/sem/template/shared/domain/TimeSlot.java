@@ -22,7 +22,7 @@ public class TimeSlot {
      * @param schedule the list of time intervals
      * @return a list of timeslots representing the intersection
      */
-    List<TimeSlot> intersect(List<Pair<Integer, Integer>> schedule) {
+    public List<TimeSlot> intersect(List<Pair<Integer, Integer>> schedule) {
         List<TimeSlot> intersection = new ArrayList<>();
         for (Pair<Integer, Integer> time : schedule)
             if (time.getFirst() < this.time.getSecond() &&
@@ -42,7 +42,7 @@ public class TimeSlot {
      * @param schedule the list of time intervals
      * @return a list of timeslots representing the intersection
      */
-    List<TimeSlot> difference(List<Pair<Integer, Integer>> schedule) {
+    public List<TimeSlot> difference(List<Pair<Integer, Integer>> schedule) {
         List<TimeSlot> intersection = this.intersect(schedule);
         List<TimeSlot> difference = new ArrayList<>();
 

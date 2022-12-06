@@ -3,6 +3,7 @@ package user;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.util.Pair;
 
+import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import javax.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 import java.util.List;

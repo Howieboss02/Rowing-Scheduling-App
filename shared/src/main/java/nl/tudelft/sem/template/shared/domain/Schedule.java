@@ -2,6 +2,11 @@ package nl.tudelft.sem.template.shared.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import org.springframework.data.util.Pair;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Predicate;
 
 @AllArgsConstructor
 @Data
@@ -58,8 +63,8 @@ public class Schedule {
      * @param slot the time slot that should be temporarily added
      */
     public void addSlot(TimeSlot slot) {
-        // TODO: Only add parts of slot that were not already filled in recurring table
-        addedSlots.add(slot);
+        List<TimeSlot> toAdd = slot.difference(recurringSlots.get(slot.getDay()));
+        addedSlots.addAll(toAdd);
     }
 
     /**
