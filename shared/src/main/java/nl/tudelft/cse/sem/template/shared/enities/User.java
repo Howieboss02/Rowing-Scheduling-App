@@ -24,6 +24,7 @@ public class User {
   @Column(name = "id", nullable = false)
   private Long id;
 
+  private String netId;
   private String name;
   private String organization;
   private String email;
@@ -53,8 +54,9 @@ public class User {
    * @param certificate the biggest certificate it holds
    * @param positions the list of positions it can handle
    */
-  public User(Long id, String name, String organization, String email, String gender, Certificate certificate, List<Position> positions){
+  public User(Long id, String netId, String name, String organization, String email, String gender, Certificate certificate, List<Position> positions){
     this.id = id;
+    this.netId = netId;
     this.name = name;
     this.organization = organization;
     this.email = email;
