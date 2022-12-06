@@ -1,10 +1,10 @@
-package nl.tudelft.cse.sem.template.shared.enities;
+package nl.tudelft.sem.template.shared.enities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nl.tudelft.cse.sem.template.shared.converters.PositionsToFIllListConverter;
-import nl.tudelft.cse.sem.template.shared.domain.Position;
+import nl.tudelft.sem.template.shared.converters.PositionsToFIllListConverter;
+import nl.tudelft.sem.template.shared.domain.Position;
 
 import javax.persistence.*;
 import java.util.ArrayList;
