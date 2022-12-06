@@ -1,4 +1,3 @@
-
 plugins {
     id 'org.springframework.boot' version '2.3.5.RELEASE'
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
@@ -6,10 +5,10 @@ plugins {
 
 
     // Code style
-/*    id 'checkstyle'*/
+    id 'checkstyle'
 
     // PMD
-   /* id 'pmd'*/
+    id 'pmd'
 
 }
 
@@ -64,17 +63,17 @@ repositories {
 }
 
 
-/*checkstyle {
+checkstyle {
     toolVersion "8.37"
     configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
     ignoreFailures = false
     maxErrors = 0
     maxWarnings = 0
-}*/
+}
 
-/*pmd {
+pmd {
     incrementalAnalysis = true
     sourceSets = [sourceSets.main]
-}*/
+}
 
 
