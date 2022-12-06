@@ -4,12 +4,17 @@ plugins {
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
     id 'java'
 
+    // Test coverage
+    id 'jacoco'
 
     // Code style
     id 'checkstyle'
 
     // PMD
      id 'pmd'
+
+    // PITest
+    id 'info.solidsoft.pitest' version '1.5.2'
 
 }
 
@@ -63,10 +68,32 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    jacoco {
+        enabled = true
+        includes = ['nl.tudelft.sem.template.*']
+        excludes = []
+    }
 }
 
 repositories {
     mavenCentral()
+}
+
+jacocoTestCoverageVerification() {
+    dependsOn test
+    violationRules {
+        rule {
+            enabled = true
+            element = 'CLASS'
+            includes = ['nl.tudelft.sem.template.*']
+
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.1
+            }
+        }
+    }
 }
 
 
@@ -81,6 +108,18 @@ checkstyle {
 pmd {
     incrementalAnalysis = true
     sourceSets = [sourceSets.main]
+}
+
+apply plugin: 'info.solidsoft.pitest'
+pitest {
+    //adds dependency to org.pitest:pitest-junit5-plugin and sets "testPlugin" to "junit5"
+    junit5PluginVersion = '0.12'
+
+    targetClasses = ['nl.tudelft.sem.template.*']  //by default "${project.group}.*"
+    pitestVersion = '1.5.1' //not needed when a default PIT version should be used
+    threads = 4
+    outputFormats = ['XML', 'HTML']
+    timestampedReports = false
 }
 
 
