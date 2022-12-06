@@ -1,17 +1,15 @@
-package nl.tudelft.cse.sem.template.shared.domain;
+package user;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.data.util.Pair;
 
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class ScheduleTest {
     @Test
     void constructor() {
-        Schedule s = new Schedule();
+        nl.tudelft.cse.sem.template.shared.domain.Schedule s = new Schedule();
         assertEquals(s.getAddedSlots(), new ArrayList<>());
         assertEquals(s.getRemovedSlots(), new ArrayList<>());
         assertEquals(s.getRecurringSlots().size(), 7);

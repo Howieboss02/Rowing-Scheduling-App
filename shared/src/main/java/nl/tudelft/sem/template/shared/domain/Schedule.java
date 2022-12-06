@@ -1,12 +1,7 @@
-package nl.tudelft.cse.sem.template.shared.domain;
+package nl.tudelft.sem.template.shared.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.data.util.Pair;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.function.Predicate;
 
 @AllArgsConstructor
 @Data

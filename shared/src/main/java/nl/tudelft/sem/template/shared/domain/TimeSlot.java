@@ -1,4 +1,4 @@
-package nl.tudelft.cse.sem.template.shared.domain;
+package nl.tudelft.sem.template.shared.domain;
 
 import org.springframework.data.util.Pair;
 import lombok.AllArgsConstructor;

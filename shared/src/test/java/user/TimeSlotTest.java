@@ -1,4 +1,4 @@
-package nl.tudelft.cse.sem.template.shared.domain;
+package user;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.data.util.Pair;
