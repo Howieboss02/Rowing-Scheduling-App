@@ -1,0 +1,8 @@
+rootProject.name = 'template'
+
+include 'authentication-microservice'
+include 'example-microservice'
+include 'user-microservice'
+include 'shared'
+include 'event-microservice'
+

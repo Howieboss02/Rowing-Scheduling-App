@@ -4,14 +4,20 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
+        <option name="delegatedBuild" value="true" />
+        <option name="testRunner" value="GRADLE" />
         <option name="distributionType" value="DEFAULT_WRAPPED" />
-        <option name="externalProjectPath" value="$PROJECT_DIR$/lab-template" />
+        <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="gradleHome" value="$USER_HOME$/.gradle/wrapper/dists/gradle-7.1-bin/4pslxx9lrxt5svtz5wbnb6tkz/gradle-7.1" />
+        <option name="gradleJvm" value="jbr-11" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/lab-template" />
-            <option value="$PROJECT_DIR$/lab-template/authentication-microservice" />
-            <option value="$PROJECT_DIR$/lab-template/example-microservice" />
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/authentication-microservice" />
+            <option value="$PROJECT_DIR$/event-microservice" />
+            <option value="$PROJECT_DIR$/example-microservice" />
+            <option value="$PROJECT_DIR$/shared" />
+            <option value="$PROJECT_DIR$/user-microservice" />
           </set>
         </option>
       </GradleProjectSettings>
