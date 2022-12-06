@@ -9,24 +9,24 @@ variables:
   # Disable the Gradle daemon to ensure isolated runs of the CI pipeline.
   GRADLE_OPTS: "-Dorg.gradle.daemon=false"
 
-build-authentication-microservice:
+build-user-microservice:
   stage: build
   script:
     gradle user-microservice:assemble user-microservice:testClasses
 
-checkStyle-authentication-microservice:
+checkStyle-user-microservice:
   stage: staticAnalysis
   script:
     gradle user-microservice:checkstyleMain user-microservice:checkStyleTest
   allow_failure: true
 
-PMD-authentication-microservice:
+PMD-user-microservice:
   stage: staticAnalysis
   script:
     gradle user-microservice:pmdMain
   allow_failure: true
 
-test-authentication-microservice:
+test-user-microservice:
   stage: test
   script:
     - gradle user-microservice:test user-microservice:jacocoTestReport
