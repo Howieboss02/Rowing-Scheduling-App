@@ -1,0 +1,28 @@
+AGENDA MEETING 3
+Date: 06.12.2022
+
+Chairman: Violeta Macsim
+
+Note taker: Rafal Owczarski
+
+##QUESTIONS:
+* Can we use a design pattern that would not be making an implementation design more efficient?
+* Check project structure
+
+##PROGRESS:
+* Configured Gradle dependencies
+* Created shared classes and the structure for the User microservice
+* Created the UML
+
+##NOTES:
+1.)    Merge dev int main each Sunday
+2.)    Q1 Design patterns? Chain of responsibility redundant checks? We should add all design patterns that makes our life easier we should add it. Strategy -> most intuitive, Outside lectures -> we can use any dp we want
+3.)    Context map not mandatory, UML is 
+4.)    Elaborate on our microservices choice (number why this functionality etc)
+5.)    How microservices communicate with each other
+6.)    How they interact with each other 
+7.)    Mention Anticorruption layer
+8.)    Splitting queue and Event int two paragraphs
+9.)    Security architecture (checks in each miroservice/one) synchronous, asynchronous
+10.)     Only test our own code, not the library one
+11.)    / in checkstyle .idea
