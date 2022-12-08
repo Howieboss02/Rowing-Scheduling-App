@@ -47,6 +47,8 @@ public class Event {
 
     private EventType type;
 
+    @Column(name = "organisation")
+    private String organisation;
 
 
 
