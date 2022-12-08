@@ -3,7 +3,7 @@ package nl.tudelft.cse.sem.template.shared.enities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nl.tudelft.cse.sem.template.shared.converters.PositionsToFIllListConverter;
+import nl.tudelft.cse.sem.template.shared.converters.PositionsToFillListConverter;
 import nl.tudelft.cse.sem.template.shared.domain.Position;
 
 import javax.persistence.*;
@@ -29,7 +29,7 @@ public class Event {
     private String label;
 
     @Column(name = "positions")
-    @Convert(converter = PositionsToFIllListConverter.class)
+    @Convert(converter = PositionsToFillListConverter.class)
     private List<Position> positions = new ArrayList<>();
 
     @Column(name = "start-time", nullable = false)
