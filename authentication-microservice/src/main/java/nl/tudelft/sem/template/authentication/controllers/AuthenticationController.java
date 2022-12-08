@@ -21,6 +21,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+//import nl.tudelft.sem.template.;
+
 @RestController
 public class AuthenticationController {
 
@@ -91,6 +93,12 @@ public class AuthenticationController {
         try {
             NetId netId = new NetId(request.getNetId());
             Password password = new Password(request.getPassword());
+//            String name = request.getName();
+//            String organization = request.getOrganization();
+//            String email = request.getEmail();
+//            Certificate certificate;
+//            String gender;
+//            String positions;
             registrationService.registerUser(netId, password);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());

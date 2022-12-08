@@ -14,5 +14,5 @@ public class RegistrationRequestModel {
     private String email;
     private String certificate;
     private String gender;
-    this.positions = positions;
+    private String positions;
 }
