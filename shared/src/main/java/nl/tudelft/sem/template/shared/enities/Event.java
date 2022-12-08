@@ -24,7 +24,7 @@ public class Event {
     @Column(name = "id", nullable = false, unique = true)
     private Long id;
 
-    @Column(name = "owning-user", nullable = false)
+    @Column(name = "owningUser", nullable = false)
     private Long owningUser;
 
     @Column(name = "label", nullable = false, unique = true)
@@ -34,10 +34,10 @@ public class Event {
     @Convert(converter = PositionsToFIllListConverter.class)
     private List<Position> positions = new ArrayList<>();
 
-    @Column(name = "start-time", nullable = false)
+    @Column(name = "startTime", nullable = false)
     private String startTime;
 
-    @Column(name = "end-time", nullable = false)
+    @Column(name = "endTime", nullable = false)
     private String endTime;
 
     @Column(name = "certificate", nullable = false)
