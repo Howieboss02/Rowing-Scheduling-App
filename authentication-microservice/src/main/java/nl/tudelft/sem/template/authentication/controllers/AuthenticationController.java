@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.authentication.controllers;
 
 import nl.tudelft.sem.template.authentication.authentication.JwtTokenGenerator;
 import nl.tudelft.sem.template.authentication.authentication.JwtUserDetailsService;
+import nl.tudelft.sem.template.authentication.domain.user.Email;
 import nl.tudelft.sem.template.authentication.domain.user.NetId;
 import nl.tudelft.sem.template.authentication.domain.user.Password;
 import nl.tudelft.sem.template.authentication.domain.user.RegistrationService;
@@ -93,13 +94,14 @@ public class AuthenticationController {
         try {
             NetId netId = new NetId(request.getNetId());
             Password password = new Password(request.getPassword());
-//            String name = request.getName();
-//            String organization = request.getOrganization();
-//            String email = request.getEmail();
-//            Certificate certificate;
-//            String gender;
-//            String positions;
-            registrationService.registerUser(netId, password);
+            Email email = new Email(request.getEmail());
+            // String name = request.getName();
+            // String organization = request.getOrganization();
+            // String email = request.getEmail();
+            // Certificate certificate;
+            // String gender;
+            // String positions;
+            registrationService.registerUser(netId, password, email);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }

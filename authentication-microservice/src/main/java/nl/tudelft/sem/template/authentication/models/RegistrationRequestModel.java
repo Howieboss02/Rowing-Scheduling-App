@@ -9,9 +9,9 @@ import lombok.Data;
 public class RegistrationRequestModel {
     private String netId;
     private String password;
+    private String email;
     private String name;
     private String organization;
-    private String email;
     private String certificate;
     private String gender;
     private String positions;

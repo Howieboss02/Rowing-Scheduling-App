@@ -3,10 +3,7 @@ package nl.tudelft.sem.template.authentication.authentication;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-import nl.tudelft.sem.template.authentication.domain.user.AppUser;
-import nl.tudelft.sem.template.authentication.domain.user.HashedPassword;
-import nl.tudelft.sem.template.authentication.domain.user.NetId;
-import nl.tudelft.sem.template.authentication.domain.user.UserRepository;
+import nl.tudelft.sem.template.authentication.domain.user.*;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,12 +29,12 @@ public class JwtUserDetailsServiceTests {
     private transient UserRepository userRepository;
 
     @Test
-    public void loadUserByUsername_withValidUser_returnsCorrectUser() {
+    public void loadUserByUsername_withValidUser_returnsCorrectUser() throws Exception {
         // Arrange
         final NetId testUser = new NetId("SomeUser");
         final HashedPassword testHashedPassword = new HashedPassword("password123Hash");
-
-        AppUser appUser = new AppUser(testUser, testHashedPassword);
+        final Email testEmail = new Email("test@test.com");
+        AppUser appUser = new AppUser(testUser, testHashedPassword, testEmail);
         userRepository.save(appUser);
 
         // Act
@@ -55,8 +52,8 @@ public class JwtUserDetailsServiceTests {
 
         final NetId testUser = new NetId("AnotherUser");
         final String testPasswordHash = "password123Hash";
-
-        AppUser appUser = new AppUser(testUser, new HashedPassword(testPasswordHash));
+        final Email testEmail = new Email("test@test.com");
+        AppUser appUser = new AppUser(testUser, new HashedPassword(testPasswordHash), testEmail);
         userRepository.save(appUser);
 
         // Act
