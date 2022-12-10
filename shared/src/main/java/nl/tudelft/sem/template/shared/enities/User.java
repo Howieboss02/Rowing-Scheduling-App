@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import nl.tudelft.sem.template.shared.domain.Schedule;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
+import nl.tudelft.sem.template.shared.enums.Day;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -86,11 +87,11 @@ public class User {
 
   /**
    * Add a recurring slot
-   * @param day the day of the slot (values from 0 to 6)
+   * @param day the day of the slot
    * @param time the time interval in seconds of the slot
    */
-  public void addRecurringSlot(Integer day, Pair<Integer, Integer> time) {
-    schedule.addRecurringSlot(day, time);
+  public void addRecurringSlot(Day day, Pair<Integer, Integer> time) {
+    schedule.addRecurringSlot(new TimeSlot(-1, day, time));
   }
 
   /**

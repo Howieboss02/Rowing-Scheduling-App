@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.shared.domain;
 
+import nl.tudelft.sem.template.shared.enums.Day;
 import org.springframework.data.util.Pair;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,7 +14,7 @@ import java.util.List;
 @Data
 public class TimeSlot {
     private Integer week;
-    private Integer day;
+    private Day day;
     private Pair<Integer, Integer> time;
 
     /**
@@ -22,16 +23,18 @@ public class TimeSlot {
      * @param schedule the list of time intervals
      * @return a list of timeslots representing the intersection
      */
-    public List<TimeSlot> intersect(List<Pair<Integer, Integer>> schedule) {
+    public List<TimeSlot> intersect(List<TimeSlot> schedule) {
         List<TimeSlot> intersection = new ArrayList<>();
-        for (Pair<Integer, Integer> time : schedule)
+        for (TimeSlot entry : schedule) {
+            Pair<Integer, Integer> time = entry.getTime();
             if (time.getFirst() < this.time.getSecond() &&
-                time.getSecond() > this.time.getFirst()) {
+                    time.getSecond() > this.time.getFirst()) {
                 intersection.add(new TimeSlot(week, day,
                         Pair.of(Integer.max(time.getFirst(), this.time.getFirst()),
                                 Integer.min(time.getSecond(), this.time.getSecond())
-                                )));
+                        )));
             }
+        }
         return intersection;
     }
 
@@ -42,7 +45,7 @@ public class TimeSlot {
      * @param schedule the list of time intervals
      * @return a list of timeslots representing the intersection
      */
-    public List<TimeSlot> difference(List<Pair<Integer, Integer>> schedule) {
+    public List<TimeSlot> difference(List<TimeSlot> schedule) {
         List<TimeSlot> intersection = this.intersect(schedule);
         List<TimeSlot> difference = new ArrayList<>();
 

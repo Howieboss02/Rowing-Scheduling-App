@@ -1,10 +1,10 @@
 package user;
 
+import nl.tudelft.sem.template.shared.enums.Day;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.util.Pair;
 
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -14,16 +14,16 @@ class TimeSlotTest {
 
     @Test
     void intersect() {
-        TimeSlot slot = new TimeSlot(1, 1, Pair.of(2, 10));
-        List<Pair<Integer, Integer>> list = new ArrayList<>();
+        TimeSlot slot = new TimeSlot(1, Day.MONDAY, Pair.of(2, 10));
+        List<TimeSlot> list = new ArrayList<>();
 
-        list.add(Pair.of(1, 2));
-        list.add(Pair.of(4, 5));
-        list.add(Pair.of(8, 11));
+        list.add(new TimeSlot(-1, Day.MONDAY, Pair.of(1, 2)));
+        list.add(new TimeSlot(-1, Day.MONDAY, Pair.of(4, 5)));
+        list.add(new TimeSlot(-1, Day.MONDAY, Pair.of(8, 11)));
 
         List<TimeSlot> result = new ArrayList<>();
-        result.add(new TimeSlot(1, 1, Pair.of(4, 5)));
-        result.add(new TimeSlot(1, 1, Pair.of(8, 10)));
+        result.add(new TimeSlot(1, Day.MONDAY, Pair.of(4, 5)));
+        result.add(new TimeSlot(1, Day.MONDAY, Pair.of(8, 10)));
 
         assertEquals(slot.intersect(list), result);
 
@@ -31,16 +31,16 @@ class TimeSlotTest {
 
     @Test
     void difference() {
-        TimeSlot slot = new TimeSlot(1, 1, Pair.of(2, 10));
-        List<Pair<Integer, Integer>> list = new ArrayList<>();
+        TimeSlot slot = new TimeSlot(1, Day.MONDAY, Pair.of(2, 10));
+        List<TimeSlot> list = new ArrayList<>();
 
-        list.add(Pair.of(1, 2));
-        list.add(Pair.of(4, 5));
-        list.add(Pair.of(8, 11));
+        list.add(new TimeSlot(-1, Day.MONDAY, Pair.of(1, 2)));
+        list.add(new TimeSlot(-1, Day.MONDAY, Pair.of(4, 5)));
+        list.add(new TimeSlot(-1, Day.MONDAY, Pair.of(8, 11)));
 
         List<TimeSlot> result = new ArrayList<>();
-        result.add(new TimeSlot(1, 1, Pair.of(2, 4)));
-        result.add(new TimeSlot(1, 1, Pair.of(5, 8)));
+        result.add(new TimeSlot(1, Day.MONDAY, Pair.of(2, 4)));
+        result.add(new TimeSlot(1, Day.MONDAY, Pair.of(5, 8)));
 
         assertEquals(slot.difference(list), result);
     }

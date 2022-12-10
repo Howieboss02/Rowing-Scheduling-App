@@ -2,7 +2,6 @@ package nl.tudelft.sem.template.shared.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.springframework.data.util.Pair;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,18 +11,15 @@ import java.util.function.Predicate;
 @Data
 public class Schedule {
     /**
-     * For each of the 7 days of the week we store
-     * a list of time intervals in seconds
+     * List of recurring slots
      */
-    private List<List<Pair<Integer, Integer>>> recurringSlots;
+    private List<TimeSlot> recurringSlots;
     /**
-     * Recurring slots that were temporarily removed
-     * (for a specific week)
+     * Recurring slots that were removed for a specific week
      */
     private List<TimeSlot> removedSlots;
     /**
-     * Slots that were temporarily added
-     * (for a specific week)
+     * Slots that were added for a specific week
      */
     private List<TimeSlot> addedSlots;
 
@@ -32,38 +28,39 @@ public class Schedule {
      */
     public Schedule() {
         recurringSlots = new ArrayList<>();
-        for (int i  = 0; i < 7; ++ i)
-            recurringSlots.add(new ArrayList<>());
-
         removedSlots = new ArrayList<>();
         addedSlots = new ArrayList<>();
     }
 
     /**
      * Add a recurring slot
-     * @param day the day of the slot (values from 0 to 6)
-     * @param time the time interval in seconds of the slot
+     * @param slot the slot to add
      */
-    public void addRecurringSlot(Integer day, Pair<Integer, Integer> time) {
-        if (day > 6 || day < 0) return;
-        recurringSlots.get(day).add(time);
+    public void addRecurringSlot(TimeSlot slot) {
+        recurringSlots.add(slot);
     }
 
     /**
-     * Temporarily removes slot
+     * Removes slot from the recurring slots for a specific week
      * @param slot the time slot that should be temporarily removed
      */
     public void removeSlot(TimeSlot slot) {
-        List<TimeSlot> toAdd = slot.intersect(recurringSlots.get(slot.getDay()));
+        Predicate<TimeSlot> condition = a -> a.getDay().equals(slot.getDay());
+        List<TimeSlot> toAdd = slot.intersect(
+                recurringSlots.stream().filter(condition).toList()
+        );
         removedSlots.addAll(toAdd);
     }
 
     /**
-     * Temporarily adds slot
+     * Adds a slot that is not recurring for a specific week
      * @param slot the time slot that should be temporarily added
      */
     public void addSlot(TimeSlot slot) {
-        List<TimeSlot> toAdd = slot.difference(recurringSlots.get(slot.getDay()));
+        Predicate<TimeSlot> condition = a -> a.getDay().equals(slot.getDay());
+        List<TimeSlot> toAdd = slot.difference(
+                recurringSlots.stream().filter(condition).toList()
+        );
         addedSlots.addAll(toAdd);
     }
 
