@@ -1,12 +1,15 @@
 package nl.tudelft.sem.template.services;
 
+import javassist.NotFoundException;
 import nl.tudelft.sem.template.database.EventRepository;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.enities.Event;
 import nl.tudelft.sem.template.shared.enums.Certificate;
+import nl.tudelft.sem.template.shared.enums.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,13 +34,11 @@ public class EventService {
         }
     }
 
-    public boolean deleteById( Long eventId ) {
+    public void deleteById( Long eventId ) throws Exception {
         if(!eventRepo.existsById(eventId)){
-            return false;
-        }else{
-            eventRepo.deleteById(eventId);
-            return true;
+            throw new Exception("ID does not exist");
         }
+        eventRepo.deleteById(eventId);
     }
 
     public Optional<Event> getById(Long id){
@@ -48,20 +49,33 @@ public class EventService {
         }
     }
 
-    public Optional<Event> updateById( Long userId, Long eventId, String label, List<Position> positions, String startTime, String endTime, Certificate certificate, boolean isCompetitive, String organisation ) {
+    public Optional<Event> updateById( Long userId, Long eventId, String label, List<Position> positions, String startTime, String endTime, Certificate certificate, boolean isCompetitive, EventType type, String organisation, boolean editCompetition ) {
         Optional<Event> toUpdate = getById(eventId);
         if(toUpdate.isPresent()){
             if(toUpdate.get().getOwningUser() != userId){
+                System.out.println(toUpdate.get().getOwningUser() + " " + userId);
                 return Optional.empty();
             }
-            toUpdate.get().setLabel(label);
-            toUpdate.get().setStartTime(startTime);
-            toUpdate.get().setEndTime(endTime);
-            toUpdate.get().setCertificate(certificate);
-            toUpdate.get().setOrganisation(organisation);
-            toUpdate.get().setCompetitive(isCompetitive);
-            toUpdate.get().setPositions(positions);
+            if(label != null)
+                toUpdate.get().setLabel(label);
+            if(startTime != null)
+                toUpdate.get().setStartTime(startTime);
+            if(endTime != null)
+                toUpdate.get().setEndTime(endTime);
+            if(certificate != null)
+                toUpdate.get().setCertificate(certificate);
+            if(type != null)
+                toUpdate.get().setType(type);
+            if(organisation != null)
+                toUpdate.get().setOrganisation(organisation);
+            if(editCompetition == true)
+                toUpdate.get().setCompetitive(isCompetitive);
+            if(positions != null)
+                toUpdate.get().setPositions(positions);
+            eventRepo.save(toUpdate.get());
         }
         return toUpdate;
     }
+
+
 }

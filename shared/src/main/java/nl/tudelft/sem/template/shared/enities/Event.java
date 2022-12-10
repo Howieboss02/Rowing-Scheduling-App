@@ -50,7 +50,17 @@ public class Event {
     @Column(name = "organisation")
     private String organisation;
 
-
+    public Event(Long owningUser, String label, List<Position> positions, String startTime, String endTime, Certificate certificate, boolean isCompetitive, EventType type, String organisation) throws IllegalArgumentException{
+        this.owningUser = owningUser;
+        this.label = label;
+        this.positions = positions;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.certificate = certificate;
+        this.isCompetitive = isCompetitive;
+        this.type = type;
+        this.organisation = organisation;
+    }
 
     public void addPosition(Position position) {
         positions.add(position);
