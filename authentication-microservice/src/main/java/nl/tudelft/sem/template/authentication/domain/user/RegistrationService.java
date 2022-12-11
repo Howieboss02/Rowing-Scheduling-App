@@ -13,7 +13,7 @@ public class RegistrationService {
     /**
      * Instantiates a new UserService.
      *
-     * @param userRepository  the user repository
+     * @param userRepository         the user repository
      * @param passwordHashingService the password encoder
      */
     public RegistrationService(UserRepository userRepository, PasswordHashingService passwordHashingService) {
@@ -28,23 +28,32 @@ public class RegistrationService {
      * @param password The password of the user
      * @throws Exception if the user already exists
      */
-    public AppUser registerUser(NetId netId, Password password) throws Exception {
-
-        if (checkNetIdIsUnique(netId)) {
+    public AppUser registerUser(NetId netId, Password password, Email email) throws Exception {
+        try {
+            if (userRepository.existsByNetId(netId)) {
+                throw new NetIdAlreadyInUseException(netId);
+            }
+            if (userRepository.existsByEmail(email)) {
+                throw new EmailAlreadyInUseException(email);
+            }
             // Hash password
             HashedPassword hashedPassword = passwordHashingService.hash(password);
 
             // Create new account
-            AppUser user = new AppUser(netId, hashedPassword);
+            AppUser user = new AppUser(netId, hashedPassword, email);
+
             userRepository.save(user);
-
             return user;
+        } catch (Exception e) {
+            throw new Exception("Could not register user", e);
         }
-
-        throw new NetIdAlreadyInUseException(netId);
     }
 
     public boolean checkNetIdIsUnique(NetId netId) {
         return !userRepository.existsByNetId(netId);
+    }
+
+    public boolean checkEmailIsUnique(Email email) {
+        return !userRepository.existsByEmail(email);
     }
 }

@@ -35,30 +35,32 @@ public class RegistrationServiceTests {
         final NetId testUser = new NetId("SomeUser");
         final Password testPassword = new Password("password123");
         final HashedPassword testHashedPassword = new HashedPassword("hashedTestPassword");
+        final Email testEmail = new Email("test@test.com");
         when(mockPasswordEncoder.hash(testPassword)).thenReturn(testHashedPassword);
 
         // Act
-        registrationService.registerUser(testUser, testPassword);
-
+        var u = registrationService.registerUser(testUser, testPassword, testEmail);
+        System.out.println(u.getEmail().equals(testEmail));
         // Assert
-        AppUser savedUser = userRepository.findByNetId(testUser).orElseThrow();
+        AppUser savedUser = userRepository.findByEmail(testEmail).orElseThrow();
 
         assertThat(savedUser.getNetId()).isEqualTo(testUser);
         assertThat(savedUser.getPassword()).isEqualTo(testHashedPassword);
+        assertThat(savedUser.getEmail()).isEqualTo(testEmail);
     }
 
     @Test
-    public void createUser_withExistingUser_throwsException() {
+    public void createUser_withExistingUser_throwsException() throws Exception {
         // Arrange
         final NetId testUser = new NetId("SomeUser");
         final HashedPassword existingTestPassword = new HashedPassword("password123");
         final Password newTestPassword = new Password("password456");
-
-        AppUser existingAppUser = new AppUser(testUser, existingTestPassword);
+        final Email testEmail = new Email("test@test.com");
+        AppUser existingAppUser = new AppUser(testUser, existingTestPassword, testEmail);
         userRepository.save(existingAppUser);
 
         // Act
-        ThrowingCallable action = () -> registrationService.registerUser(testUser, newTestPassword);
+        ThrowingCallable action = () -> registrationService.registerUser(testUser, newTestPassword, testEmail);
 
         // Assert
         assertThatExceptionOfType(Exception.class)
@@ -68,5 +70,30 @@ public class RegistrationServiceTests {
 
         assertThat(savedUser.getNetId()).isEqualTo(testUser);
         assertThat(savedUser.getPassword()).isEqualTo(existingTestPassword);
+    }
+
+    @Test
+    public void createUser_withExistEmail_throwsException() throws Exception {
+        // Arrange
+        final NetId testUser = new NetId("SomeUser");
+        final NetId newUser = new NetId("NewUser");
+        final HashedPassword existingTestPassword = new HashedPassword("password123");
+        final Password newTestPassword = new Password("password456");
+        final Email testEmail = new Email("test@test.com");
+        AppUser existingAppUser = new AppUser(testUser, existingTestPassword, testEmail);
+        userRepository.save(existingAppUser);
+
+        // Act
+        ThrowingCallable action = () -> registrationService.registerUser(newUser, newTestPassword, testEmail);
+
+        // Assert
+        assertThatExceptionOfType(Exception.class)
+                .isThrownBy(action);
+
+        AppUser savedUser = userRepository.findByNetId(testUser).orElseThrow();
+
+        assertThat(savedUser.getNetId()).isEqualTo(testUser);
+        assertThat(savedUser.getPassword()).isEqualTo(existingTestPassword);
+        assertThat(savedUser.getEmail()).isEqualTo(testEmail);
     }
 }
