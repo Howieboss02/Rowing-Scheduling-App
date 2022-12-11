@@ -6,6 +6,7 @@ import lombok.Data;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Data
@@ -47,7 +48,7 @@ public class Schedule {
     public void removeSlot(TimeSlot slot) {
         Predicate<TimeSlot> condition = a -> a.getDay().equals(slot.getDay());
         List<TimeSlot> toAdd = slot.intersect(
-                recurringSlots.stream().filter(condition).toList()
+                recurringSlots.stream().filter(condition).collect(Collectors.toList())
         );
         removedSlots.addAll(toAdd);
     }
@@ -59,7 +60,7 @@ public class Schedule {
     public void addSlot(TimeSlot slot) {
         Predicate<TimeSlot> condition = a -> a.getDay().equals(slot.getDay());
         List<TimeSlot> toAdd = slot.difference(
-                recurringSlots.stream().filter(condition).toList()
+                recurringSlots.stream().filter(condition).collect(Collectors.toList())
         );
         addedSlots.addAll(toAdd);
     }
@@ -72,8 +73,8 @@ public class Schedule {
     public void cleanSlots(int currentWeek) {
         Predicate<TimeSlot> condition = a -> a.getWeek() >= currentWeek;
         removedSlots =
-                removedSlots.stream().filter(condition).toList();
+                removedSlots.stream().filter(condition).collect(Collectors.toList());
         addedSlots =
-                addedSlots.stream().filter(condition).toList();
+                addedSlots.stream().filter(condition).collect(Collectors.toList());
     }
 }
