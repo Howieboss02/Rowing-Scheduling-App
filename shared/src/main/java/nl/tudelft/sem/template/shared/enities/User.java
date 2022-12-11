@@ -36,7 +36,7 @@ public class User {
   private List<Position> positions;
 
   @Column
-  @ElementCollection(targetClass=String.class)
+  @ElementCollection(targetClass = String.class)
   private List<String> notifications = new ArrayList<>();
 
   /*TODO: add schedule structure
