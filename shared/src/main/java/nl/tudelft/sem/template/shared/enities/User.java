@@ -6,6 +6,9 @@ import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import nl.tudelft.sem.template.shared.domain.Schedule;
+import nl.tudelft.sem.template.shared.domain.TimeSlot;
+import nl.tudelft.sem.template.shared.enums.Day;
 import nl.tudelft.sem.template.shared.converters.PositionsToFIllListConverter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -13,6 +16,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.enums.Certificate;
+import org.springframework.data.util.Pair;
 
 @Entity
 @Data
@@ -39,8 +43,7 @@ public class User {
   @ElementCollection(targetClass = String.class)
   private List<String> notifications = new ArrayList<>();
 
-  /*TODO: add schedule structure
-   */
+  private Schedule schedule;
 
   /*
   TODO: add enqueued activities list
@@ -89,6 +92,30 @@ public class User {
     this.positions.add(position);
   }
 
+  /**
+   * Add a recurring slot
+   * @param day the day of the slot
+   * @param time the time interval in seconds of the slot
+   */
+  public void addRecurringSlot(Day day, Pair<Integer, Integer> time) {
+    schedule.addRecurringSlot(new TimeSlot(-1, day, time));
+  }
+
+  /**
+   * Temporarily removes slot
+   * @param slot the time slot that should be temporarily removed
+   */
+  public void removeSlot(TimeSlot slot) {
+    schedule.removeSlot(slot);
+  }
+
+  /**
+   * Temporarily adds slot
+   * @param slot the time slot that should be temporarily added
+   */
+  public void addSlot(TimeSlot slot) {
+    schedule.addSlot(slot);
+  }
   /**
    * Method to append a notification
    * @param notifications a new notification
