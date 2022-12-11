@@ -1,6 +1,6 @@
-package event;
+package converters;
 
-import nl.tudelft.sem.template.shared.converters.PositionsToFIllListConverter;
+import nl.tudelft.sem.template.shared.converters.PositionsToFillListConverter;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.enums.PositionName;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PositionsToFillConverterTest {
 
-    private PositionsToFIllListConverter converter = new PositionsToFIllListConverter();
+    private final PositionsToFillListConverter converter = new PositionsToFillListConverter();
 
     @Test
     public void testConvertToDatabaseColumnNull() {

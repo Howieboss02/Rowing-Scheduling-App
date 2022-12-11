@@ -9,7 +9,7 @@ import lombok.Data;
 import nl.tudelft.sem.template.shared.domain.Schedule;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.enums.Day;
-import nl.tudelft.sem.template.shared.converters.PositionsToFIllListConverter;
+import nl.tudelft.sem.template.shared.converters.PositionsToFillListConverter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -37,7 +37,7 @@ public class User {
   private Certificate certificate;
 
   @Column
-  @Convert(converter = PositionsToFIllListConverter.class)
+  @Convert(converter = PositionsToFillListConverter.class)
   private List<Position> positions;
 
   @Column
