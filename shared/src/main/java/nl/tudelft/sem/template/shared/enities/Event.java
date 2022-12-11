@@ -70,6 +70,13 @@ public class Event {
         positions.remove(position);
     }
 
+    /**
+     * Method for converting info about an event to notification message
+     * @return a string containing relevant data for a user
+     */
+    public String messageConverter(){
+        return  getLabel() + " - " + getType() + " from " + getStartTime() + " until " + getEndTime() + ".\n";
+    }
 
 }
 
