@@ -29,8 +29,13 @@ public class RegistrationService {
      * @throws Exception if the user already exists
      */
     public AppUser registerUser(NetId netId, Password password, Email email) throws Exception {
-
-        if (checkNetIdIsUnique(netId) && checkEmailIsUnique(email)) {
+        try {
+            if (userRepository.existsByNetId(netId)) {
+                throw new NetIdAlreadyInUseException(netId);
+            }
+            if (userRepository.existsByEmail(email)) {
+                throw new EmailAlreadyInUseException(email);
+            }
             // Hash password
             HashedPassword hashedPassword = passwordHashingService.hash(password);
 
@@ -38,14 +43,10 @@ public class RegistrationService {
             AppUser user = new AppUser(netId, hashedPassword, email);
 
             userRepository.save(user);
-
             return user;
+        } catch (Exception e) {
+            throw new Exception("Could not register user", e);
         }
-        if (!checkNetIdIsUnique(netId)) {
-            throw new NetIdAlreadyInUseException(netId);
-        }
-        throw new EmailAlreadyInUseException(email);
-
     }
 
     public boolean checkNetIdIsUnique(NetId netId) {

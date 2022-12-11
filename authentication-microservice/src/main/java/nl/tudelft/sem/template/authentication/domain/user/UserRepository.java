@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 /**
- * A DDD repository for quering and persisting user aggregate roots.
+ * A DDD repository for querying and persisting user aggregate roots.
  */
 @Repository
 public interface UserRepository extends JpaRepository<AppUser, String> {
@@ -18,6 +18,11 @@ public interface UserRepository extends JpaRepository<AppUser, String> {
      * Check if an existing user already uses a NetID.
      */
     boolean existsByNetId(NetId netId);
+
+    /**
+     * Find user by Email.
+     */
+    Optional<AppUser> findByEmail(Email email);
 
     /**
      * Check if an existing user already uses an email.

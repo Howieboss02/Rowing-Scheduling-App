@@ -33,7 +33,7 @@ public class AppUser extends HasEvents {
     private HashedPassword password;
 
     @Column(name = "email", nullable = false, unique = true)
-    @Convert(converter = EmailConverter.class)
+    @Convert(converter = EmailAttributeConverter.class)
     private Email email;
 
     /**
@@ -46,7 +46,7 @@ public class AppUser extends HasEvents {
         this.netId = netId;
         this.password = password;
         this.email = email;
-        this.recordThat(new UserWasCreatedEvent(netId));
+        this.recordThat(new UserWasCreatedEvent(netId, email));
     }
 
     public void changePassword(HashedPassword password) {
@@ -83,6 +83,6 @@ public class AppUser extends HasEvents {
 
     @Override
     public int hashCode() {
-        return Objects.hash(netId);
+        return Objects.hash(netId, email);
     }
 }

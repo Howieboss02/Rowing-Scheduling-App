@@ -1,7 +1,11 @@
 package nl.tudelft.sem.template.authentication.domain.user;
 
 import java.util.regex.Pattern;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 
+@EqualsAndHashCode
+@Getter
 public class Email {
     private final transient String emailValue;
 
