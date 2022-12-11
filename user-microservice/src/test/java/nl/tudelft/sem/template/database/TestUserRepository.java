@@ -108,12 +108,17 @@ public class TestUserRepository implements UserRepository {
     return null;
   }
 
-  @Override
+/*  @Override
   public <S extends User> List<S> saveAllAndFlush(Iterable<S> entities) {
     return null;
-  }
+  }*/
 
   @Override
+  public void deleteInBatch(Iterable<User> entities) {
+
+  }
+
+ /* @Override
   public void deleteAllInBatch(Iterable<User> entities) {
 
   }
@@ -121,7 +126,7 @@ public class TestUserRepository implements UserRepository {
   @Override
   public void deleteAllByIdInBatch(Iterable<Long> longs) {
 
-  }
+  }*/
 
   @Override
   public void deleteAllInBatch() {
@@ -133,10 +138,11 @@ public class TestUserRepository implements UserRepository {
     return null;
   }
 
-  @Override
+ /* @Override
   public User getById(Long aLong) {
     return null;
-  }
+  }*/
+
 
   @Override
   public <S extends User> Optional<S> findOne(Example<S> example) {
@@ -167,6 +173,5 @@ public class TestUserRepository implements UserRepository {
   public <S extends User> boolean exists(Example<S> example) {
     return false;
   }
-
 
 }

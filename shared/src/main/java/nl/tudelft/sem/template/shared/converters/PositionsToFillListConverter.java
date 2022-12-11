@@ -11,7 +11,7 @@ import java.util.Arrays;
 import java.util.List;
 
 @Converter
-public class PositionsToFIllListConverter implements AttributeConverter<List<Position>, String> {
+public class PositionsToFillListConverter implements AttributeConverter<List<Position>, String> {
     private static final String OBJECT_SPLIT_CHAR = ";";
     private static final String FIELD_SPLIT_CHAR = ",";
 

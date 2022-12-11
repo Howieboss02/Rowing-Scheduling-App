@@ -34,7 +34,7 @@ public class UserTest {
     List<Position> pos = new ArrayList<>();
     pos.add(new Position(PositionName.Cox, false));
     pos.add(new Position(PositionName.Coach, true));
-    User u = new User(1L, "Bob", "Bob's Organization", "Bob@b.ob", "Male", Certificate.B1, pos);
+    User u = new User(1L, "BobID","Bob", "Bob's Organization", "Bob@b.ob", "Male", Certificate.B1, pos);
     assertEquals(u.getOrganization(), "Bob's Organization");
     assertEquals(u.getCertificate().toString(), "B1");
     assertEquals(u.getPositions(), pos);
