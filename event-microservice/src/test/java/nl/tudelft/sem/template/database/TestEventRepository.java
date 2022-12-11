@@ -93,19 +93,20 @@ public class TestEventRepository implements EventRepository{
     }
 
     @Override
-    public <S extends Event> List<S> saveAllAndFlush(Iterable<S> entities) {
-        return null;
-    }
-
-    @Override
-    public void deleteAllInBatch(Iterable<Event> entities) {
+    public void deleteInBatch( Iterable<Event> entities ) {
 
     }
 
-    @Override
-    public void deleteAllByIdInBatch(Iterable<Long> longs) {
 
-    }
+//    @Override
+//    public void deleteAllInBatch(Iterable<Event> entities) {
+//
+//    }
+//
+//    @Override
+//    public void deleteAllByIdInBatch(Iterable<Long> longs) {
+//
+//    }
 
     @Override
     public void deleteAllInBatch() {
@@ -117,10 +118,10 @@ public class TestEventRepository implements EventRepository{
         return null;
     }
 
-    @Override
-    public Event getById(Long aLong) {
-        return null;
-    }
+//    @Override
+//    public Event getById(Long aLong) {
+//        return null;
+//    }
 
     @Override
     public <S extends Event> Optional<S> findOne(Example<S> example) {
