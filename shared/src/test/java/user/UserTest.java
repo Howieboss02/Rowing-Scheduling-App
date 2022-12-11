@@ -1,10 +1,10 @@
 package user;
 
 import org.junit.jupiter.api.Test;
-import nl.tudelft.cse.sem.template.shared.domain.Position;
-import nl.tudelft.cse.sem.template.shared.enities.User;
-import nl.tudelft.cse.sem.template.shared.enums.Certificate;
-import nl.tudelft.cse.sem.template.shared.enums.PositionName;
+import nl.tudelft.sem.template.shared.domain.Position;
+import nl.tudelft.sem.template.shared.enities.User;
+import nl.tudelft.sem.template.shared.enums.Certificate;
+import nl.tudelft.sem.template.shared.enums.PositionName;
 
 import java.util.ArrayList;
 import java.util.List;

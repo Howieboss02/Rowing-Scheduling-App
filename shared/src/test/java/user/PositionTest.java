@@ -1,8 +1,8 @@
 package user;
 
 import org.junit.jupiter.api.Test;
-import nl.tudelft.cse.sem.template.shared.domain.Position;
-import nl.tudelft.cse.sem.template.shared.enums.PositionName;
+import nl.tudelft.sem.template.shared.domain.Position;
+import nl.tudelft.sem.template.shared.enums.PositionName;
 
 import static org.junit.jupiter.api.Assertions.*;
 
