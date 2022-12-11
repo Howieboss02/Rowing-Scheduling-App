@@ -9,6 +9,7 @@ import lombok.Data;
 import nl.tudelft.sem.template.shared.domain.Schedule;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.enums.Day;
+import nl.tudelft.sem.template.shared.converters.PositionsToFIllListConverter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -33,7 +34,13 @@ public class User {
   private String email;
   private String gender;
   private Certificate certificate;
+
+  @Column
+  @Convert(converter = PositionsToFIllListConverter.class)
   private List<Position> positions;
+
+  @Column
+  @ElementCollection(targetClass = String.class)
   private List<String> notifications = new ArrayList<>();
 
   private Schedule schedule;
