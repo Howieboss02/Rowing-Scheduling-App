@@ -17,7 +17,7 @@ public class PlatformStrategyTest {
     n.setStrategy(new PlatformStrategy());
     String message = n.sendNotification(user, event, Outcome.ACCEPTED);
     assertEquals(1, user.getNotifications().size());
-    assertEquals("Bob, you have been accepted to the TRAINING from 12:00 until 14:00.\n", message);
+    assertEquals("Bob, you have been accepted to Training 1 - TRAINING from 12:00 until 14:00.\n", message);
   }
   @Test
   public void testPlatformRejected(){
@@ -25,6 +25,6 @@ public class PlatformStrategyTest {
     n.setStrategy(new PlatformStrategy());
     String message = n.sendNotification(user, event, Outcome.REJECTED);
     assertEquals(1, user.getNotifications().size());
-    assertEquals("Bob, you have been rejected from the TRAINING from 12:00 until 14:00.\n", message);
+    assertEquals("Bob, you have been rejected from Training 1 - TRAINING from 12:00 until 14:00.\n", message);
   }
 }

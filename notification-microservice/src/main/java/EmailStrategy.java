@@ -13,9 +13,9 @@ public class EmailStrategy implements Strategy{
   public String sendNotification(User user, Event event, Outcome outcome){
     String message = "";
     if(outcome == ACCEPTED)
-      message =  user.getName() + ", you have been accepted to the " + event.messageConverter();
+      message =  user.getName() + ", you have been accepted to " + event.messageConverter();
     else if (outcome == REJECTED)
-      message =  user.getName() + ", you have been rejected from the " + event.messageConverter();
+      message =  user.getName() + ", you have been rejected from " + event.messageConverter();
     return "Email has been sent to " + user.getEmail() + " with the message: \n" + message;
   }
 }

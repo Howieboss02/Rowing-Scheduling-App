@@ -63,7 +63,7 @@ public class Event {
      * @return a string containing relevant data for a user
      */
     public String messageConverter(){
-        return getType() + " from " + getStartTime() + " until " + getEndTime() + ".\n";
+        return  getLabel() + " - " + getType() + " from " + getStartTime() + " until " + getEndTime() + ".\n";
     }
 
 }
