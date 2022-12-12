@@ -1,15 +1,14 @@
 package nl.tudelft.sem.template.shared.converters;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import javax.persistence.AttributeConverter;
+import javax.persistence.Converter;
 import nl.tudelft.sem.template.shared.domain.Schedule;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.enums.Day;
 import org.springframework.data.util.Pair;
-
-import javax.persistence.AttributeConverter;
-import javax.persistence.Converter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 @Converter
 public class ScheduleConverter implements AttributeConverter<Schedule, String> {
@@ -20,7 +19,7 @@ public class ScheduleConverter implements AttributeConverter<Schedule, String> {
 
     @Override
     public String convertToDatabaseColumn(Schedule schedule) {
-        if(schedule == null) {
+        if (schedule == null) {
             return "";
         }
         StringBuilder scheduleString = new StringBuilder();
@@ -41,7 +40,7 @@ public class ScheduleConverter implements AttributeConverter<Schedule, String> {
 
     @Override
     public Schedule convertToEntityAttribute(String schedule) {
-        if(schedule == null || schedule.isEmpty()) {
+        if (schedule == null || schedule.isEmpty()) {
             return new Schedule();
         }
 
@@ -56,19 +55,20 @@ public class ScheduleConverter implements AttributeConverter<Schedule, String> {
     private void timeSlotListToString(StringBuilder scheduleString,
                                           List<TimeSlot> slots) {
         for (TimeSlot slot : slots) {
-            scheduleString.append(slot.getWeek()).
-                    append(FIELD_SPLIT_CHAR).append(slot.getDay()).
-                    append(FIELD_SPLIT_CHAR).append(slot.getTime().getFirst()).
-                    append(FIELD_SPLIT_CHAR).append(slot.getTime().getSecond()).
-                    append(SLOT_SPLIT_CHAR);
+            scheduleString.append(slot.getWeek())
+                    .append(FIELD_SPLIT_CHAR).append(slot.getDay())
+                    .append(FIELD_SPLIT_CHAR).append(slot.getTime().getFirst())
+                    .append(FIELD_SPLIT_CHAR).append(slot.getTime().getSecond())
+                    .append(SLOT_SPLIT_CHAR);
         }
     }
 
     private List<TimeSlot> stringToTimeSlotList(String s) {
         List<TimeSlot> slotList = new ArrayList<>();
 
-        if (s.isEmpty())
+        if (s.isEmpty()) {
             return slotList;
+        }
 
         String[] scheduleString = s.split(SLOT_SPLIT_CHAR);
 
