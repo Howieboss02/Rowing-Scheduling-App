@@ -11,6 +11,7 @@ Note taker: Alex Preda
 ##PROGRESS:
 * Finished Assignment 1 .
 * Added all microservices, some of them are already functional. (Quick demo with postman).
+* Added pipelines for 3 more modules.
 * Still lacking communication between microservices.
 
 ##NOTES:
