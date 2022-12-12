@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.shared.enities;
+package nl.tudelft.sem.template.shared.entities;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -6,10 +6,10 @@ import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import nl.tudelft.sem.template.shared.converters.PositionsToFillListConverter;
 import nl.tudelft.sem.template.shared.domain.Schedule;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.enums.Day;
-import nl.tudelft.sem.template.shared.converters.PositionsToFIllListConverter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -37,13 +37,14 @@ public class User {
   private Certificate certificate;
 
   @Column
-  @Convert(converter = PositionsToFIllListConverter.class)
+  @Convert(converter = PositionsToFillListConverter.class)
   private List<Position> positions;
 
   @Column
   @ElementCollection(targetClass = String.class)
   private List<String> notifications = new ArrayList<>();
 
+  @Column
   private Schedule schedule;
 
   /*
