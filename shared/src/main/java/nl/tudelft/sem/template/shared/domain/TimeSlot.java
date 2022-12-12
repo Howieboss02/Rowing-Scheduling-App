@@ -1,13 +1,12 @@
 package nl.tudelft.sem.template.shared.domain;
 
-import nl.tudelft.sem.template.shared.enums.Day;
-import org.springframework.data.util.Pair;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
+import nl.tudelft.sem.template.shared.enums.Day;
+import org.springframework.data.util.Pair;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,7 +18,8 @@ public class TimeSlot {
 
     /**
      * Calculate the intersection between the time of this timeslot
-     * and a list of time intervals
+     * and a list of time intervals.
+     *
      * @param schedule the list of time intervals
      * @return a list of timeslots representing the intersection
      */
@@ -41,7 +41,8 @@ public class TimeSlot {
     /**
      * Calculate the difference between the time of this timeslot
      * and a list of time intervals (the time intervals that appear
-     * in the timeslot but not in the given list)
+     * in the timeslot but not in the given list).
+     *
      * @param schedule the list of time intervals
      * @return a list of timeslots representing the intersection
      */
