@@ -3,7 +3,7 @@ package nl.tudelft.sem.template.shared.enities;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import nl.tudelft.sem.template.shared.converters.PositionsToFIllListConverter;
+import nl.tudelft.sem.template.shared.converters.PositionsToFillListConverter;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
@@ -31,7 +31,7 @@ public class Event {
     private String label;
 
     @Column(name = "positions")
-    @Convert(converter = PositionsToFIllListConverter.class)
+    @Convert(converter = PositionsToFillListConverter.class)
     private List<Position> positions = new ArrayList<>();
 
     @Column(name = "startTime", nullable = false)
