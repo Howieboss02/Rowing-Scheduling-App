@@ -15,3 +15,16 @@ Note taker: Alex Preda
 * Still lacking communication between microservices.
 
 ##NOTES:
+-Talked about what we worked on this week
+-Draft:
+	- "The package will aid with..." (to complete)
+	- remove non functional requirments
+	- Diagram is not clear enough:
+		- add services in each subsystems
+		- connection between user and event that is called user(find better description)
+		- add enqueuing microservice
+	- page 2: paragraph with the event microservice is not finsihed
+	- syncronous but dont explain why
+	- explain for every microserivce how they communicate and why (syncronous vs asyncornous)
+	- talk about all the databases in the program if we keep the first paragraph
+	- why is user and authentication is split from the user.
