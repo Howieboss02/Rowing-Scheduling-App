@@ -23,12 +23,12 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public List<User> getUsers() {
         return userService.getAllUsers();
     }
 
-    @GetMapping(path = "getNotifications/{userId}")
+    @GetMapping(path = "/getNotifications/{userId}")
     public ResponseEntity<List<String>> getNotifications(@PathVariable("userId") Long id) {
         if (userService.getNotifications(id).isEmpty()){
             return ResponseEntity.badRequest().build();
@@ -37,7 +37,7 @@ public class UserController {
         }
     }
 
-    @PostMapping
+    @PostMapping("/register")
     public ResponseEntity<User> registerNewUser(@RequestBody User user) {
         User insertedUser = userService.insert(user);
         if (insertedUser == null){
@@ -46,7 +46,7 @@ public class UserController {
         return ResponseEntity.ok(insertedUser);
     }
 
-    @DeleteMapping(path = "{userId}")
+    @DeleteMapping(path = "/delete/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable("userId") Long userId) {
         if (!userService.deleteById(userId)){
             return ResponseEntity.badRequest().build();
@@ -57,7 +57,7 @@ public class UserController {
     /**
      * Update everything about a user at once by giving all possible parameters
      */
-    @PutMapping(path = "{userId}")
+    @PutMapping(path = "/update/{userId}")
     public ResponseEntity<?> updateUser(@PathVariable("userId") Long userId ,
                                         @RequestParam(required = false) String name,
                                         @RequestParam(required = false) String organization,
@@ -72,4 +72,82 @@ public class UserController {
 
         return ResponseEntity.ok().build();
     }
+
+    /**
+     * Update the user's name
+     */
+    @PutMapping(path = "/update/name/{userId}")
+    public ResponseEntity<?> setEmail(@PathVariable("userId") Long userId ,
+                                      @RequestParam(required = false) String name
+    ) {
+        if (userService.setName(userId, name).isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Update the user's organization
+     */
+    @PutMapping(path = "/update/organization/{userId}")
+    public ResponseEntity<?> setOrganization(@PathVariable("userId") Long userId ,
+                                        @RequestParam(required = false) String organization
+    ) {
+        if (userService.setOrganization(userId, organization).isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
+    }
+
+
+    /**
+     * Update the user's gender
+     */
+    @PutMapping(path = "/update/gender/{userId}")
+    public ResponseEntity<?> setGender(@PathVariable("userId") Long userId ,
+                                      @RequestParam(required = false) String gender
+    ) {
+        if (userService.setGender(userId, gender).isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Update the user's certificate
+     */
+    @PutMapping(path = "/update/certificate/{userId}")
+    public ResponseEntity<?> setCertificate(@PathVariable("userId") Long userId ,
+                                       @RequestParam(required = false) Certificate certificate
+    ) {
+        if (userService.setCertificate(userId, certificate).isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Update the user's positions
+     */
+    @PutMapping(path = "/update/positions/{userId}")
+    public ResponseEntity<?> setPositions(@PathVariable("userId") Long userId ,
+                                 @RequestParam(required = false) List<Position> positions
+    ) {
+        if (userService.setPositions(userId, positions).isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping(path = "/notify/{userId}")
+    public ResponseEntity<?> addNotification(@PathVariable("userId") Long userId ,
+                                          @RequestParam(required = false) String notification
+    ) {
+        if (userService.addNotification(userId, notification).isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
+    }
+
+
 }
