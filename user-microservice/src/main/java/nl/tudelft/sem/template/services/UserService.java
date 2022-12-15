@@ -81,6 +81,16 @@ public class UserService {
         return user;
     }
 
+    public Optional<User> removeRecurringTimeSlot(Long id, Day day, Pair<Integer, Integer> time) {
+        Optional<User> user = getById(id);
+
+        if(user.isPresent()) {
+            user.get().removeRecurringSlot(day, time);
+            userRepo.save(user.get());
+        }
+        return user;
+    }
+
     public Optional<User> addTimeSlot(Long id, TimeSlot timeSlot) {
         Optional<User> user = getById(id);
 

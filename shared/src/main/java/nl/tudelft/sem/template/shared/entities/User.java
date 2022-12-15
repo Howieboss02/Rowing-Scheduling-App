@@ -106,6 +106,10 @@ public class User {
     schedule.addRecurringSlot(new TimeSlot(-1, day, time));
   }
 
+  public void removeRecurringSlot(Day day, Pair<Integer, Integer> time) {
+    schedule.removeRecurringSlot(new TimeSlot(-1, day, time));
+  }
+
   /**
    * Temporarily removes slot
    * @param slot the time slot that should be temporarily removed

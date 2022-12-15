@@ -80,7 +80,7 @@ public class UserController {
      * Update the user's name
      */
     @PutMapping(path = "/update/name/{userId}")
-    public ResponseEntity<?> setEmail(@PathVariable("userId") Long userId ,
+    public ResponseEntity<?> setName(@PathVariable("userId") Long userId ,
                                       @RequestParam(required = false) String name
     ) {
         if (userService.setName(userId, name).isEmpty()){
@@ -164,6 +164,20 @@ public class UserController {
                                                   @RequestParam(required = false) Pair<Integer, Integer> time
     ) {
         if (userService.addRecurringTimeSlot(userId, day, time).isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Remove a recurring timeslot (day of the week + time) from the user's schedule
+     */
+    @PutMapping(path = "/schedule/remove/{userId}")
+    public ResponseEntity<?> removeRecurringTimeSlot(@PathVariable("userId") Long userId ,
+                                                  @RequestParam(required = false) Day day,
+                                                  @RequestParam(required = false) Pair<Integer, Integer> time
+    ) {
+        if (userService.removeRecurringTimeSlot(userId, day, time).isEmpty()){
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok().build();
