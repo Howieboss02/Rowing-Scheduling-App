@@ -1,12 +1,15 @@
 package nl.tudelft.sem.template.controllers;
 
 import nl.tudelft.sem.template.services.UserService;
+import nl.tudelft.sem.template.shared.domain.TimeSlot;
+import nl.tudelft.sem.template.shared.enums.Day;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.enities.User;
 import nl.tudelft.sem.template.shared.enums.Certificate;
+import org.springframework.data.util.Pair;
 
 import java.util.List;
 
@@ -139,11 +142,54 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Add a notification to the user's list of notifications
+     */
     @PutMapping(path = "/notify/{userId}")
     public ResponseEntity<?> addNotification(@PathVariable("userId") Long userId ,
                                           @RequestParam(required = false) String notification
     ) {
         if (userService.addNotification(userId, notification).isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Add a recurring timeslot (day of the week + time) to the user's schedule
+     */
+    @PutMapping(path = "/schedule/add/{userId}")
+    public ResponseEntity<?> addRecurringTimeSlot(@PathVariable("userId") Long userId ,
+                                                  @RequestParam(required = false) Day day,
+                                                  @RequestParam(required = false) Pair<Integer, Integer> time
+    ) {
+        if (userService.addRecurringTimeSlot(userId, day, time).isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     * Include a one-time-only timeslot in the user schedule
+     */
+    @PutMapping(path = "/schedule/include/{userId}")
+    public ResponseEntity<?> addTimeSlot(@PathVariable("userId") Long userId ,
+                                                  @RequestParam(required = false) TimeSlot timeslot
+    ) {
+        if (userService.addTimeSlot(userId, timeslot).isEmpty()){
+            return ResponseEntity.badRequest().build();
+        }
+        return ResponseEntity.ok().build();
+    }
+
+    /**
+     *  Exclude one instance of a timeslot from the user's schedule
+     */
+    @PutMapping(path = "/schedule/exclude/{userId}")
+    public ResponseEntity<?> removeTimeSlot(@PathVariable("userId") Long userId ,
+                                         @RequestParam(required = false) TimeSlot timeslot
+    ) {
+        if (userService.removeTimeSlot(userId, timeslot).isEmpty()){
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok().build();

@@ -1,7 +1,10 @@
 package nl.tudelft.sem.template.services;
 
 import nl.tudelft.sem.template.database.UserRepository;
+import nl.tudelft.sem.template.shared.domain.TimeSlot;
+import nl.tudelft.sem.template.shared.enums.Day;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.enities.User;
@@ -66,6 +69,36 @@ public class UserService {
             userRepo.save(toUpdate.get());
         }
         return toUpdate;
+    }
+
+    public Optional<User> addRecurringTimeSlot(Long id, Day day, Pair<Integer, Integer> time) {
+        Optional<User> user = getById(id);
+
+        if(user.isPresent()) {
+            user.get().addRecurringSlot(day, time);
+            userRepo.save(user.get());
+        }
+        return user;
+    }
+
+    public Optional<User> addTimeSlot(Long id, TimeSlot timeSlot) {
+        Optional<User> user = getById(id);
+
+        if(user.isPresent()) {
+            user.get().addSlot(timeSlot);
+            userRepo.save(user.get());
+        }
+        return user;
+    }
+
+    public Optional<User> removeTimeSlot(Long id, TimeSlot timeSlot) {
+        Optional<User> user = getById(id);
+
+        if(user.isPresent()) {
+            user.get().removeSlot(timeSlot);
+            userRepo.save(user.get());
+        }
+        return user;
     }
 
     public Optional<List<String>> getNotifications(Long id) {
