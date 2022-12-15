@@ -72,4 +72,70 @@ public class UserService {
         Optional<User> user = getById(id);
         return user.map(User::getNotifications);
     }
+
+    public Optional<User> addNotification(Long id, String notification) {
+        Optional<User> user = getById(id);
+
+        if(user.isPresent()) {
+            user.get().addNotification(notification);
+            userRepo.save(user.get());
+        }
+        return user;
+    }
+
+    public Optional<User> setName(Long id, String name) {
+
+        Optional<User> user = getById(id);
+
+        if (user.isPresent()) {
+            user.get().setEmail(name);
+            userRepo.save(user.get());
+        }
+        return user;
+    }
+
+    public Optional<User> setOrganization(Long id, String organization) {
+
+        Optional<User> user = getById(id);
+
+        if (user.isPresent()) {
+            user.get().setOrganization(organization);
+            userRepo.save(user.get());
+        }
+        return user;
+    }
+
+
+    public Optional<User> setGender(Long id, String gender) {
+
+        Optional<User> user = getById(id);
+
+        if (user.isPresent()) {
+            user.get().setGender(gender);
+            userRepo.save(user.get());
+        }
+        return user;
+    }
+
+    public Optional<User> setCertificate(Long id, Certificate certificate) {
+
+        Optional<User> user = getById(id);
+
+        if (user.isPresent()) {
+            user.get().setCertificate(certificate);
+            userRepo.save(user.get());
+        }
+        return user;
+    }
+
+    public Optional<User> setPositions(Long id, List<Position> positions) {
+
+        Optional<User> user = getById(id);
+
+        if (user.isPresent()) {
+            user.get().setPositions(positions);
+            userRepo.save(user.get());
+        }
+        return user;
+    }
 }
