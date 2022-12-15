@@ -1,7 +1,7 @@
-import nl.tudelft.sem.template.shared.enities.User;
-import nl.tudelft.sem.template.shared.enums.Outcome;
+package nl.tudelft.sem.template;
+
+import nl.tudelft.sem.template.Notification;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

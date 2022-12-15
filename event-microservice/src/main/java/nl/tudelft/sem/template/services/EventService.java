@@ -1,15 +1,13 @@
 package nl.tudelft.sem.template.services;
 
-import javassist.NotFoundException;
 import nl.tudelft.sem.template.database.EventRepository;
 import nl.tudelft.sem.template.shared.domain.Position;
-import nl.tudelft.sem.template.shared.enities.Event;
+import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 

@@ -1,11 +1,8 @@
 package nl.tudelft.sem.template.controllers;
 
 import nl.tudelft.sem.template.services.EventService;
-import nl.tudelft.sem.template.shared.domain.Position;
-import nl.tudelft.sem.template.shared.enities.Event;
-import nl.tudelft.sem.template.shared.enities.EventModel;
-import nl.tudelft.sem.template.shared.enums.Certificate;
-import nl.tudelft.sem.template.shared.enums.EventType;
+import nl.tudelft.sem.template.shared.entities.Event;
+import nl.tudelft.sem.template.shared.entities.EventModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
