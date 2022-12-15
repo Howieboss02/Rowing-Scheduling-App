@@ -9,7 +9,7 @@ import lombok.Data;
 import nl.tudelft.sem.template.shared.domain.Schedule;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.enums.Day;
-import nl.tudelft.sem.template.shared.converters.PositionsToFIllListConverter;
+import nl.tudelft.sem.template.shared.converters.PositionsToFillListConverter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -37,14 +37,14 @@ public class User {
   private Certificate certificate;
 
   @Column
-  @Convert(converter = PositionsToFIllListConverter.class)
+  @Convert(converter = PositionsToFillListConverter.class)
   private List<Position> positions;
 
   @Column
   @ElementCollection(targetClass = String.class)
   private List<String> notifications = new ArrayList<>();
 
-  private Schedule schedule;
+  /*private Schedule schedule;*/
 
   /*
   TODO: add enqueued activities list
@@ -102,7 +102,7 @@ public class User {
    * @param time the time interval in seconds of the slot
    */
   public void addRecurringSlot(Day day, Pair<Integer, Integer> time) {
-    schedule.addRecurringSlot(new TimeSlot(-1, day, time));
+    //schedule.addRecurringSlot(new TimeSlot(-1, day, time));
   }
 
   /**
@@ -110,7 +110,7 @@ public class User {
    * @param slot the time slot that should be temporarily removed
    */
   public void removeSlot(TimeSlot slot) {
-    schedule.removeSlot(slot);
+    //schedule.removeSlot(slot);
   }
 
   /**
@@ -118,7 +118,7 @@ public class User {
    * @param slot the time slot that should be temporarily added
    */
   public void addSlot(TimeSlot slot) {
-    schedule.addSlot(slot);
+    //schedule.addSlot(slot);
   }
   /**
    * Method to append a notification
