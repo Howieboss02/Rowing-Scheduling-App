@@ -1,7 +1,10 @@
 package nl.tudelft.sem.template.services;
 
 import nl.tudelft.sem.template.database.UserRepository;
+import nl.tudelft.sem.template.shared.domain.TimeSlot;
+import nl.tudelft.sem.template.shared.enums.Day;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.entities.User;
@@ -68,8 +71,104 @@ public class UserService {
         return toUpdate;
     }
 
+    public Optional<User> addRecurringTimeSlot(Long id, Day day, Pair<Integer, Integer> time) {
+        Optional<User> user = getById(id);
+
+        if(user.isPresent()) {
+            user.get().addRecurringSlot(day, time);
+            userRepo.save(user.get());
+        }
+        return user;
+    }
+
+    public Optional<User> addTimeSlot(Long id, TimeSlot timeSlot) {
+        Optional<User> user = getById(id);
+
+        if(user.isPresent()) {
+            user.get().addSlot(timeSlot);
+            userRepo.save(user.get());
+        }
+        return user;
+    }
+
+    public Optional<User> removeTimeSlot(Long id, TimeSlot timeSlot) {
+        Optional<User> user = getById(id);
+
+        if(user.isPresent()) {
+            user.get().removeSlot(timeSlot);
+            userRepo.save(user.get());
+        }
+        return user;
+    }
+
     public Optional<List<String>> getNotifications(Long id) {
         Optional<User> user = getById(id);
         return user.map(User::getNotifications);
+    }
+
+    public Optional<User> addNotification(Long id, String notification) {
+        Optional<User> user = getById(id);
+
+        if(user.isPresent()) {
+            user.get().addNotification(notification);
+            userRepo.save(user.get());
+        }
+        return user;
+    }
+
+    public Optional<User> setName(Long id, String name) {
+
+        Optional<User> user = getById(id);
+
+        if (user.isPresent()) {
+            user.get().setEmail(name);
+            userRepo.save(user.get());
+        }
+        return user;
+    }
+
+    public Optional<User> setOrganization(Long id, String organization) {
+
+        Optional<User> user = getById(id);
+
+        if (user.isPresent()) {
+            user.get().setOrganization(organization);
+            userRepo.save(user.get());
+        }
+        return user;
+    }
+
+
+    public Optional<User> setGender(Long id, String gender) {
+
+        Optional<User> user = getById(id);
+
+        if (user.isPresent()) {
+            user.get().setGender(gender);
+            userRepo.save(user.get());
+        }
+        return user;
+    }
+
+    public Optional<User> setCertificate(Long id, Certificate certificate) {
+
+        Optional<User> user = getById(id);
+
+        if (user.isPresent()) {
+            user.get().setCertificate(certificate);
+            userRepo.save(user.get());
+        }
+        return user;
+    }
+
+    public Optional<User> setPositions(Long id, List<Position> positions) {
+
+        Optional<User> user = getById(id);
+
+        if (user.isPresent()) {
+            user.get().setPositions(positions);
+            userRepo.save(user.get());
+        }
+        return user;
     }
 }

@@ -123,10 +123,10 @@ public class User {
   }
   /**
    * Method to append a notification
-   * @param notifications a new notification
+   * @param notification a new notification
    */
-  public void addNotification(String notifications) {
-    this.notifications.add(notifications);
+  public void addNotification(String notification) {
+    this.notifications.add(notification);
   }
 
   /**
