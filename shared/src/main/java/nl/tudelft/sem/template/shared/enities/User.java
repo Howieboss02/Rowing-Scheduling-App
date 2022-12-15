@@ -6,10 +6,10 @@ import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import nl.tudelft.sem.template.shared.converters.PositionsToFillListConverter;
 import nl.tudelft.sem.template.shared.domain.Schedule;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.enums.Day;
-import nl.tudelft.sem.template.shared.converters.PositionsToFIllListConverter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -37,7 +37,7 @@ public class User {
   private Certificate certificate;
 
   @Column
-  @Convert(converter = PositionsToFIllListConverter.class)
+  @Convert(converter = PositionsToFillListConverter.class)
   private List<Position> positions;
 
   @Column
@@ -122,10 +122,10 @@ public class User {
   }
   /**
    * Method to append a notification
-   * @param notifications a new notification
+   * @param notification a new notification
    */
-  public void addNotification(String notifications) {
-    this.notifications.add(notifications);
+  public void addNotification(String notification) {
+    this.notifications.add(notification);
   }
 
   /**
