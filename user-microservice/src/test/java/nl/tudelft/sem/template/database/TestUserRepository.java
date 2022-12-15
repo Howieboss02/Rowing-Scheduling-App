@@ -6,7 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import nl.tudelft.sem.template.shared.enities.User;
+import nl.tudelft.sem.template.shared.entities.User;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -108,25 +108,13 @@ public class TestUserRepository implements UserRepository {
     return null;
   }
 
-/*  @Override
-  public <S extends User> List<S> saveAllAndFlush(Iterable<S> entities) {
-    return null;
-  }*/
+
 
   @Override
   public void deleteInBatch(Iterable<User> entities) {
 
   }
 
- /* @Override
-  public void deleteAllInBatch(Iterable<User> entities) {
-
-  }
-
-  @Override
-  public void deleteAllByIdInBatch(Iterable<Long> longs) {
-
-  }*/
 
   @Override
   public void deleteAllInBatch() {
@@ -137,11 +125,6 @@ public class TestUserRepository implements UserRepository {
   public User getOne(Long aLong) {
     return null;
   }
-
- /* @Override
-  public User getById(Long aLong) {
-    return null;
-  }*/
 
 
   @Override

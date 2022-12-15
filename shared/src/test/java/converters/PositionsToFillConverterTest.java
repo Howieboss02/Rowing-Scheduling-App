@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PositionsToFillConverterTest {
 
-    private final PositionsToFillListConverter converter = new PositionsToFillListConverter();
+    private PositionsToFillListConverter converter = new PositionsToFillListConverter();
 
     @Test
     public void testConvertToDatabaseColumnNull() {

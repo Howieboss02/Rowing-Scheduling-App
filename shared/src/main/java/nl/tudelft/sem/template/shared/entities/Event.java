@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.shared.enities;
+package nl.tudelft.sem.template.shared.entities;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

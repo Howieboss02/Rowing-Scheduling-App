@@ -1,5 +1,7 @@
-import nl.tudelft.sem.template.shared.enities.Event;
-import nl.tudelft.sem.template.shared.enities.User;
+package nl.tudelft.sem.template;
+
+import nl.tudelft.sem.template.shared.entities.Event;
+import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.Outcome;
 
 public interface Strategy {

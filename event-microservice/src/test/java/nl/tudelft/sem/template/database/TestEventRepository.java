@@ -1,7 +1,7 @@
 package nl.tudelft.sem.template.database;
 
 
-import nl.tudelft.sem.template.shared.enities.Event;
+import nl.tudelft.sem.template.shared.entities.Event;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

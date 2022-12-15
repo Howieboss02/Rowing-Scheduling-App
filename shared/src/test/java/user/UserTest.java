@@ -2,7 +2,7 @@ package user;
 
 import org.junit.jupiter.api.Test;
 import nl.tudelft.sem.template.shared.domain.Position;
-import nl.tudelft.sem.template.shared.enities.User;
+import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.PositionName;
 
