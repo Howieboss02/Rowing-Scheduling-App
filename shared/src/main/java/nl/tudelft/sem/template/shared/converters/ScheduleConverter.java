@@ -17,6 +17,11 @@ public class ScheduleConverter implements AttributeConverter<Schedule, String> {
     private static final String SLOT_SPLIT_CHAR = ";";
     private static final String FIELD_SPLIT_CHAR = ",";
 
+    /**
+     * Converts a Schedule to a string
+     * @param schedule the entity attribute value to be converted
+     * @return a string representing the given schedule
+     */
     @Override
     public String convertToDatabaseColumn(Schedule schedule) {
         if (schedule == null) {
@@ -38,6 +43,12 @@ public class ScheduleConverter implements AttributeConverter<Schedule, String> {
         return scheduleString.toString();
     }
 
+    /**
+     * Converts a string to a Schedule
+     * @param schedule  the data from the database column to be
+     *                converted
+     * @return a Schedule representing the given string
+     */
     @Override
     public Schedule convertToEntityAttribute(String schedule) {
         if (schedule == null || schedule.isEmpty()) {
@@ -52,6 +63,11 @@ public class ScheduleConverter implements AttributeConverter<Schedule, String> {
         return new Schedule(recurringList, removedList, addedList);
     }
 
+    /**
+     * Adds the representation of a list of slots to the given StringBuilder
+     * @param scheduleString the StringBuilder
+     * @param slots the list of TimeSlots to add
+     */
     private void timeSlotListToString(StringBuilder scheduleString,
                                           List<TimeSlot> slots) {
         for (TimeSlot slot : slots) {
@@ -63,6 +79,11 @@ public class ScheduleConverter implements AttributeConverter<Schedule, String> {
         }
     }
 
+    /**
+     * Converts a string to a list of TimeSlot
+     * @param s the string to convert
+     * @return the list of TimeSlot the string represents
+     */
     private List<TimeSlot> stringToTimeSlotList(String s) {
         List<TimeSlot> slotList = new ArrayList<>();
 
