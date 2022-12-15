@@ -18,7 +18,8 @@ public class ScheduleConverter implements AttributeConverter<Schedule, String> {
     private static final String FIELD_SPLIT_CHAR = ",";
 
     /**
-     * Converts a Schedule to a string
+     * Converts a Schedule to a string.
+     *
      * @param schedule the entity attribute value to be converted
      * @return a string representing the given schedule
      */
@@ -44,7 +45,8 @@ public class ScheduleConverter implements AttributeConverter<Schedule, String> {
     }
 
     /**
-     * Converts a string to a Schedule
+     * Converts a string to a Schedule.
+     *
      * @param schedule  the data from the database column to be
      *                converted
      * @return a Schedule representing the given string
@@ -64,7 +66,8 @@ public class ScheduleConverter implements AttributeConverter<Schedule, String> {
     }
 
     /**
-     * Adds the representation of a list of slots to the given StringBuilder
+     * Adds the representation of a list of slots to the given StringBuilder.
+     *
      * @param scheduleString the StringBuilder
      * @param slots the list of TimeSlots to add
      */
@@ -80,7 +83,8 @@ public class ScheduleConverter implements AttributeConverter<Schedule, String> {
     }
 
     /**
-     * Converts a string to a list of TimeSlot
+     * Converts a string to a list of TimeSlot.
+     *
      * @param s the string to convert
      * @return the list of TimeSlot the string represents
      */
