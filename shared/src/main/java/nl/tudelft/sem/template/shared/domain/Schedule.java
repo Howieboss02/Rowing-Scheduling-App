@@ -42,6 +42,15 @@ public class Schedule {
     }
 
     /**
+     * Remove a recurring slot
+     * @param slot the slot to remove
+     */
+    public void removeRecurringSlot(TimeSlot slot) {
+        recurringSlots.remove(slot);
+    }
+
+
+    /**
      * Removes slot from the recurring slots for a specific week
      * @param slot the time slot that should be temporarily removed
      */
