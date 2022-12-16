@@ -6,7 +6,7 @@
     "organization": "Summer camp",
     "email": "Bob@b.ob",
     "gender": "Male",
-    "Certificate": "B3",
-    "Positions": [{"position": "Cox", "isCompetitive": "true"}, {"position": "Coach", "isCompetitive": "true"}, {"position": "ScullingRower", "isCompetitive": "false"}],
+    "certificate": "B3",
+    "positions": [{"name": "Cox", "isCompetitive": "true"}, {"name": "Coach", "isCompetitive": "true"}, {"name": "ScullingRower", "isCompetitive": "false"}]
     
 }
