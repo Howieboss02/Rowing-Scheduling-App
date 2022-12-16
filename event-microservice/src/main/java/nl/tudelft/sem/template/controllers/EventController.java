@@ -46,7 +46,7 @@ public class EventController {
         return ResponseEntity.ok(receivedEvent);
     }
 
-    @DeleteMapping("/delete/{eventId}")
+    @DeleteMapping("/{eventId}")
     public ResponseEntity<?> deleteEvent(@PathVariable("eventId") Long eventId){
         try{
             eventService.deleteById(eventId);
@@ -56,7 +56,7 @@ public class EventController {
         return ResponseEntity.ok().build();
     }
 
-    @PutMapping( "edit/{eventId}")
+    @PutMapping( "/{eventId}")
     public ResponseEntity<?> updateEvent( @PathVariable("eventId") Long eventId,
                                           @RequestBody EventModel eventModel,
                                           @RequestParam("editCompetition") boolean editCompetition){

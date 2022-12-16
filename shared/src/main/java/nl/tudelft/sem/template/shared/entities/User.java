@@ -108,6 +108,10 @@ public class User {
     schedule.addRecurringSlot(new TimeSlot(-1, day, time));
   }
 
+  public void removeRecurringSlot(Day day, Pair<Integer, Integer> time) {
+    schedule.removeRecurringSlot(new TimeSlot(-1, day, time));
+  }
+
   /**
    * Temporarily removes slot
    * @param slot the time slot that should be temporarily removed
@@ -125,10 +129,10 @@ public class User {
   }
   /**
    * Method to append a notification
-   * @param notifications a new notification
+   * @param notification a new notification
    */
-  public void addNotification(String notifications) {
-    this.notifications.add(notifications);
+  public void addNotification(String notification) {
+    this.notifications.add(notification);
   }
 
   /**
