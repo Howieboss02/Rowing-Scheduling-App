@@ -1,16 +1,14 @@
 package user;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import nl.tudelft.sem.template.shared.domain.Schedule;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.enums.Day;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.util.Pair;
-
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ScheduleTest {
     @Test
@@ -20,6 +18,7 @@ class ScheduleTest {
         assertEquals(s.getRemovedSlots(), new ArrayList<>());
         assertEquals(s.getRecurringSlots(), new ArrayList<>());
     }
+
     @Test
     void addRecurringSlot() {
         Schedule s = new Schedule();
@@ -33,7 +32,7 @@ class ScheduleTest {
     @Test
     void removeSlot() {
         Schedule s = new Schedule();
-        TimeSlot t = new TimeSlot(1,Day.WEDNESDAY, Pair.of(1, 2));
+        TimeSlot t = new TimeSlot(1, Day.WEDNESDAY, Pair.of(1, 2));
         s.removeSlot(t);
         List<TimeSlot> p = new ArrayList<>();
 
@@ -55,7 +54,7 @@ class ScheduleTest {
     @Test
     void addSlot() {
         Schedule s = new Schedule();
-        TimeSlot t = new TimeSlot(1,Day.WEDNESDAY, Pair.of(1, 2));
+        TimeSlot t = new TimeSlot(1, Day.WEDNESDAY, Pair.of(1, 2));
         s.addSlot(t);
         List<TimeSlot> p = new ArrayList<>();
         p.add(t);
@@ -66,7 +65,7 @@ class ScheduleTest {
     @Test
     void cleanSlots() {
         Schedule s = new Schedule();
-        TimeSlot t = new TimeSlot(1,Day.FRIDAY, Pair.of(1, 2));
+        TimeSlot t = new TimeSlot(1, Day.FRIDAY, Pair.of(1, 2));
         s.addSlot(t);
         s.cleanSlots(2);
 
