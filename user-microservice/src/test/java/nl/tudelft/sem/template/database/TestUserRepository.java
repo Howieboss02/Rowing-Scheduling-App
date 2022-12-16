@@ -1,16 +1,14 @@
 package nl.tudelft.sem.template.database;
 
-
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import nl.tudelft.sem.template.shared.entities.User;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import nl.tudelft.sem.template.shared.entities.User;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 public class TestUserRepository implements UserRepository {
 
@@ -18,10 +16,11 @@ public class TestUserRepository implements UserRepository {
   public final List<String> used = new ArrayList<>();
 
   /**
-   * Adds a called method to the used list
+   * Adds a called method to the used list.
+   *
    * @param s the name of the method
    */
-  public void call(String s){
+  public void call(String s) {
     used.add(s);
   }
 

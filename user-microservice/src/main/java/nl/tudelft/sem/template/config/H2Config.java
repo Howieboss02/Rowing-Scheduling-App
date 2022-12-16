@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.config;
 
+import java.util.Objects;
 import javax.sql.DataSource;
 import lombok.Getter;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +11,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.util.Objects;
 
 /**
  * The H2 config.
