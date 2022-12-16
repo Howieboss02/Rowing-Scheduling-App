@@ -14,7 +14,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 public class EventController {
-    private transient EventService eventService;
+    private final transient EventService eventService;
 
     @Autowired
     public EventController(EventService eventService) {
