@@ -26,7 +26,8 @@ public class TimeSlot {
         List<TimeSlot> intersection = new ArrayList<>();
         for (TimeSlot entry : schedule) {
             Pair<Integer, Integer> time = entry.getTime();
-            if (time.getFirst() < this.time.getSecond() && time.getSecond() > this.time.getFirst()) {
+            if (time.getFirst() < this.time.getSecond()
+                    && time.getSecond() > this.time.getFirst()) {
                 intersection.add(new TimeSlot(week, day,
                         Pair.of(Integer.max(time.getFirst(), this.time.getFirst()),
                                 Integer.min(time.getSecond(), this.time.getSecond())

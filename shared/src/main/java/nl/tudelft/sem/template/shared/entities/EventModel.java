@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.shared.entities;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import nl.tudelft.sem.template.shared.converters.PositionsToFillListConverter;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
