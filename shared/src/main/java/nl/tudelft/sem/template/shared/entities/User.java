@@ -7,6 +7,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import nl.tudelft.sem.template.shared.converters.PositionsToFillListConverter;
+import nl.tudelft.sem.template.shared.converters.ScheduleConverter;
 import nl.tudelft.sem.template.shared.domain.Schedule;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.enums.Day;
@@ -45,6 +46,7 @@ public class User {
   private List<String> notifications = new ArrayList<>();
 
   @Column
+  @Convert(converter = ScheduleConverter.class)
   private Schedule schedule;
 
   /*
