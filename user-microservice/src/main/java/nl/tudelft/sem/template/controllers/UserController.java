@@ -49,7 +49,7 @@ public class UserController {
         return ResponseEntity.ok(insertedUser);
     }
 
-    @DeleteMapping(path = "/delete/{userId}")
+    @DeleteMapping(path = "/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable("userId") Long userId) {
         if (!userService.deleteById(userId)){
             return ResponseEntity.badRequest().build();
@@ -60,7 +60,7 @@ public class UserController {
     /**
      * Update everything about a user at once by giving all possible parameters
      */
-    @PutMapping(path = "/update/{userId}")
+    @PutMapping(path = "/user/{userId}")
     public ResponseEntity<?> updateUser(@PathVariable("userId") Long userId ,
                                         @RequestParam(required = false) String name,
                                         @RequestParam(required = false) String organization,
@@ -79,7 +79,7 @@ public class UserController {
     /**
      * Update the user's name
      */
-    @PutMapping(path = "/update/name/{userId}")
+    @PutMapping(path = "/name/{userId}")
     public ResponseEntity<?> setName(@PathVariable("userId") Long userId ,
                                       @RequestParam(required = false) String name
     ) {
@@ -92,7 +92,7 @@ public class UserController {
     /**
      * Update the user's organization
      */
-    @PutMapping(path = "/update/organization/{userId}")
+    @PutMapping(path = "/organization/{userId}")
     public ResponseEntity<?> setOrganization(@PathVariable("userId") Long userId ,
                                         @RequestParam(required = false) String organization
     ) {
@@ -106,7 +106,7 @@ public class UserController {
     /**
      * Update the user's gender
      */
-    @PutMapping(path = "/update/gender/{userId}")
+    @PutMapping(path = "/gender/{userId}")
     public ResponseEntity<?> setGender(@PathVariable("userId") Long userId ,
                                       @RequestParam(required = false) String gender
     ) {
@@ -119,7 +119,7 @@ public class UserController {
     /**
      * Update the user's certificate
      */
-    @PutMapping(path = "/update/certificate/{userId}")
+    @PutMapping(path = "/certificate/{userId}")
     public ResponseEntity<?> setCertificate(@PathVariable("userId") Long userId ,
                                        @RequestParam(required = false) Certificate certificate
     ) {
@@ -132,7 +132,7 @@ public class UserController {
     /**
      * Update the user's positions
      */
-    @PutMapping(path = "/update/positions/{userId}")
+    @PutMapping(path = "/positions/{userId}")
     public ResponseEntity<?> setPositions(@PathVariable("userId") Long userId ,
                                  @RequestParam(required = false) List<Position> positions
     ) {
@@ -145,7 +145,7 @@ public class UserController {
     /**
      * Add a notification to the user's list of notifications
      */
-    @PutMapping(path = "/notify/{userId}")
+    @PutMapping(path = "/notification/{userId}")
     public ResponseEntity<?> addNotification(@PathVariable("userId") Long userId ,
                                           @RequestParam(required = false) String notification
     ) {
