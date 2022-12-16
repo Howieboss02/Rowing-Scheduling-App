@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.controllers;
 
 import java.util.List;
+import javax.persistence.Transient;
 import nl.tudelft.sem.template.services.UserService;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.entities.User;
@@ -10,11 +11,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
+
 @RestController
 @RequestMapping(path = "api/user")
 public class UserController {
 
-    private final UserService userService;
+    private final transient UserService userService;
 
 
     @Autowired
