@@ -35,7 +35,7 @@ class ScheduleTest {
         s.addRecurringSlot(new TimeSlot(1, Day.MONDAY, Pair.of(1, 2)));
         List<TimeSlot> p = new ArrayList<>();
 
-        s.removeRecurringSlot(new TimeSlot(1, Day.MONDAY, Pair.of(1,2)));
+        s.removeRecurringSlot(new TimeSlot(1, Day.MONDAY, Pair.of(1, 2)));
         assertEquals(s.getRecurringSlots(), p);
     }
 
