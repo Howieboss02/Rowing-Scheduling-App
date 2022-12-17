@@ -33,13 +33,20 @@ public class NotificationController {
    * @param outcome the outcome of enqueueing
    * @return either a "NOT_FOUND" if the ids are invalid or the final message of the notification
    */
-  @PostMapping(path = "addNotification/{eventId}")
-  public ResponseEntity<String> sendNotification(@PathVariable ("eventId") Long idEvent, @RequestBody long idUser, @RequestBody Outcome outcome){
+  @PostMapping(path = "/{idEvent}")
+  public ResponseEntity<String> sendNotification(@PathVariable("idEvent") Long idEvent, @RequestBody Long idUser, @RequestBody Outcome outcome){
     Optional<Event> event = eventService.getById(idEvent);
+    System.out.println(event.get().getLabel());
     if(event.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     Optional<User> user = userService.getById(idUser);
     if(user.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    return ResponseEntity.ok(notification.sendNotification(user.get(), event.get(), outcome));
+
+    String messages = "";
+    notification.setStrategy(new EmailStrategy());
+    messages += notification.sendNotification(user.get(), event.get(), outcome) + "\n";
+    notification.setStrategy((new PlatformStrategy()));
+    messages += notification.sendNotification(user.get(), event.get(), outcome);
+    return ResponseEntity.ok(messages);
   }
 
 }
