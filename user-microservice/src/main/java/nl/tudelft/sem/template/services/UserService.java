@@ -4,9 +4,12 @@ import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.database.UserRepository;
 import nl.tudelft.sem.template.shared.domain.Position;
+import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.Certificate;
+import nl.tudelft.sem.template.shared.enums.Day;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,6 +22,9 @@ public class UserService {
         this.userRepo = userRepo;
     }
 
+    /**
+     * Get all users.
+     */
     public List<User> getAllUsers() {
         return userRepo.findAll();
     }
@@ -69,14 +75,13 @@ public class UserService {
     /**
      * Update information about a user inside the database.
      *
-     * @param id the id of the user we want to update
-     *
-     * @param name the netId of the user
+     * @param id           the id of the user we want to update
+     * @param name         the netId of the user
      * @param organization the organization the user is part of
-     * @param email the email the profile is registered with
-     * @param gender the gender of the rower
-     * @param certificate the biggest certificate a user holds
-     * @param positions the list of position they can fill
+     * @param email        the email the profile is registered with
+     * @param gender       the gender of the rower
+     * @param certificate  the biggest certificate a user holds
+     * @param positions    the list of position they can fill
      * @return the new profile
      */
     public Optional<User> updateById(Long id, String name, String organization, String email, String gender,
@@ -97,61 +102,86 @@ public class UserService {
         return toUpdate;
     }
 
+    /**
+     * Update the availability of a user.
+     *
+     * @param id the id of the user
+     * @param day the day of the week
+     * @return the updated user
+     */
     public Optional<User> addRecurringTimeSlot(Long id, Day day, Pair<Integer, Integer> time) {
         Optional<User> user = getById(id);
 
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             user.get().addRecurringSlot(day, time);
             userRepo.save(user.get());
         }
         return user;
     }
 
+    /**
+     * Remove a recurring time slot from a user.
+     */
     public Optional<User> removeRecurringTimeSlot(Long id, Day day, Pair<Integer, Integer> time) {
         Optional<User> user = getById(id);
 
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             user.get().removeRecurringSlot(day, time);
             userRepo.save(user.get());
         }
         return user;
     }
 
+    /**
+     * Add a one time time slot to a user.
+     */
     public Optional<User> addTimeSlot(Long id, TimeSlot timeSlot) {
         Optional<User> user = getById(id);
 
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             user.get().addSlot(timeSlot);
             userRepo.save(user.get());
         }
         return user;
     }
 
+    /**
+     * Remove a one time time slot from a user.
+     */
     public Optional<User> removeTimeSlot(Long id, TimeSlot timeSlot) {
         Optional<User> user = getById(id);
 
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             user.get().removeSlot(timeSlot);
             userRepo.save(user.get());
         }
         return user;
     }
 
+    /**
+     * Get all notifications for a user.
+     */
     public Optional<List<String>> getNotifications(Long id) {
         Optional<User> user = getById(id);
         return user.map(User::getNotifications);
     }
 
+    /**
+     * Add a notification to a user.
+     */
     public Optional<User> addNotification(Long id, String notification) {
         Optional<User> user = getById(id);
 
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             user.get().addNotification(notification);
             userRepo.save(user.get());
         }
         return user;
     }
 
+    /**
+     * Set user's name.
+     */
     public Optional<User> setName(Long id, String name) {
 
         Optional<User> user = getById(id);
@@ -163,6 +193,9 @@ public class UserService {
         return user;
     }
 
+    /**
+     * Set user's organization.
+     */
     public Optional<User> setOrganization(Long id, String organization) {
 
         Optional<User> user = getById(id);
@@ -174,7 +207,9 @@ public class UserService {
         return user;
     }
 
-
+    /**
+     * Set user's gender.
+     */
     public Optional<User> setGender(Long id, String gender) {
 
         Optional<User> user = getById(id);
@@ -186,6 +221,9 @@ public class UserService {
         return user;
     }
 
+    /**
+     * Set user's certificate.
+     */
     public Optional<User> setCertificate(Long id, Certificate certificate) {
 
         Optional<User> user = getById(id);
@@ -197,6 +235,9 @@ public class UserService {
         return user;
     }
 
+    /**
+     * Set user's positions.
+     */
     public Optional<User> setPositions(Long id, List<Position> positions) {
 
         Optional<User> user = getById(id);

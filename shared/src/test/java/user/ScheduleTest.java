@@ -29,16 +29,15 @@ class ScheduleTest {
         assertEquals(s.getRecurringSlots(), p);
     }
 
-    //    @Test
-    //    void removeRecurringSlot() {
-    //        Schedule s = new Schedule();
-    //        s.addRecurringSlot(new TimeSlot(1, Day.MONDAY, Pair.of(1, 2)));
-    //        List<TimeSlot> p = new ArrayList<>();
-    //
-    //        s.removeRecurringSlot(new TimeSlot(1, Day.MONDAY, Pair.of(1,2)));
-    //
-    //        assertEquals(s.getRecurringSlots(), p);
-    //    }
+    @Test
+    void removeRecurringSlot() {
+        Schedule s = new Schedule();
+        s.addRecurringSlot(new TimeSlot(1, Day.MONDAY, Pair.of(1, 2)));
+        List<TimeSlot> p = new ArrayList<>();
+
+        s.removeRecurringSlot(new TimeSlot(1, Day.MONDAY, Pair.of(1,2)));
+        assertEquals(s.getRecurringSlots(), p);
+    }
 
     @Test
     void removeSlot() {

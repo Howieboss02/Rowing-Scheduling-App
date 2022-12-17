@@ -46,6 +46,16 @@ public class Schedule {
      *
      * @param slot the time slot that should be temporarily removed
      */
+
+    /**
+     * Remove a recurring slot.
+     *
+     * @param slot the slot to remove
+     */
+    public void removeRecurringSlot(TimeSlot slot) {
+        recurringSlots.remove(slot);
+    }
+
     public void removeSlot(TimeSlot slot) {
         Predicate<TimeSlot> condition = a -> a.getDay().equals(slot.getDay());
         List<TimeSlot> toAdd = slot.intersect(

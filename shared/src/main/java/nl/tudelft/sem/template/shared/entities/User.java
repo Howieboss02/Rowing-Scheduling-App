@@ -112,6 +112,16 @@ public class User {
     }
 
     /**
+     * Remove a recurring slot.
+     *
+     * @param day  the day of the slot
+     * @param time the time interval in seconds of the slot
+     */
+    public void removeRecurringSlot(Day day, Pair<Integer, Integer> time) {
+        schedule.removeRecurringSlot(new TimeSlot(-1, day, time));
+    }
+
+    /**
      * Temporarily removes slot.
      *
      * @param slot the time slot that should be temporarily removed
