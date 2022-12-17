@@ -3,23 +3,26 @@ package nl.tudelft.sem.template.controllers;
 import nl.tudelft.sem.template.services.EventService;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.EventModel;
+import nl.tudelft.sem.template.shared.entities.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
 import java.util.Optional;
 
 @RestController
 public class EventController {
     private final EventService eventService;
+    private WebClient client;
 
     @Autowired
     public EventController(EventService eventService){
         this.eventService = eventService;
     }
+
 
     @GetMapping("/all")
     public List<Event> getEvents(){
@@ -68,4 +71,14 @@ public class EventController {
         }
     }
 
+    @PutMapping("/enqueue/{eventId}/")
+    public ResponseEntity<String> enqueue(@PathVariable("eventId") Long eventId, @RequestParam("userId") Long userId) {
+        Optional<Event> event = eventService.getById(eventId);
+        if(event.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        this.client = WebClient.create();
+        WebClient.ResponseSpec response = client.get().uri("http://localhost:8084/api/user/" + userId).retrieve();
+        User user = response.bodyToMono(User.class).block();
+        event.get().enqueue(user);
+        return ResponseEntity.ok("ENQUEUED");
+    }
 }
