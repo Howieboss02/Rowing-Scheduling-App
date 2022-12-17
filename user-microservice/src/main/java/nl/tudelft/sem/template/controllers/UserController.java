@@ -4,6 +4,7 @@ import nl.tudelft.sem.template.services.UserService;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.enums.Day;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import nl.tudelft.sem.template.shared.domain.Position;
@@ -12,6 +13,7 @@ import nl.tudelft.sem.template.shared.enums.Certificate;
 import org.springframework.data.util.Pair;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -29,6 +31,13 @@ public class UserController {
     @GetMapping("/all")
     public List<User> getUsers() {
         return userService.getAllUsers();
+    }
+
+    @GetMapping("/{userId}")
+    public ResponseEntity<User> getUser(@PathVariable("userId") Long id){
+        Optional<User> user = userService.getById(id);
+        if(user.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        return ResponseEntity.ok(user.get());
     }
 
     @GetMapping(path = "/getNotifications/{userId}")

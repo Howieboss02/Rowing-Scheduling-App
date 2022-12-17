@@ -50,6 +50,9 @@ public class Event {
     @Column(name = "organisation")
     private String organisation;
 
+    @OneToMany
+    private List<User> queue;
+
     public Event(Long owningUser, String label, List<Position> positions, String startTime, String endTime, Certificate certificate, boolean isCompetitive, EventType type, String organisation) throws IllegalArgumentException{
         this.owningUser = owningUser;
         this.label = label;
@@ -68,6 +71,14 @@ public class Event {
 
     public void removePosition(Position position) {
         positions.remove(position);
+    }
+
+    public void enqueue(User user){
+        queue.add(user);
+    }
+
+    public void dequeue(User user){
+        queue.remove(user);
     }
 
     /**
