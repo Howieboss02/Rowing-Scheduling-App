@@ -1,7 +1,7 @@
 package nl.tudelft.sem.template.database;
 
 
-import nl.tudelft.sem.template.shared.enities.Event;
+import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
 import java.util.List;

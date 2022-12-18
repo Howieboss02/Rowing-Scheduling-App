@@ -4,9 +4,9 @@ import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.services.EventService;
 import nl.tudelft.sem.template.shared.domain.Position;
-import nl.tudelft.sem.template.shared.enities.Event;
-import nl.tudelft.sem.template.shared.enities.EventModel;
-import nl.tudelft.sem.template.shared.enities.User;
+import nl.tudelft.sem.template.shared.entities.Event;
+import nl.tudelft.sem.template.shared.entities.EventModel;
+import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,10 +94,10 @@ public class EventController {
         Optional<Event> returned = eventService.updateById(eventModel.getOwningUser(), eventId, eventModel.getLabel(),
                 eventModel.getPositions(), eventModel.getStartTime(), eventModel.getEndTime(),
                 eventModel.getCertificate(), eventModel.getType(), eventModel.getOrganisation());
-        if (returned.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        } else {
+        if(!returned.isPresent()) {
             return ResponseEntity.ok(returned.get());
+        } else {
+            return ResponseEntity.badRequest().build();
         }
     }
 

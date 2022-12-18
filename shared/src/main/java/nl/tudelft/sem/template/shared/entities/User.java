@@ -8,6 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import nl.tudelft.sem.template.shared.converters.PositionsToFillListConverter;
+import nl.tudelft.sem.template.shared.converters.ScheduleConverter;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.Schedule;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
@@ -38,15 +39,16 @@ public class User {
   @Getter private Certificate certificate;
 
   @Column
-  @Convert(converter = PositionsToFIllListConverter.class)
+  @Convert(converter = PositionsToFillListConverter.class)
   @Getter private List<Position> positions;
 
   @Column
   @ElementCollection(targetClass = String.class)
   private List<String> notifications = new ArrayList<>();
 
-  /*TODO: add schedule structure
-   */
+  @Column
+  @Convert(converter = ScheduleConverter.class)
+  Schedule schedule;
 
   /*
   TODO: add enqueued activities list

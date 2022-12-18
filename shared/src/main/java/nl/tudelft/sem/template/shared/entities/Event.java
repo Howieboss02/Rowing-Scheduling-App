@@ -3,9 +3,8 @@ package nl.tudelft.sem.template.shared.entities;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+
+import lombok.*;
 import nl.tudelft.sem.template.shared.converters.PositionsToFillListConverter;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.enums.Certificate;
@@ -57,7 +56,6 @@ public class Event {
      * @param startTime the start time of the event
      * @param endTime the end time of the event
      * @param certificate the certificate that is required for the event
-     * @param isCompetitive whether the event is competitive or not
      * @param type the type of the event
      * @param organisation the organisation that created the event
      * @throws IllegalArgumentException if any of the parameters are null

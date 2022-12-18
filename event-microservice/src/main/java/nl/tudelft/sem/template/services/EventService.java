@@ -4,17 +4,14 @@ import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.database.EventRepository;
 import nl.tudelft.sem.template.shared.domain.Position;
-import nl.tudelft.sem.template.shared.enities.Event;
-import nl.tudelft.sem.template.shared.enities.User;
+import nl.tudelft.sem.template.shared.entities.Event;
+import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class EventService {
@@ -81,10 +78,8 @@ public class EventService {
      * @param startTime start time of the event
      * @param endTime endtime of the event
      * @param certificate certificate of the event
-     * @param isCompetitive is the event competitive
      * @param type type of the event
      * @param organisation organisation of the event
-     * @param editCompetition edit competition
      * @return the updated event
      */
     public Optional<Event> updateById(Long userId, Long eventId, String label, List<Position> positions,
