@@ -66,9 +66,8 @@ public class EventController {
 
     @PutMapping( "edit/{eventId}")
     public ResponseEntity<?> updateEvent( @PathVariable("eventId") Long eventId,
-                                          @RequestBody EventModel eventModel,
-                                          @RequestParam("editCompetition") boolean editCompetition){
-        Optional<Event> returned = eventService.updateById(eventModel.getOwningUser(), eventId, eventModel.getLabel(), eventModel.getPositions(), eventModel.getStartTime(), eventModel.getEndTime(), eventModel.getCertificate(), eventModel.getType(), eventModel.getOrganisation(), editCompetition);
+                                          @RequestBody EventModel eventModel){
+        Optional<Event> returned = eventService.updateById(eventModel.getOwningUser(), eventId, eventModel.getLabel(), eventModel.getPositions(), eventModel.getStartTime(), eventModel.getEndTime(), eventModel.getCertificate(), eventModel.getType(), eventModel.getOrganisation());
         if(returned.isEmpty()){
             return ResponseEntity.badRequest().build();
         }else {

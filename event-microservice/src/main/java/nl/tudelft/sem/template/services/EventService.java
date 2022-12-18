@@ -51,7 +51,7 @@ public class EventService {
         }
     }
 
-    public Optional<Event> updateById( Long userId, Long eventId, String label, List<Position> positions, String startTime, String endTime, Certificate certificate, EventType type, String organisation, boolean editCompetition ) {
+    public Optional<Event> updateById( Long userId, Long eventId, String label, List<Position> positions, String startTime, String endTime, Certificate certificate, EventType type, String organisation) {
         Optional<Event> toUpdate = getById(eventId);
         if(toUpdate.isPresent()){
             if(toUpdate.get().getOwningUser() != userId){
