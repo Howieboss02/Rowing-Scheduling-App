@@ -39,7 +39,6 @@ public class EventController {
      */
     @PostMapping("/register")
     public ResponseEntity<Event> registerNewEvent(@RequestBody EventModel eventModel) throws Exception {
-        Event receivedEvent;
         try {
             Event event = new Event(eventModel.getOwningUser(),
                     eventModel.getLabel(),
@@ -50,11 +49,11 @@ public class EventController {
                     eventModel.isCompetitive(),
                     eventModel.getType(),
                     eventModel.getOrganisation());
-            receivedEvent = eventService.insert(event);
+            Event receivedEvent = eventService.insert(event);
+            return ResponseEntity.ok(receivedEvent);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(receivedEvent);
     }
 
     /**
