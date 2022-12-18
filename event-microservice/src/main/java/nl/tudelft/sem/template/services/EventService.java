@@ -133,7 +133,8 @@ public class EventService {
         List<Event> e2 = eventRepo.findMatchingCompetitions(user.getCertificate(), user.getOrganization(),
                                                             user.getId(), EventType.COMPETITION);
         List<Event> matchedEvents = new ArrayList<>();
-        List<Position> positions = user.getPositions();
+        List<Position> positions = new ArrayList<>();
+        positions.addAll(user.getPositions());
         for (Event e : e1) {
             for (Position p : positions) {
                 if (e.getPositions().contains(p)) {
