@@ -1,19 +1,17 @@
 package converters;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.ArrayList;
+import java.util.List;
 import nl.tudelft.sem.template.shared.converters.PositionsToFillListConverter;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.enums.PositionName;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-
 public class PositionsToFillConverterTest {
 
-    private final PositionsToFillListConverter converter = new PositionsToFillListConverter();
+    private PositionsToFillListConverter converter = new PositionsToFillListConverter();
 
     @Test
     public void testConvertToDatabaseColumnNull() {

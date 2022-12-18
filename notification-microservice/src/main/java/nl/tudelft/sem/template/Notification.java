@@ -1,6 +1,10 @@
-import nl.tudelft.sem.template.shared.enities.*;
-import nl.tudelft.sem.template.shared.enums.Outcome;
+package nl.tudelft.sem.template;
 
+import nl.tudelft.sem.template.shared.entities.*;
+import nl.tudelft.sem.template.shared.enums.Outcome;
+import org.springframework.stereotype.Service;
+
+@Service
 public class Notification {
 
   private Strategy strategy;
@@ -17,7 +21,7 @@ public class Notification {
   }
 
   /**
-   * The method of sending the notification using the "Strategy" design pattern
+   * The method of sending the notification using the "nl.tudelft.sem.template.Strategy" design pattern
    * @param user the user that will receive it
    * @param event the event the notification is about
    * @param outcome accept/reject
