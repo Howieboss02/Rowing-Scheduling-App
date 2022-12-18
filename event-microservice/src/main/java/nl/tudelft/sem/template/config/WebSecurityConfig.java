@@ -20,6 +20,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AuthenticationManager authenticationManagerBean() throws Exception {
         return super.authenticationManagerBean();
     }
+
     //TODO change permitAll() once authentication is implemented
     @Override
     protected void configure(HttpSecurity http) throws Exception {
