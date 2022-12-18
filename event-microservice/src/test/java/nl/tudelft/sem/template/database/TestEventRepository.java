@@ -1,11 +1,10 @@
 package nl.tudelft.sem.template.database;
 
-
+import java.util.List;
+import java.util.Optional;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
-import java.util.List;
-import java.util.Optional;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -139,12 +138,13 @@ public class TestEventRepository implements EventRepository {
     }
 
     @Override
-    public List<Event> findMatchingTrainings( Certificate certificate, Long id , EventType et ) {
+    public List<Event> findMatchingTrainings(Certificate certificate, Long id, EventType et) {
         return null;
     }
 
     @Override
-    public List<Event> findMatchingCompetitions( Certificate certificate, String organization, Long id, EventType competition ) {
+    public List<Event> findMatchingCompetitions(Certificate certificate, String organization,
+                                                Long id, EventType competition) {
         return null;
     }
 }
