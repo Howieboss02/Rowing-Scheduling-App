@@ -1,15 +1,16 @@
 package nl.tudelft.sem.template.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.database.EventRepository;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.entities.Event;
+import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 
 @Service
 public class EventService {
@@ -76,20 +77,16 @@ public class EventService {
      * @param startTime start time of the event
      * @param endTime endtime of the event
      * @param certificate certificate of the event
-     * @param isCompetitive is the event competitive
      * @param type type of the event
      * @param organisation organisation of the event
-     * @param editCompetition edit competition
      * @return the updated event
      */
     public Optional<Event> updateById(Long userId, Long eventId, String label, List<Position> positions,
                                       String startTime, String endTime, Certificate certificate,
-                                      boolean isCompetitive, EventType type, String organisation,
-                                      boolean editCompetition) {
+                                      EventType type, String organisation) {
         Optional<Event> toUpdate = getById(eventId);
         if (toUpdate.isPresent()) {
             if (!toUpdate.get().getOwningUser().equals(userId)) {
-                System.out.println(toUpdate.get().getOwningUser() + " " + userId);
                 return Optional.empty();
             }
 
@@ -117,10 +114,6 @@ public class EventService {
                 toUpdate.get().setOrganisation(organisation);
             }
 
-            if (editCompetition == true) {
-                toUpdate.get().setCompetitive(isCompetitive);
-            }
-
             if (positions != null) {
                 toUpdate.get().setPositions(positions);
             }
@@ -130,5 +123,34 @@ public class EventService {
         return toUpdate;
     }
 
-
+    /**finds the events a user is suitable for.
+     *
+     * @param user the user for which the returned events should match
+     * @return events that match the user
+     */
+    public List<Event> getMatchedEvents(User user) {
+        List<Event> e1 = eventRepo.findMatchingTrainings(user.getCertificate(), user.getId(), EventType.TRAINING);
+        List<Event> e2 = eventRepo.findMatchingCompetitions(user.getCertificate(), user.getOrganization(),
+                                                            user.getId(), EventType.COMPETITION);
+        List<Event> matchedEvents = new ArrayList<>();
+        List<Position> positions = new ArrayList<>();
+        positions.addAll(user.getPositions());
+        for (Event e : e1) {
+            for (Position p : positions) {
+                if (e.getPositions().contains(p)) {
+                    matchedEvents.add(e);
+                    break;
+                }
+            }
+        }
+        for (Event e : e2) {
+            for (Position p : positions) {
+                if (e.getPositions().contains(p)) {
+                    matchedEvents.add(e);
+                    break;
+                }
+            }
+        }
+        return matchedEvents;
+    }
 }

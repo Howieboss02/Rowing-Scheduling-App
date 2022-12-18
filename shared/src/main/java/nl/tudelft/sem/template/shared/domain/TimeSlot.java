@@ -17,7 +17,8 @@ public class TimeSlot {
     private Pair<Integer, Integer> time;
 
     /**
-     * Calculate the intersection between the time of this timeslot and a list of time intervals.
+     * Calculate the intersection between the time of this timeslot
+     * and a list of time intervals.
      *
      * @param schedule the list of time intervals
      * @return a list of timeslots representing the intersection
@@ -52,12 +53,14 @@ public class TimeSlot {
         Integer begin = this.time.getFirst();
         for (TimeSlot slot : intersection) {
             if (begin < slot.getTime().getFirst()) {
-                difference.add(new TimeSlot(week, day, Pair.of(begin, slot.getTime().getFirst())));
+                difference.add(new TimeSlot(week, day,
+                        Pair.of(begin, slot.getTime().getFirst())));
             }
             begin = slot.getTime().getSecond();
         }
         if (begin < this.time.getSecond()) {
-            difference.add(new TimeSlot(week, day, Pair.of(begin, this.time.getSecond())));
+            difference.add(new TimeSlot(week, day,
+                    Pair.of(begin, this.time.getSecond())));
         }
         return difference;
     }

@@ -3,15 +3,14 @@ package nl.tudelft.sem.template.shared.entities;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import nl.tudelft.sem.template.shared.converters.PositionsToFillListConverter;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "event")
 @AllArgsConstructor
@@ -42,13 +41,11 @@ public class Event {
     @Column(name = "certificate", nullable = false)
     private Certificate certificate;
 
-    private boolean isCompetitive;
-
     private EventType type;
 
     @Column(name = "organisation")
     private String organisation;
-
+    
     /**
      * Constructor for the Event class containing all information.
      *
@@ -58,13 +55,12 @@ public class Event {
      * @param startTime the start time of the event
      * @param endTime the end time of the event
      * @param certificate the certificate that is required for the event
-     * @param isCompetitive whether the event is competitive or not
      * @param type the type of the event
      * @param organisation the organisation that created the event
      * @throws IllegalArgumentException if any of the parameters are null
      */
     public Event(Long owningUser, String label, List<Position> positions, String startTime,
-                 String endTime, Certificate certificate, boolean isCompetitive,
+                 String endTime, Certificate certificate,
                  EventType type, String organisation) throws IllegalArgumentException {
         this.owningUser = owningUser;
         this.label = label;
@@ -72,7 +68,6 @@ public class Event {
         this.startTime = startTime;
         this.endTime = endTime;
         this.certificate = certificate;
-        this.isCompetitive = isCompetitive;
         this.type = type;
         this.organisation = organisation;
     }
