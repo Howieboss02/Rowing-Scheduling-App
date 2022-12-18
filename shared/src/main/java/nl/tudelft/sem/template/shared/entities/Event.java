@@ -63,6 +63,7 @@ public class Event {
         this.isCompetitive = isCompetitive;
         this.type = type;
         this.organisation = organisation;
+        this.queue = new ArrayList<>();
     }
 
     public void addPosition(Position position) {

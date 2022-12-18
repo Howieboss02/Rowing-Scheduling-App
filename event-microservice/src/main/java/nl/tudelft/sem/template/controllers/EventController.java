@@ -1,5 +1,7 @@
 package nl.tudelft.sem.template.controllers;
 
+import java.util.List;
+import java.util.Optional;
 import nl.tudelft.sem.template.services.EventService;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.EventModel;
@@ -10,8 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
-import java.util.List;
-import java.util.Optional;
+import reactor.core.publisher.Mono;
 
 @RestController
 public class EventController {
@@ -71,13 +72,21 @@ public class EventController {
         }
     }
 
+    /**
+     * PUT API for enqueueing a user to an event
+     * @param eventId the id of the event
+     * @param userId the id of the user
+     * @return "NOT_FOUND" if the ids don't match something or "ENQUEUED" if task gets completed
+     */
     @PutMapping("/enqueue/{eventId}/")
     public ResponseEntity<String> enqueue(@PathVariable("eventId") Long eventId, @RequestParam("userId") Long userId) {
         Optional<Event> event = eventService.getById(eventId);
         if(event.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        //Getting the User info from the database
         this.client = WebClient.create();
-        WebClient.ResponseSpec response = client.get().uri("http://localhost:8084/api/user/" + userId).retrieve();
-        User user = response.bodyToMono(User.class).block();
+        Mono<User> response = client.get().uri("http://localhost:8084/api/user/" + userId).retrieve().bodyToMono(User.class).log();
+        User user = response.block();
         event.get().enqueue(user);
         return ResponseEntity.ok("ENQUEUED");
     }
