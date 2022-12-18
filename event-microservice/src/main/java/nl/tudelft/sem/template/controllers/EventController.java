@@ -35,8 +35,18 @@ public class EventController {
         return eventService.getAllEvents();
     }
 
+    /** matches suitable events with a user.
+     *
+     * @param user the user to match the events to
+     * @return the events that match the user
+     * @throws IllegalArgumentException if the user profile is not full
+     */
     @GetMapping("/matchEvents")
-    public List<Event> matchEvents(@RequestBody User user) {
+    public List<Event> matchEvents(@RequestBody User user) throws IllegalArgumentException {
+        if (user.getCertificate() == null || user.getPositions() == null || user.getPositions().size() == 0
+                || user.getCertificate() == null || user.getOrganization() == null) {
+            throw new IllegalArgumentException("Profile is not (fully) completed");
+        }
         return eventService.getMatchedEvents(user);
     }
 
