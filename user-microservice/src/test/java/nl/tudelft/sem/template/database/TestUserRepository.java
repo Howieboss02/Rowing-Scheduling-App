@@ -106,21 +106,6 @@ public class TestUserRepository implements UserRepository {
         return null;
     }
 
-  @Override
-  public <S extends User> List<S> saveAllAndFlush(Iterable<S> entities) {
-    return null;
-  }
-
-    @Override
-    public void deleteAllInBatch( Iterable<User> entities ) {
-
-    }
-
-    @Override
-    public void deleteAllByIdInBatch( Iterable<Long> longs ) {
-
-    }
-
     @Override
     public void deleteInBatch(Iterable<User> entities) {
 
@@ -134,12 +119,6 @@ public class TestUserRepository implements UserRepository {
 
     @Override
     public User getOne(Long aLong) {
-        return null;
-    }
-
-
-    @Override
-    public User getById( Long aLong ) {
         return null;
     }
     
