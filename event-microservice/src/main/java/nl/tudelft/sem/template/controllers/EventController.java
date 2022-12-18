@@ -36,7 +36,7 @@ public class EventController {
     }
 
     @GetMapping("/matchEvents")
-    public List<Event> matchEvents( @RequestBody User user ){
+    public List<Event> matchEvents(@RequestBody User user) {
         return eventService.getMatchedEvents(user);
     }
 
@@ -94,7 +94,7 @@ public class EventController {
         Optional<Event> returned = eventService.updateById(eventModel.getOwningUser(), eventId, eventModel.getLabel(),
                 eventModel.getPositions(), eventModel.getStartTime(), eventModel.getEndTime(),
                 eventModel.getCertificate(), eventModel.getType(), eventModel.getOrganisation());
-        if(!returned.isPresent()) {
+        if (!returned.isPresent()) {
             return ResponseEntity.ok(returned.get());
         } else {
             return ResponseEntity.badRequest().build();

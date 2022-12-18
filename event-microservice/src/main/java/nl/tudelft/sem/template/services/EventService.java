@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.database.EventRepository;
@@ -10,8 +11,6 @@ import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
 
 @Service
 public class EventService {
@@ -124,23 +123,28 @@ public class EventService {
         return toUpdate;
     }
 
-
-    public List<Event> getMatchedEvents( User user ) {
-        List<Event> e1 = eventRepo.findMatchingTrainings(user.getCertificate(), user.getId(), EventType.TRAINING );
-        List<Event> e2 = eventRepo.findMatchingCompetitions(user.getCertificate(), user.getOrganization(), user.getId(), EventType.COMPETITION);
+    /**finds the events a user is suitable for.
+     *
+     * @param user the user for which the returned events should match
+     * @return events that match the user
+     */
+    public List<Event> getMatchedEvents(User user) {
+        List<Event> e1 = eventRepo.findMatchingTrainings(user.getCertificate(), user.getId(), EventType.TRAINING);
+        List<Event> e2 = eventRepo.findMatchingCompetitions(user.getCertificate(), user.getOrganization(),
+                                                            user.getId(), EventType.COMPETITION);
         List<Event> matchedEvents = new ArrayList<>();
         List<Position> positions = user.getPositions();
-        for(Event e: e1){
-            for(Position p: positions){
-                if(e.getPositions().contains(p)){
+        for (Event e : e1) {
+            for (Position p : positions) {
+                if (e.getPositions().contains(p)) {
                     matchedEvents.add(e);
                     break;
                 }
             }
         }
-        for(Event e: e2){
-            for(Position p: positions){
-                if(e.getPositions().contains(p)){
+        for (Event e : e2) {
+            for (Position p : positions) {
+                if (e.getPositions().contains(p)) {
                     matchedEvents.add(e);
                     break;
                 }
