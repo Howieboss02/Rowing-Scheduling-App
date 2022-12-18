@@ -109,6 +109,11 @@ public class TestUserRepository implements UserRepository {
   }
 
   @Override
+  public void deleteInBatch( Iterable<User> entities ) {
+
+  }
+
+  @Override
   public <S extends User> List<S> saveAllAndFlush(Iterable<S> entities) {
     return null;
   }
@@ -134,7 +139,7 @@ public class TestUserRepository implements UserRepository {
   }
 
   @Override
-  public User getById(Long aLong) {
+  public User getById( Long aLong ) {
     return null;
   }
 

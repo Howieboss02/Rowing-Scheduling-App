@@ -1,8 +1,6 @@
 package nl.tudelft.sem.template.shared.enities;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import nl.tudelft.sem.template.shared.converters.PositionsToFIllListConverter;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.enums.Certificate;
@@ -12,7 +10,8 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "event")
 @AllArgsConstructor
@@ -43,21 +42,18 @@ public class Event {
     @Column(name = "certificate", nullable = false)
     private Certificate certificate;
 
-    private boolean isCompetitive;
-
     private EventType type;
 
     @Column(name = "organisation")
     private String organisation;
 
-    public Event(Long owningUser, String label, List<Position> positions, String startTime, String endTime, Certificate certificate, boolean isCompetitive, EventType type, String organisation) throws IllegalArgumentException{
+    public Event(Long owningUser, String label, List<Position> positions, String startTime, String endTime, Certificate certificate, EventType type, String organisation) throws IllegalArgumentException{
         this.owningUser = owningUser;
         this.label = label;
         this.positions = positions;
         this.startTime = startTime;
         this.endTime = endTime;
         this.certificate = certificate;
-        this.isCompetitive = isCompetitive;
         this.type = type;
         this.organisation = organisation;
     }

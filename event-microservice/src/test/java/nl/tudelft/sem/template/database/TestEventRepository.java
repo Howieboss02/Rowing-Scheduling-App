@@ -2,6 +2,8 @@ package nl.tudelft.sem.template.database;
 
 
 import nl.tudelft.sem.template.shared.enities.Event;
+import nl.tudelft.sem.template.shared.enums.Certificate;
+import nl.tudelft.sem.template.shared.enums.EventType;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -151,5 +153,15 @@ public class TestEventRepository implements EventRepository{
     @Override
     public <S extends Event> boolean exists(Example<S> example) {
         return false;
+    }
+
+    @Override
+    public List<Event> findMatchingTrainings( Certificate certificate, Long id , EventType et ) {
+        return null;
+    }
+
+    @Override
+    public List<Event> findMatchingCompetitions( Certificate certificate, String organization, Long id, EventType competition ) {
+        return null;
     }
 }

@@ -4,12 +4,14 @@ import javassist.NotFoundException;
 import nl.tudelft.sem.template.database.EventRepository;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.enities.Event;
+import nl.tudelft.sem.template.shared.enities.User;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,11 +51,10 @@ public class EventService {
         }
     }
 
-    public Optional<Event> updateById( Long userId, Long eventId, String label, List<Position> positions, String startTime, String endTime, Certificate certificate, boolean isCompetitive, EventType type, String organisation, boolean editCompetition ) {
+    public Optional<Event> updateById( Long userId, Long eventId, String label, List<Position> positions, String startTime, String endTime, Certificate certificate, EventType type, String organisation, boolean editCompetition ) {
         Optional<Event> toUpdate = getById(eventId);
         if(toUpdate.isPresent()){
             if(toUpdate.get().getOwningUser() != userId){
-                System.out.println(toUpdate.get().getOwningUser() + " " + userId);
                 return Optional.empty();
             }
             if(label != null)
@@ -68,8 +69,6 @@ public class EventService {
                 toUpdate.get().setType(type);
             if(organisation != null)
                 toUpdate.get().setOrganisation(organisation);
-            if(editCompetition == true)
-                toUpdate.get().setCompetitive(isCompetitive);
             if(positions != null)
                 toUpdate.get().setPositions(positions);
             eventRepo.save(toUpdate.get());
@@ -78,4 +77,27 @@ public class EventService {
     }
 
 
+    public List<Event> getMatchedEvents( User user ) {
+        List<Event> e1 = eventRepo.findMatchingTrainings(user.getCertificate(), user.getId(), EventType.TRAINING );
+        List<Event> e2 = eventRepo.findMatchingCompetitions(user.getCertificate(), user.getOrganization(), user.getId(), EventType.COMPETITION);
+        List<Event> matchedEvents = new ArrayList<>();
+        List<Position> positions = user.getPositions();
+        for(Event e: e1){
+            for(Position p: positions){
+                if(e.getPositions().contains(p)){
+                    matchedEvents.add(e);
+                    break;
+                }
+            }
+        }
+        for(Event e: e2){
+            for(Position p: positions){
+                if(e.getPositions().contains(p)){
+                    matchedEvents.add(e);
+                    break;
+                }
+            }
+        }
+        return matchedEvents;
+    }
 }

@@ -6,6 +6,7 @@ import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import nl.tudelft.sem.template.shared.converters.PositionsToFIllListConverter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -25,15 +26,15 @@ public class User {
   @Column(name = "id", nullable = false)
   private Long id;
 
-  private String name;
-  private String organization;
-  private String email;
-  private String gender;
-  private Certificate certificate;
+  @Getter private String name;
+  @Getter private String organization;
+  @Getter private String email;
+  @Getter private String gender;
+  @Getter private Certificate certificate;
 
   @Column
   @Convert(converter = PositionsToFIllListConverter.class)
-  private List<Position> positions;
+  @Getter private List<Position> positions;
 
   @Column
   @ElementCollection(targetClass = String.class)

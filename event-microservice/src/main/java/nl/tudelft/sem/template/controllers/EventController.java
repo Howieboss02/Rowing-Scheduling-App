@@ -4,6 +4,7 @@ import nl.tudelft.sem.template.services.EventService;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.enities.Event;
 import nl.tudelft.sem.template.shared.enities.EventModel;
+import nl.tudelft.sem.template.shared.enities.User;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,11 @@ public class EventController {
         return eventService.getAllEvents();
     }
 
+    @GetMapping("/matchEvents")
+    public List<Event> matchEvents( @RequestBody User user ){
+        return eventService.getMatchedEvents(user);
+    }
+
     @PostMapping("/register")
     public ResponseEntity<Event> registerNewEvent( @RequestBody EventModel eventModel ) throws Exception{
         Event receivedEvent;
@@ -39,7 +45,6 @@ public class EventController {
                     eventModel.getStartTime(),
                     eventModel.getEndTime(),
                     eventModel.getCertificate(),
-                    eventModel.isCompetitive(),
                     eventModel.getType(),
                     eventModel.getOrganisation());
             receivedEvent = eventService.insert(event);
@@ -63,7 +68,7 @@ public class EventController {
     public ResponseEntity<?> updateEvent( @PathVariable("eventId") Long eventId,
                                           @RequestBody EventModel eventModel,
                                           @RequestParam("editCompetition") boolean editCompetition){
-        Optional<Event> returned = eventService.updateById(eventModel.getOwningUser(), eventId, eventModel.getLabel(), eventModel.getPositions(), eventModel.getStartTime(), eventModel.getEndTime(), eventModel.getCertificate(), eventModel.isCompetitive(), eventModel.getType(), eventModel.getOrganisation(), editCompetition);
+        Optional<Event> returned = eventService.updateById(eventModel.getOwningUser(), eventId, eventModel.getLabel(), eventModel.getPositions(), eventModel.getStartTime(), eventModel.getEndTime(), eventModel.getCertificate(), eventModel.getType(), eventModel.getOrganisation(), editCompetition);
         if(returned.isEmpty()){
             return ResponseEntity.badRequest().build();
         }else {
