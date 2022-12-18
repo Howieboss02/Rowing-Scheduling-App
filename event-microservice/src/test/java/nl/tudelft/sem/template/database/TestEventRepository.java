@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.database;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.shared.entities.Event;
@@ -15,9 +16,22 @@ import org.springframework.data.domain.Sort;
  */
 public class TestEventRepository implements EventRepository {
 
+    public final transient List<Event> events = new ArrayList<>();
+    public final transient List<String> used = new ArrayList<>();
+
+    /**
+     * Adds a called method to the used list.
+     *
+     * @param s the name of the method
+     */
+    public void call(String s) {
+        used.add(s);
+    }
+
     @Override
     public List<Event> findAll() {
-        return null;
+        call("findAll");
+        return events;
     }
 
     @Override
@@ -52,7 +66,8 @@ public class TestEventRepository implements EventRepository {
 
     @Override
     public long count() {
-        return 0;
+        call("count");
+        return events.size();
     }
 
     @Override
@@ -62,12 +77,14 @@ public class TestEventRepository implements EventRepository {
 
     @Override
     public void deleteById(Long id) {
-
+        call("deleteById");
+        events.remove(id);
     }
 
     @Override
     public void delete(Event entity) {
-
+        call("delete");
+        events.remove(entity);
     }
 
     @Override
@@ -82,7 +99,10 @@ public class TestEventRepository implements EventRepository {
 
     @Override
     public <S extends Event> S save(S entity) {
-        return null;
+        call("save");
+        entity.setId((long) events.size());
+        events.add(entity);
+        return entity;
     }
 
     @Override
