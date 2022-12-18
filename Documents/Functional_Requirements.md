@@ -24,3 +24,4 @@ After being presented with the scenario, the team has made a priority list for e
 ### 4.     WON’T HAVES:
 -   The platform won’t have a GUI
 -   The platform won’t have a certification validation/verification
+
