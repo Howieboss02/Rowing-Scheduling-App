@@ -3,12 +3,18 @@ plugins {
     id 'org.springframework.boot' version '2.3.5.RELEASE'
     id 'io.spring.dependency-management' version '1.0.10.RELEASE'
     id 'java'
+    // Test coverage
+    id 'jacoco'
+
     // Code style
-    /*id 'checkstyle'*/
+    id 'checkstyle'
+
 
     // PMD
-    /* id 'pmd'*/
+    id 'pmd'
 
+    // PITest
+    id 'info.solidsoft.pitest' version '1.5.2'
 }
 
 bootJar {
@@ -47,7 +53,6 @@ dependencies {
 
 
     // Local test nl.tudelft.sem.template.database (in-memory)
-    implementation 'com.h2database:h2'
     developmentOnly 'org.hibernate:hibernate-entitymanager'
 
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
@@ -60,24 +65,58 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    jacoco {
+        enabled = true
+        includes = ['nl.tudelft.sem.template.*']
+        excludes = []
+    }
 }
 
 repositories {
     mavenCentral()
 }
 
+jacocoTestCoverageVerification() {
+    dependsOn test
+    violationRules {
+        rule {
+            enabled = true
+            element = 'CLASS'
+            includes = ['nl.tudelft.sem.template.*']
 
-/*checkstyle {
+            limit {
+                counter = 'BRANCH'
+                value = 'COVEREDRATIO'
+                minimum = 0.1
+            }
+        }
+    }
+}
+
+
+checkstyle {
     toolVersion "8.37"
     configFile = file("${rootDir}/config/checkstyle/checkstyle.xml")
     ignoreFailures = false
     maxErrors = 0
     maxWarnings = 0
-}*/
+}
 
-/*pmd {
+pmd {
     incrementalAnalysis = true
     sourceSets = [sourceSets.main]
-}*/
+}
+
+apply plugin: 'info.solidsoft.pitest'
+pitest {
+    //adds dependency to org.pitest:pitest-junit5-plugin and sets "testPlugin" to "junit5"
+    junit5PluginVersion = '0.12'
+
+    targetClasses = ['nl.tudelft.sem.template.*']  //by default "${project.group}.*"
+    pitestVersion = '1.5.1' //not needed when a default PIT version should be used
+    threads = 4
+    outputFormats = ['XML', 'HTML']
+    timestampedReports = false
+}
 
 
