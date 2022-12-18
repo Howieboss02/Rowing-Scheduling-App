@@ -1,4 +1,6 @@
-import nl.tudelft.sem.template.shared.enities.*;
+import nl.tudelft.sem.template.EmailStrategy;
+import nl.tudelft.sem.template.Notification;
+import nl.tudelft.sem.template.shared.entities.*;
 import nl.tudelft.sem.template.shared.enums.*;
 import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
@@ -6,7 +8,7 @@ import java.util.ArrayList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 public class EmailStrategyTest {
   public User user = new User(1L, "Bob", "Bob@b.ob");
-  public Event event = new Event(1L, 1L, "Training 1", new ArrayList<>(), "12:00", "14:00", Certificate.B1, true, EventType.TRAINING);
+  public Event event = new Event(1L, 1L, "Training 1", new ArrayList<>(), "12:00", "14:00", Certificate.B1, true, EventType.TRAINING, "Bob's camp");
 
   @Test
   public void testEmailAccepted() {

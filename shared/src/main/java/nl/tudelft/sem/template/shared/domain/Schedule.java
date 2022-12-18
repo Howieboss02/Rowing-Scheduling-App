@@ -1,31 +1,30 @@
 package nl.tudelft.sem.template.shared.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 @AllArgsConstructor
 @Data
 public class Schedule {
     /**
-     * List of recurring slots
+     * List of recurring slots.
      */
     private List<TimeSlot> recurringSlots;
     /**
-     * Recurring slots that were removed for a specific week
+     * Recurring slots that were removed for a specific week.
      */
     private List<TimeSlot> removedSlots;
     /**
-     * Slots that were added for a specific week
+     * Slots that were added for a specific week.
      */
     private List<TimeSlot> addedSlots;
 
     /**
-     * Empty constructor for the Schedule class
+     * Empty constructor for the Schedule class.
      */
     public Schedule() {
         recurringSlots = new ArrayList<>();
@@ -34,7 +33,8 @@ public class Schedule {
     }
 
     /**
-     * Add a recurring slot
+     * Add a recurring slot.
+     *
      * @param slot the slot to add
      */
     public void addRecurringSlot(TimeSlot slot) {
@@ -42,7 +42,8 @@ public class Schedule {
     }
 
     /**
-     * Removes slot from the recurring slots for a specific week
+     * Removes slot from the recurring slots for a specific week.
+     *
      * @param slot the time slot that should be temporarily removed
      */
     public void removeSlot(TimeSlot slot) {
@@ -54,7 +55,17 @@ public class Schedule {
     }
 
     /**
-     * Adds a slot that is not recurring for a specific week
+     * Remove a recurring slot.
+     *
+     * @param slot the slot to remove
+     */
+    public void removeRecurringSlot(TimeSlot slot) {
+        recurringSlots.remove(slot);
+    }
+
+    /**
+     * Adds a slot that is not recurring for a specific week.
+     *
      * @param slot the time slot that should be temporarily added
      */
     public void addSlot(TimeSlot slot) {
@@ -67,7 +78,8 @@ public class Schedule {
 
     /**
      * Remove added/removed slots from lists that are older
-     * than the current week
+     * than the current week.
+     *
      * @param currentWeek the current week
      */
     public void cleanSlots(int currentWeek) {

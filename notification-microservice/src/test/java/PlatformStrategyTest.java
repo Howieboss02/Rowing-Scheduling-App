@@ -1,4 +1,6 @@
-import nl.tudelft.sem.template.shared.enities.*;
+import nl.tudelft.sem.template.Notification;
+import nl.tudelft.sem.template.PlatformStrategy;
+import nl.tudelft.sem.template.shared.entities.*;
 import nl.tudelft.sem.template.shared.enums.*;
 import org.junit.jupiter.api.Test;
 
@@ -9,7 +11,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class PlatformStrategyTest {
 
   public User user = new User(1L, "Bob", "Bob@b.ob");
-  public Event event = new Event(1L, 1L, "Training 1", new ArrayList<>(),"12:00", "14:00", Certificate.B1, true, EventType.TRAINING);
+  public Event event = new Event(1L, 1L, "Training 1", new ArrayList<>(),"12:00", "14:00", Certificate.B1, true, EventType.TRAINING, "Bob's camp");
 
   @Test
   public void testPlatformAccepted(){

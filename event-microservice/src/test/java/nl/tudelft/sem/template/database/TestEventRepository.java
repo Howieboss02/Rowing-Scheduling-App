@@ -1,21 +1,19 @@
 package nl.tudelft.sem.template.database;
 
-
-import nl.tudelft.sem.template.shared.enities.Event;
+import java.util.List;
+import java.util.Optional;
+import nl.tudelft.sem.template.shared.entities.Event;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * This class will be used to test the EventRepository.
  * But I don't know if we should test all those methods since they are implemented by JPA.
  * I think we should only test the methods we implemented ourselves.
  */
-public class TestEventRepository implements EventRepository{
+public class TestEventRepository implements EventRepository {
 
     @Override
     public List<Event> findAll() {
@@ -93,20 +91,9 @@ public class TestEventRepository implements EventRepository{
     }
 
     @Override
-    public void deleteInBatch( Iterable<Event> entities ) {
+    public void deleteInBatch(Iterable<Event> entities) {
 
     }
-
-
-//    @Override
-//    public void deleteAllInBatch(Iterable<Event> entities) {
-//
-//    }
-//
-//    @Override
-//    public void deleteAllByIdInBatch(Iterable<Long> longs) {
-//
-//    }
 
     @Override
     public void deleteAllInBatch() {
@@ -117,11 +104,6 @@ public class TestEventRepository implements EventRepository{
     public Event getOne(Long aLong) {
         return null;
     }
-
-//    @Override
-//    public Event getById(Long aLong) {
-//        return null;
-//    }
 
     @Override
     public <S extends Event> Optional<S> findOne(Example<S> example) {
