@@ -3,7 +3,6 @@ package nl.tudelft.sem.template.shared.entities;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
-
 import lombok.*;
 import nl.tudelft.sem.template.shared.converters.PositionsToFillListConverter;
 import nl.tudelft.sem.template.shared.domain.Position;
