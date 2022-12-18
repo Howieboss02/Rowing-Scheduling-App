@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(path = "api/user")
 public class UserController {
 
+    private static final String uid = "userId";
     private final transient UserService userService;
 
 
@@ -41,7 +42,7 @@ public class UserController {
      * @return a list of notifications
      */
     @GetMapping(path = "getNotifications/{ userId }")
-    public ResponseEntity<List<String>> getNotifications(@PathVariable("userId") Long id) {
+    public ResponseEntity<List<String>> getNotifications(@PathVariable(uid) Long id) {
         if (userService.getNotifications(id).isEmpty()) {
             return ResponseEntity.badRequest().build();
         } else {
@@ -71,7 +72,7 @@ public class UserController {
      * @return a confirmation of deleting it
      */
     @DeleteMapping(path = "{userId}")
-    public ResponseEntity<?> deleteUser(@PathVariable("userId") Long userId) {
+    public ResponseEntity<?> deleteUser(@PathVariable(uid) Long userId) {
         if (!userService.deleteById(userId)) {
             return ResponseEntity.badRequest().build();
         }
@@ -82,7 +83,7 @@ public class UserController {
      * Update everything about a user at once by giving all possible parameters.
      */
     @PutMapping(path = "{userId}")
-    public ResponseEntity<?> updateUser(@PathVariable("userId") Long userId,
+    public ResponseEntity<?> updateUser(@PathVariable(uid) Long userId,
                                         @RequestParam(required = false) String name,
                                         @RequestParam(required = false) String organization,
                                         @RequestParam(required = false) String email,
@@ -101,7 +102,7 @@ public class UserController {
      * Update the user's name.
      */
     @PutMapping(path = "/name/{userId}")
-    public ResponseEntity<?> setName(@PathVariable("userId") Long userId,
+    public ResponseEntity<?> setName(@PathVariable(uid) Long userId,
                                      @RequestParam(required = false) String name
     ) {
         if (userService.setName(userId, name).isEmpty()) {
@@ -114,7 +115,7 @@ public class UserController {
      * Update the user's organization.
      */
     @PutMapping(path = "/organization/{userId}")
-    public ResponseEntity<?> setOrganization(@PathVariable("userId") Long userId,
+    public ResponseEntity<?> setOrganization(@PathVariable(uid) Long userId,
                                              @RequestParam(required = false) String organization
     ) {
         if (userService.setOrganization(userId, organization).isEmpty()) {
@@ -128,7 +129,7 @@ public class UserController {
      * Update the user's gender.
      */
     @PutMapping(path = "/gender/{userId}")
-    public ResponseEntity<?> setGender(@PathVariable("userId") Long userId,
+    public ResponseEntity<?> setGender(@PathVariable(uid) Long userId,
                                        @RequestParam(required = false) String gender
     ) {
         if (userService.setGender(userId, gender).isEmpty()) {
@@ -141,7 +142,7 @@ public class UserController {
      * Update the user's certificate.
      */
     @PutMapping(path = "/certificate/{userId}")
-    public ResponseEntity<?> setCertificate(@PathVariable("userId") Long userId,
+    public ResponseEntity<?> setCertificate(@PathVariable(uid) Long userId,
                                             @RequestParam(required = false) Certificate certificate
     ) {
         if (userService.setCertificate(userId, certificate).isEmpty()) {
@@ -154,7 +155,7 @@ public class UserController {
      * Update the user's positions.
      */
     @PutMapping(path = "/positions/{userId}")
-    public ResponseEntity<?> setPositions(@PathVariable("userId") Long userId,
+    public ResponseEntity<?> setPositions(@PathVariable(uid) Long userId,
                                           @RequestParam(required = false) List<Position> positions
     ) {
         if (userService.setPositions(userId, positions).isEmpty()) {
@@ -167,7 +168,7 @@ public class UserController {
      * Add a notification to the user's list of notifications.
      */
     @PutMapping(path = "/notification/{userId}")
-    public ResponseEntity<?> addNotification(@PathVariable("userId") Long userId,
+    public ResponseEntity<?> addNotification(@PathVariable(uid) Long userId,
                                              @RequestParam(required = false) String notification
     ) {
         if (userService.addNotification(userId, notification).isEmpty()) {
@@ -180,7 +181,7 @@ public class UserController {
      * Add a recurring timeslot (day of the week + time) to the user's schedule.
      */
     @PutMapping(path = "/schedule/add/{userId}")
-    public ResponseEntity<?> addRecurringTimeSlot(@PathVariable("userId") Long userId,
+    public ResponseEntity<?> addRecurringTimeSlot(@PathVariable(uid) Long userId,
                                                   @RequestParam(required = false) Day day,
                                                   @RequestParam(required = false) Pair<Integer, Integer> time
     ) {
@@ -194,7 +195,7 @@ public class UserController {
      * Remove a recurring timeslot (day of the week + time) from the user's schedule.
      */
     @PutMapping(path = "/schedule/remove/{userId}")
-    public ResponseEntity<?> removeRecurringTimeSlot(@PathVariable("userId") Long userId,
+    public ResponseEntity<?> removeRecurringTimeSlot(@PathVariable(uid) Long userId,
                                                      @RequestParam(required = false) Day day,
                                                      @RequestParam(required = false) Pair<Integer, Integer> time
     ) {
@@ -208,7 +209,7 @@ public class UserController {
      * Include a one-time-only timeslot in the user schedule.
      */
     @PutMapping(path = "/schedule/include/{userId}")
-    public ResponseEntity<?> addTimeSlot(@PathVariable("userId") Long userId,
+    public ResponseEntity<?> addTimeSlot(@PathVariable(uid) Long userId,
                                          @RequestParam(required = false) TimeSlot timeslot
     ) {
         if (userService.addTimeSlot(userId, timeslot).isEmpty()) {
@@ -221,7 +222,7 @@ public class UserController {
      * Exclude one instance of a timeslot from the user's schedule.
      */
     @PutMapping(path = "/schedule/exclude/{userId}")
-    public ResponseEntity<?> removeTimeSlot(@PathVariable("userId") Long userId,
+    public ResponseEntity<?> removeTimeSlot(@PathVariable(uid) Long userId,
                                             @RequestParam(required = false) TimeSlot timeslot
     ) {
         if (userService.removeTimeSlot(userId, timeslot).isEmpty()) {
