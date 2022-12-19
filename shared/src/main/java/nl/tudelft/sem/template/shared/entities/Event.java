@@ -84,11 +84,11 @@ public class Event {
         positions.remove(position);
     }
 
-    public void enqueue(User user){
+    public void enqueue(User user) {
         queue.add(user);
     }
 
-    public void dequeue(User user){
+    public void dequeue(User user) {
         queue.remove(user);
     }
 

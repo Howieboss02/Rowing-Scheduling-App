@@ -37,10 +37,18 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    /**
+     * GET API for getting a specific user.
+     *
+     * @param id the id of the user we are looking for
+     * @return the respective user
+     */
     @GetMapping("/{userId}")
-    public ResponseEntity<User> getUser(@PathVariable("userId") Long id){
+    public ResponseEntity<User> getUser(@PathVariable("userId") Long id) {
         Optional<User> user = userService.getById(id);
-        if(user.isEmpty()) return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        if (user.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         return ResponseEntity.ok(user.get());
     }
 
