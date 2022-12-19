@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.database;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import nl.tudelft.sem.template.shared.entities.User;
 import org.springframework.data.domain.Example;
@@ -54,7 +55,7 @@ public class TestUserRepository implements UserRepository {
     @Override
     public void deleteById(Long aLong) {
         call("deleteById");
-        users.remove(aLong);
+        users.removeIf(user -> user.getId().equals(aLong));
     }
 
     @Override
@@ -76,7 +77,11 @@ public class TestUserRepository implements UserRepository {
     @Override
     public <S extends User> S save(S entity) {
         call("save");
-        entity.setId((long) users.size());
+        entity.setId((long) (users.size() + 1));
+        Optional<User> user = users.stream().filter(x -> x.equals(entity)).findFirst();
+        if (user.isPresent()) {
+            users.remove(user);
+        }
         users.add(entity);
         return entity;
     }
@@ -88,11 +93,21 @@ public class TestUserRepository implements UserRepository {
 
     @Override
     public Optional<User> findById(Long aLong) {
+        for(User user : users){
+            if(Objects.equals(user.getId(), aLong)) {
+                return Optional.of(user);
+            }
+        }
         return Optional.empty();
     }
 
     @Override
     public boolean existsById(Long aLong) {
+        for(User user : users){
+            if(Objects.equals(user.getId(), aLong)) {
+                return true;
+            }
+        }
         return false;
     }
 
