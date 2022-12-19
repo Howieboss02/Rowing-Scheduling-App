@@ -14,7 +14,6 @@ import nl.tudelft.sem.template.shared.enums.EventType;
 import nl.tudelft.sem.template.shared.enums.PositionName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
 
 public class EventControllerTest {
 
@@ -107,7 +106,7 @@ public class EventControllerTest {
     public void getAllTest() {
         try {
             sut.registerNewEvent(getEventModel("B", 1L, Certificate.B5, EventType.COMPETITION));
-            sut.registerNewEvent(getEventModel("A", 2L, Certificate.B2, EventType.COMPETITION));
+            sut.registerNewEvent(getEventModel("A", 2L, Certificate.B2, EventType.TRAINING));
             assertEquals(sut.getEvents().size(), 2);
         } catch (Exception e) {
             e.printStackTrace();
