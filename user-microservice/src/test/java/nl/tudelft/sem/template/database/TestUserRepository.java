@@ -77,12 +77,17 @@ public class TestUserRepository implements UserRepository {
     @Override
     public <S extends User> S save(S entity) {
         call("save");
-        entity.setId((long) (users.size() + 1));
+
         Optional<User> user = users.stream().filter(x -> x.equals(entity)).findFirst();
         if (user.isPresent()) {
+            Long id = user.get().getId();
             users.remove(user);
+            entity.setId(id);
+            users.add(entity);
+        } else {
+            entity.setId((long) (users.size() + 1));
+            users.add(entity);
         }
-        users.add(entity);
         return entity;
     }
 
@@ -93,8 +98,8 @@ public class TestUserRepository implements UserRepository {
 
     @Override
     public Optional<User> findById(Long aLong) {
-        for(User user : users){
-            if(Objects.equals(user.getId(), aLong)) {
+        for (User user : users) {
+            if (Objects.equals(user.getId(), aLong)) {
                 return Optional.of(user);
             }
         }
@@ -103,8 +108,8 @@ public class TestUserRepository implements UserRepository {
 
     @Override
     public boolean existsById(Long aLong) {
-        for(User user : users){
-            if(Objects.equals(user.getId(), aLong)) {
+        for (User user : users) {
+            if (Objects.equals(user.getId(), aLong)) {
                 return true;
             }
         }
