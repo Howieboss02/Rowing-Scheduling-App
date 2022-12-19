@@ -7,11 +7,8 @@ import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.EventModel;
 import nl.tudelft.sem.template.shared.entities.User;
-<<<<<<< event-microservice/src/main/java/nl/tudelft/sem/template/controllers/EventController.java
-=======
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
->>>>>>> event-microservice/src/main/java/nl/tudelft/sem/template/controllers/EventController.java
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.annotation.Transient;
 import org.springframework.http.HttpStatus;
@@ -19,10 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
-<<<<<<< event-microservice/src/main/java/nl/tudelft/sem/template/controllers/EventController.java
 import reactor.core.publisher.Mono;
-=======
->>>>>>> event-microservice/src/main/java/nl/tudelft/sem/template/controllers/EventController.java
 
 @RestController
 public class EventController {
@@ -105,39 +99,21 @@ public class EventController {
      *
      * @param eventId the event's id
      * @param eventModel a dummy-like event object
-     * @param editCompetition whether we need to also update the level of competitiveness
      * @return the newly updated event
-     */
-    @PutMapping("/{eventId}")
-    public ResponseEntity<?> updateEvent(@PathVariable("eventId") Long eventId,
-                                          @RequestBody EventModel eventModel,
-                                          @RequestParam("editCompetition") boolean editCompetition) {
-        Optional<Event> returned = eventService.updateById(eventModel.getOwningUser(), eventId, eventModel.getLabel(),
-            eventModel.getPositions(), eventModel.getStartTime(), eventModel.getEndTime(), eventModel.getCertificate(),
-            eventModel.isCompetitive(), eventModel.getType(), eventModel.getOrganisation(), editCompetition);
-
-        if (returned.isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        } else {
-    
-    /**
-     * Edit an event by id.
-     *
-     * @param eventId id of the event to edit
-     * @return response entity
      */
     @PutMapping("edit/{eventId}")
     public ResponseEntity<?> updateEvent(@PathVariable("eventId") Long eventId,
                                          @RequestBody EventModel eventModel) {
         Optional<Event> returned = eventService.updateById(eventModel.getOwningUser(), eventId, eventModel.getLabel(),
-                eventModel.getPositions(), eventModel.getStartTime(), eventModel.getEndTime(),
-                eventModel.getCertificate(), eventModel.getType(), eventModel.getOrganisation());
+            eventModel.getPositions(), eventModel.getStartTime(), eventModel.getEndTime(),
+            eventModel.getCertificate(), eventModel.getType(), eventModel.getOrganisation());
         if (!returned.isPresent()) {
             return ResponseEntity.ok(returned.get());
         } else {
             return ResponseEntity.badRequest().build();
         }
     }
+
 
     /**
      * PUT API for enqueueing a user to an event.

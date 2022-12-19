@@ -40,13 +40,12 @@ public class EventControllerTest {
      *
      * @param s a string to be used
      * @param l a long to be used
-     * @param b a boolean to be used
      * @param c a certificate needed
      * @param t the type of event
      * @return a new event
      */
-    private static Event getEvent(String s, Long l, boolean b, Certificate c, EventType t) {
-        return new Event(l, s, createPositions(), s, s, c, b, t, s);
+    private static Event getEvent(String s, Long l, Certificate c, EventType t) {
+        return new Event(l, s, createPositions(), s, s, c, t, s);
     }
 
     /**
@@ -54,13 +53,12 @@ public class EventControllerTest {
      *
      * @param s a string needed
      * @param l a long needed
-     * @param b a boolean needed
      * @param c a certificate
      * @param t an event type
      * @return a new event model
      */
-    private static EventModel getEventModel(String s, Long l, boolean b, Certificate c, EventType t) {
-        return new EventModel(l, s, createPositions(), s, s, c, b, t, s);
+    private static EventModel getEventModel(String s, Long l, Certificate c, EventType t) {
+        return new EventModel(l, s, createPositions(), s, s, c, t, s);
     }
 
     /**
@@ -78,7 +76,7 @@ public class EventControllerTest {
     @Test
     public void addEventTest() {
         try {
-            var actual = sut.registerNewEvent(getEventModel("A", 1L, true, Certificate.B2, EventType.COMPETITION));
+            var actual = sut.registerNewEvent(getEventModel("A", 1L, Certificate.B2, EventType.COMPETITION));
             assertEquals(actual.getBody().getId(), 1);
             assertEquals(actual.getBody().getLabel(), "A");
             assertEquals(actual.getBody().getCertificate(), Certificate.B2);
@@ -108,8 +106,8 @@ public class EventControllerTest {
     @Test
     public void getAllTest() {
         try {
-            sut.registerNewEvent(getEventModel("B", 1L, false, Certificate.B5, EventType.COMPETITION));
-            sut.registerNewEvent(getEventModel("A", 2L, true, Certificate.B2, EventType.COMPETITION));
+            sut.registerNewEvent(getEventModel("B", 1L, Certificate.B5, EventType.COMPETITION));
+            sut.registerNewEvent(getEventModel("A", 2L, Certificate.B2, EventType.COMPETITION));
             assertEquals(sut.getEvents().size(), 2);
         } catch (Exception e) {
             e.printStackTrace();
@@ -122,11 +120,11 @@ public class EventControllerTest {
     @Test
     public void deleteTest() {
         try {
-            sut.registerNewEvent(getEventModel("B", 1L, false, Certificate.B5, EventType.COMPETITION));
-            sut.registerNewEvent(getEventModel("A", 2L, true, Certificate.B2, EventType.COMPETITION));
+            sut.registerNewEvent(getEventModel("B", 1L, Certificate.B5, EventType.COMPETITION));
+            sut.registerNewEvent(getEventModel("A", 2L, Certificate.B2, EventType.COMPETITION));
             assertEquals(sut.getEvents().size(), 2);
 
-            Event ev = getEvent("B", 1L, false, Certificate.B5, EventType.COMPETITION);
+            Event ev = getEvent("B", 1L, Certificate.B5, EventType.COMPETITION);
             assertEquals(sut.deleteEvent(1L), ev);
             assertEquals(sut.getEvents().size(), 1);
 
@@ -141,9 +139,9 @@ public class EventControllerTest {
     @Test
     public void updateTest() {
         try {
-            Event ev = getEvent("B", 1L, false, Certificate.B5, EventType.COMPETITION);
-            sut.registerNewEvent(getEventModel("A", 2L, true, Certificate.B2, EventType.COMPETITION));
-            sut.updateEvent(1L, getEventModel("B", 1L, false, Certificate.B5, EventType.COMPETITION), true);
+            Event ev = getEvent("B", 1L, Certificate.B5, EventType.COMPETITION);
+            sut.registerNewEvent(getEventModel("A", 2L, Certificate.B2, EventType.COMPETITION));
+            sut.updateEvent(1L, getEventModel("B", 1L, Certificate.B5, EventType.COMPETITION));
             assertEquals(sut.getEvents().get(0), ev);
         } catch (Exception e) {
             e.printStackTrace();
