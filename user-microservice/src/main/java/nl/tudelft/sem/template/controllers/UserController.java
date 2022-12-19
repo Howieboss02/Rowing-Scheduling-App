@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.controllers;
 
 import java.util.List;
+import java.util.Optional;
 import nl.tudelft.sem.template.services.UserService;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
@@ -9,6 +10,7 @@ import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.Day;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.util.Pair;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +35,36 @@ public class UserController {
     @GetMapping("/all")
     public List<User> getUsers() {
         return userService.getAllUsers();
+    }
+
+    /**
+     * GET API for getting a specific user.
+     *
+     * @param id the id of the user we are looking for
+     * @return the respective user
+     */
+    @GetMapping("/{userId}")
+    public ResponseEntity<User> getUser(@PathVariable("userId") Long id) {
+        Optional<User> user = userService.getById(id);
+        if (user.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(user.get());
+    }
+
+    /**
+     * API GET request to retrieve user ny the unique netId.
+     *
+     * @param name the netId of the user
+     * @return information about the user
+     */
+    @GetMapping("/name")
+    public ResponseEntity<User> getUserBynetId(@RequestBody String name) {
+        Optional<User> user = userService.getByNetId(name);
+        if (user.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(user.get());
     }
 
     /**
