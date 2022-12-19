@@ -26,11 +26,11 @@ public class EventControllerTest {
      *
      * @return the list fo positions needed for an event
      */
-    private static List<Position> createPositions() {
-        List<Position> list = new ArrayList<>();
-        list.add(new Position(PositionName.Cox, false));
-        list.add(new Position(PositionName.PortSideRower, false));
-        list.add(new Position(PositionName.PortSideRower, true));
+    private static List<PositionName> createPositions() {
+        List<PositionName> list = new ArrayList<>();
+        list.add(PositionName.Cox);
+        list.add(PositionName.PortSideRower);
+        list.add(PositionName.PortSideRower);
         return list;
     }
 
@@ -44,7 +44,7 @@ public class EventControllerTest {
      * @return a new event
      */
     private static Event getEvent(String s, Long l, Certificate c, EventType t) {
-        return new Event(l, s, createPositions(), s, s, c, t, s);
+        return new Event(l, s, createPositions(), s, s, c, t, false, s);
     }
 
     /**
@@ -57,7 +57,7 @@ public class EventControllerTest {
      * @return a new event model
      */
     private static EventModel getEventModel(String s, Long l, Certificate c, EventType t) {
-        return new EventModel(l, s, createPositions(), s, s, c, t, s);
+        return new EventModel(l, s, createPositions(), s, s, c, t, false, s);
     }
 
     /**

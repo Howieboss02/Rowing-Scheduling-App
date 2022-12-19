@@ -63,6 +63,7 @@ public class Event {
      * @param endTime the end time of the event
      * @param certificate the certificate that is required for the event
      * @param type the type of the event
+     * @param isCompetitive the competitiveness of the event
      * @param organisation the organisation that created the event
      * @throws IllegalArgumentException if any of the parameters are null
      */
