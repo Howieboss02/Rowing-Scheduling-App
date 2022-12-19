@@ -9,6 +9,7 @@ import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
+import nl.tudelft.sem.template.shared.enums.PositionName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +24,10 @@ public class EventService {
 
     public List<Event> getAllEvents() {
         return eventRepo.findAll();
+    }
+
+    public List<Event> getAllEventsByUser(Long userId) {
+        return eventRepo.findByOwningUser(userId);
     }
 
     /**
@@ -81,9 +86,9 @@ public class EventService {
      * @param organisation organisation of the event
      * @return the updated event
      */
-    public Optional<Event> updateById(Long userId, Long eventId, String label, List<Position> positions,
+    public Optional<Event> updateById(Long userId, Long eventId, String label, List<PositionName> positions,
                                       String startTime, String endTime, Certificate certificate,
-                                      EventType type, String organisation) {
+                                      EventType type, boolean isCompetitive, String organisation) {
         Optional<Event> toUpdate = getById(eventId);
         if (toUpdate.isPresent()) {
             if (!toUpdate.get().getOwningUser().equals(userId)) {
@@ -110,6 +115,10 @@ public class EventService {
                 toUpdate.get().setType(type);
             }
 
+            if (type != null) {
+                toUpdate.get().setCompetitive(isCompetitive);
+            }
+
             if (organisation != null) {
                 toUpdate.get().setOrganisation(organisation);
             }
@@ -133,11 +142,10 @@ public class EventService {
         List<Event> e2 = eventRepo.findMatchingCompetitions(user.getCertificate(), user.getOrganization(),
                                                             user.getId(), EventType.COMPETITION);
         List<Event> matchedEvents = new ArrayList<>();
-        List<Position> positions = new ArrayList<>();
-        positions.addAll(user.getPositions());
+        List<Position> positions = new ArrayList<>(user.getPositions());
         for (Event e : e1) {
             for (Position p : positions) {
-                if (e.getPositions().contains(p)) {
+                if (e.getPositions().contains(p.getName())) {
                     matchedEvents.add(e);
                     break;
                 }
@@ -145,7 +153,7 @@ public class EventService {
         }
         for (Event e : e2) {
             for (Position p : positions) {
-                if (e.getPositions().contains(p)) {
+                if (e.getPositions().contains(p.getName())) {
                     matchedEvents.add(e);
                     break;
                 }

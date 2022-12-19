@@ -6,13 +6,10 @@ import javax.persistence.*;
 import lombok.*;
 import nl.tudelft.sem.template.shared.converters.PositionsToFillListConverter;
 import nl.tudelft.sem.template.shared.converters.RequestConverter;
-import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
 import nl.tudelft.sem.template.shared.enums.PositionName;
-import org.springframework.data.util.Pair;
-
 
 @Getter
 @Setter
@@ -35,7 +32,7 @@ public class Event {
 
     @Column(name = "positions")
     @Convert(converter = PositionsToFillListConverter.class)
-    private List<Position> positions = new ArrayList<>();
+    private List<PositionName> positions = new ArrayList<>();
 
     @Column(name = "startTime", nullable = false)
     private String startTime;
@@ -47,6 +44,8 @@ public class Event {
     private Certificate certificate;
 
     private EventType type;
+
+    private boolean isCompetitive;
 
     @Column(name = "organisation")
     private String organisation;
@@ -67,9 +66,9 @@ public class Event {
      * @param organisation the organisation that created the event
      * @throws IllegalArgumentException if any of the parameters are null
      */
-    public Event(Long owningUser, String label, List<Position> positions, String startTime,
+    public Event(Long owningUser, String label, List<PositionName> positions, String startTime,
                  String endTime, Certificate certificate,
-                 EventType type, String organisation) throws IllegalArgumentException {
+                 EventType type, boolean isCompetitive, String organisation) throws IllegalArgumentException {
         this.owningUser = owningUser;
         this.label = label;
         this.positions = positions;
@@ -77,24 +76,25 @@ public class Event {
         this.endTime = endTime;
         this.certificate = certificate;
         this.type = type;
+        this.isCompetitive = isCompetitive;
         this.organisation = organisation;
         this.queue = new ArrayList<>();
     }
 
-    public void addPosition(Position position) {
+    public void addPosition(PositionName position) {
         positions.add(position);
     }
 
-    public void removePosition(Position position) {
-        positions.remove(position);
+    public boolean removePosition(PositionName position) {
+        return positions.remove(position);
     }
 
-    public void enqueue(String user, PositionName position) {
-        queue.add(new Request(user, position));
+    public boolean enqueue(String name, PositionName position) {
+        return queue.add(new Request(name, position));
     }
 
-    public void dequeue(Request request) {
-        queue.remove(request);
+    public boolean dequeue(Request request) {
+        return queue.remove(request);
     }
 
     /**
@@ -105,6 +105,5 @@ public class Event {
     public String messageConverter() {
         return getLabel() + " - " + getType() + " from " + getStartTime() + " until " + getEndTime() + ".\n";
     }
-
 }
 

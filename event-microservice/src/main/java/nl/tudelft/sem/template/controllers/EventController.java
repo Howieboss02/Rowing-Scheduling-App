@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.services.EventService;
 import nl.tudelft.sem.template.shared.domain.Position;
+import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.EventModel;
 import nl.tudelft.sem.template.shared.entities.User;
@@ -34,6 +35,11 @@ public class EventController {
     @GetMapping("/all")
     public List<Event> getEvents() {
         return eventService.getAllEvents();
+    }
+
+    @GetMapping("/ownedBy/{userId}")
+    public List<Event> getEventsByUser(@PathVariable("userId") Long userId) {
+        return eventService.getAllEventsByUser(userId);
     }
 
     /** matches suitable events with a user.
@@ -68,6 +74,7 @@ public class EventController {
                     eventModel.getEndTime(),
                     eventModel.getCertificate(),
                     eventModel.getType(),
+                    eventModel.isCompetitive(),
                     eventModel.getOrganisation());
             Event receivedEvent = eventService.insert(event);
             return ResponseEntity.ok(receivedEvent);
@@ -104,8 +111,8 @@ public class EventController {
                                          @RequestBody EventModel eventModel) {
         Optional<Event> returned = eventService.updateById(eventModel.getOwningUser(), eventId, eventModel.getLabel(),
             eventModel.getPositions(), eventModel.getStartTime(), eventModel.getEndTime(),
-            eventModel.getCertificate(), eventModel.getType(), eventModel.getOrganisation());
-        if (!returned.isPresent()) {
+            eventModel.getCertificate(), eventModel.getType(), eventModel.isCompetitive(), eventModel.getOrganisation());
+        if (returned.isPresent()) {
             return ResponseEntity.ok(returned.get());
         } else {
             return ResponseEntity.badRequest().build();
@@ -122,7 +129,7 @@ public class EventController {
      */
     @PutMapping("/enqueue/{eventId}/")
     public ResponseEntity<String> enqueue(@PathVariable("eventId") Long eventId, @RequestParam("userId") Long userId,
-                                          @RequestBody Position position) {
+                                          @RequestBody PositionName position) {
         Optional<Event> event = eventService.getById(eventId);
         if (event.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -136,7 +143,67 @@ public class EventController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         User user = response.block();
-        event.get().enqueue(user.getNetId(), position.getName());
+        event.get().enqueue(user.getNetId(), position);
         return ResponseEntity.ok("ENQUEUED");
+    }
+
+
+    /**
+     * PUT API for accepting a user into the event
+     *
+     * @param eventId the id of the event
+     * @param request the request should be accepted
+     * @return
+     */
+    @PutMapping("/accept/{eventId}")
+    public ResponseEntity<String> accept(@PathVariable("eventId") Long eventId,
+                                          @RequestBody Request request) {
+        Optional<Event> event = eventService.getById(eventId);
+        if (event.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        boolean processed = event.get().dequeue(request);
+        if (!processed) {
+            return ResponseEntity.badRequest().build(); // request doesn't exist
+        }
+        // if the request exists...
+        boolean positionFilled = event.get().removePosition(request.getPosition());
+
+        if(!positionFilled) {
+            return ResponseEntity.badRequest().build(); // position couldn't be filled
+        }
+
+        //send notification
+
+
+        return ResponseEntity.ok("ACCEPTED");
+
+    }
+
+    /**
+     * PUT API for rejecting a user who wants to join an event
+     *
+     * @param eventId the id of the event
+     * @param request the request should be rejected
+     * @return
+     */
+    @PutMapping("/reject/{eventId}")
+    public ResponseEntity<String> reject(@PathVariable("eventId") Long eventId,
+                                         @RequestBody Request request) {
+        Optional<Event> event = eventService.getById(eventId);
+        if (event.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        boolean processed = event.get().dequeue(request);
+        if (!processed) {
+            return ResponseEntity.badRequest().build(); // request doesn't exist
+        }
+
+        //send notification
+
+
+
+
+        return ResponseEntity.ok("REJECTED");
     }
 }
