@@ -16,7 +16,6 @@ public class EventModel {
     private String startTime;
     private String endTime;
     private Certificate certificate;
-    private boolean isCompetitive;
     private EventType type;
     private String organisation;
 

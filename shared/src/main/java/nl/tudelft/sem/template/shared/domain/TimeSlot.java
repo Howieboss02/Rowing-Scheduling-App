@@ -56,7 +56,6 @@ public class TimeSlot {
                 difference.add(new TimeSlot(week, day,
                         Pair.of(begin, slot.getTime().getFirst())));
             }
-
             begin = slot.getTime().getSecond();
         }
         if (begin < this.time.getSecond()) {

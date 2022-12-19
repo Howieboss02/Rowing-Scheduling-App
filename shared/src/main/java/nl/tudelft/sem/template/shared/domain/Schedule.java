@@ -1,11 +1,13 @@
 package nl.tudelft.sem.template.shared.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import nl.tudelft.sem.template.shared.converters.ScheduleConverter;
 
 @AllArgsConstructor
 @Data
@@ -42,16 +44,8 @@ public class Schedule {
     }
 
     /**
-     * Remove a recurring slot
-     * @param slot the slot to remove
-     */
-    public void removeRecurringSlot(TimeSlot slot) {
-        recurringSlots.remove(slot);
-    }
-
-
-    /**
-     * Removes slot from the recurring slots for a specific week
+     * Removes slot from the recurring slots for a specific week.
+     *
      * @param slot the time slot that should be temporarily removed
      */
     public void removeSlot(TimeSlot slot) {
@@ -60,6 +54,15 @@ public class Schedule {
                 recurringSlots.stream().filter(condition).collect(Collectors.toList())
         );
         removedSlots.addAll(toAdd);
+    }
+
+    /**
+     * Remove a recurring slot.
+     *
+     * @param slot the slot to remove
+     */
+    public void removeRecurringSlot(TimeSlot slot) {
+        recurringSlots.remove(slot);
     }
 
     /**

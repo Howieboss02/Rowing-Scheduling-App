@@ -1,16 +1,15 @@
 package converters;
 
+import static org.junit.jupiter.api.Assertions.*;
+
+import java.util.ArrayList;
+import java.util.List;
 import nl.tudelft.sem.template.shared.converters.ScheduleConverter;
 import nl.tudelft.sem.template.shared.domain.Schedule;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.enums.Day;
 import org.junit.jupiter.api.Test;
 import org.springframework.data.util.Pair;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class ScheduleConverterTest {
 

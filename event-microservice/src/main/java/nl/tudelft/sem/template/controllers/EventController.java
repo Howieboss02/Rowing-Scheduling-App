@@ -3,16 +3,26 @@ package nl.tudelft.sem.template.controllers;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.services.EventService;
+import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.EventModel;
 import nl.tudelft.sem.template.shared.entities.User;
+<<<<<<< event-microservice/src/main/java/nl/tudelft/sem/template/controllers/EventController.java
+=======
+import nl.tudelft.sem.template.shared.enums.Certificate;
+import nl.tudelft.sem.template.shared.enums.EventType;
+>>>>>>> event-microservice/src/main/java/nl/tudelft/sem/template/controllers/EventController.java
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.annotation.Transient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
+<<<<<<< event-microservice/src/main/java/nl/tudelft/sem/template/controllers/EventController.java
 import reactor.core.publisher.Mono;
+=======
+>>>>>>> event-microservice/src/main/java/nl/tudelft/sem/template/controllers/EventController.java
 
 @RestController
 public class EventController {
@@ -24,10 +34,29 @@ public class EventController {
         this.eventService = eventService;
     }
 
-
+    /**
+     * Get all events.
+     *
+     * @return List of events
+     */
     @GetMapping("/all")
     public List<Event> getEvents() {
         return eventService.getAllEvents();
+    }
+
+    /** matches suitable events with a user.
+     *
+     * @param user the user to match the events to
+     * @return the events that match the user
+     * @throws IllegalArgumentException if the user profile is not full
+     */
+    @GetMapping("/matchEvents")
+    public List<Event> matchEvents(@RequestBody User user) throws IllegalArgumentException {
+        if (user.getCertificate() == null || user.getPositions() == null || user.getPositions().size() == 0
+                || user.getCertificate() == null || user.getOrganization() == null) {
+            throw new IllegalArgumentException("Profile is not (fully) completed");
+        }
+        return eventService.getMatchedEvents(user);
     }
 
     /**
@@ -46,7 +75,6 @@ public class EventController {
                     eventModel.getStartTime(),
                     eventModel.getEndTime(),
                     eventModel.getCertificate(),
-                    eventModel.isCompetitive(),
                     eventModel.getType(),
                     eventModel.getOrganisation());
             Event receivedEvent = eventService.insert(event);
@@ -62,7 +90,7 @@ public class EventController {
      * @param eventId the event's id
      * @return an ok message if it goes right
      */
-    @DeleteMapping("/{eventId}")
+    @DeleteMapping("/delete/{eventId}")
     public ResponseEntity<?> deleteEvent(@PathVariable("eventId") Long eventId) {
         try {
             eventService.deleteById(eventId);
@@ -84,7 +112,6 @@ public class EventController {
     public ResponseEntity<?> updateEvent(@PathVariable("eventId") Long eventId,
                                           @RequestBody EventModel eventModel,
                                           @RequestParam("editCompetition") boolean editCompetition) {
-
         Optional<Event> returned = eventService.updateById(eventModel.getOwningUser(), eventId, eventModel.getLabel(),
             eventModel.getPositions(), eventModel.getStartTime(), eventModel.getEndTime(), eventModel.getCertificate(),
             eventModel.isCompetitive(), eventModel.getType(), eventModel.getOrganisation(), editCompetition);
@@ -92,7 +119,23 @@ public class EventController {
         if (returned.isEmpty()) {
             return ResponseEntity.badRequest().build();
         } else {
+    
+    /**
+     * Edit an event by id.
+     *
+     * @param eventId id of the event to edit
+     * @return response entity
+     */
+    @PutMapping("edit/{eventId}")
+    public ResponseEntity<?> updateEvent(@PathVariable("eventId") Long eventId,
+                                         @RequestBody EventModel eventModel) {
+        Optional<Event> returned = eventService.updateById(eventModel.getOwningUser(), eventId, eventModel.getLabel(),
+                eventModel.getPositions(), eventModel.getStartTime(), eventModel.getEndTime(),
+                eventModel.getCertificate(), eventModel.getType(), eventModel.getOrganisation());
+        if (!returned.isPresent()) {
             return ResponseEntity.ok(returned.get());
+        } else {
+            return ResponseEntity.badRequest().build();
         }
     }
 

@@ -1,15 +1,12 @@
 package event;
 
-
-import nl.tudelft.sem.template.shared.domain.Position;
-import nl.tudelft.sem.template.shared.enums.PositionName;
-import org.junit.jupiter.api.Test;
-
-import nl.tudelft.sem.template.shared.entities.Event;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import nl.tudelft.sem.template.shared.domain.Position;
+import nl.tudelft.sem.template.shared.entities.Event;
+import nl.tudelft.sem.template.shared.enums.PositionName;
+import org.junit.jupiter.api.Test;
 
 public class EventTest {
 
@@ -19,7 +16,7 @@ public class EventTest {
         e.addPosition(new Position(PositionName.Coach, false));
         assertNotNull(e.getPositions());
         Position p = e.getPositions().get(0);
-        assertEquals( PositionName.Coach, p.getName());
+        assertEquals(PositionName.Coach, p.getName());
     }
 
     @Test

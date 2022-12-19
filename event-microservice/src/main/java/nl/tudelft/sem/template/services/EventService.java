@@ -1,10 +1,12 @@
 package nl.tudelft.sem.template.services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.database.EventRepository;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.entities.Event;
+import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,24 +26,24 @@ public class EventService {
     }
 
     /**
-     * Query to insert events to the database.
+     * Insert an event into the database.
      *
-     * @param event the new event
-     * @return null if the insertion fails or the event itself if it's successful
+     * @param event the type of event
+     * @return List of events
      */
-    public Event insert(Event event) {
+    public Event insert(Event event) throws Exception {
         if (event == null) {
-            return null;
+            throw new IllegalArgumentException("Event cannot be null");
         } else {
             return eventRepo.save(event);
         }
     }
 
     /**
-     * Query for deleting a specific event identified by id.
+     * Delete an event from the database.
      *
-     * @param eventId the event's id
-     * @throws Exception if the event doesn't exist
+     * @param eventId id of the event to delete
+     * @throws Exception exception when the event is not found
      */
     public void deleteById(Long eventId) throws Exception {
         if (!eventRepo.existsById(eventId)) {
@@ -51,10 +53,11 @@ public class EventService {
     }
 
     /**
-     * Query for retrieving an event by id.
+     * Get an event by id.
      *
-     * @param id the id of the event
-     * @return on optional that may contain the event we were looking for
+     * @param id of the event to get
+     * @return the event
+     * @throws Exception exception when the event is not found
      */
     public Optional<Event> getById(Long id) {
         if (!eventRepo.existsById(id)) {
@@ -65,58 +68,89 @@ public class EventService {
     }
 
     /**
-     * Query to update an event by at least one field.
+     * Update an event.
      *
-     * @param userId the user's id
-     * @param eventId the event's id
-     * @param label the event label (name)
-     * @param positions the list of needed positions
-     * @param startTime the starting time of the event
-     * @param endTime the hour it ends
-     * @param certificate the certificate needed to enroll
-     * @param isCompetitive if it's for a competitive event
-     * @param type competition/training
-     * @param organisation the organization the event is being organized by
-     * @param editCompetition if it should also change the type of competitiveness
-     * @return the newly updated event
+     * @param userId id of the user
+     * @param eventId event id
+     * @param label label of the event
+     * @param positions positions of the event
+     * @param startTime start time of the event
+     * @param endTime endtime of the event
+     * @param certificate certificate of the event
+     * @param type type of the event
+     * @param organisation organisation of the event
+     * @return the updated event
      */
     public Optional<Event> updateById(Long userId, Long eventId, String label, List<Position> positions,
-                                       String startTime, String endTime, Certificate certificate, boolean isCompetitive,
-                                       EventType type, String organisation, boolean editCompetition) {
+                                      String startTime, String endTime, Certificate certificate,
+                                      EventType type, String organisation) {
         Optional<Event> toUpdate = getById(eventId);
         if (toUpdate.isPresent()) {
-            if (toUpdate.get().getOwningUser().equals(userId)) {
-                System.out.println(toUpdate.get().getOwningUser() + " " + userId);
+            if (!toUpdate.get().getOwningUser().equals(userId)) {
                 return Optional.empty();
             }
+
             if (label != null) {
                 toUpdate.get().setLabel(label);
             }
+
             if (startTime != null) {
                 toUpdate.get().setStartTime(startTime);
             }
+
             if (endTime != null) {
                 toUpdate.get().setEndTime(endTime);
             }
+
             if (certificate != null) {
                 toUpdate.get().setCertificate(certificate);
             }
+
             if (type != null) {
                 toUpdate.get().setType(type);
             }
+
             if (organisation != null) {
                 toUpdate.get().setOrganisation(organisation);
             }
-            if (editCompetition == true) {
-                toUpdate.get().setCompetitive(isCompetitive);
-            }
+
             if (positions != null) {
                 toUpdate.get().setPositions(positions);
             }
+
             eventRepo.save(toUpdate.get());
         }
         return toUpdate;
     }
 
-
+    /**finds the events a user is suitable for.
+     *
+     * @param user the user for which the returned events should match
+     * @return events that match the user
+     */
+    public List<Event> getMatchedEvents(User user) {
+        List<Event> e1 = eventRepo.findMatchingTrainings(user.getCertificate(), user.getId(), EventType.TRAINING);
+        List<Event> e2 = eventRepo.findMatchingCompetitions(user.getCertificate(), user.getOrganization(),
+                                                            user.getId(), EventType.COMPETITION);
+        List<Event> matchedEvents = new ArrayList<>();
+        List<Position> positions = new ArrayList<>();
+        positions.addAll(user.getPositions());
+        for (Event e : e1) {
+            for (Position p : positions) {
+                if (e.getPositions().contains(p)) {
+                    matchedEvents.add(e);
+                    break;
+                }
+            }
+        }
+        for (Event e : e2) {
+            for (Position p : positions) {
+                if (e.getPositions().contains(p)) {
+                    matchedEvents.add(e);
+                    break;
+                }
+            }
+        }
+        return matchedEvents;
+    }
 }
