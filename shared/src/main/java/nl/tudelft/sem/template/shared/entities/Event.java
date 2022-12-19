@@ -31,7 +31,8 @@ public class Event {
     private String label;
 
     @Column(name = "positions")
-    @Convert(converter = PositionsToFillListConverter.class)
+    @ElementCollection(targetClass = PositionName.class)
+    //@Convert(converter = PositionsToFillListConverter.class)
     private List<PositionName> positions = new ArrayList<>();
 
     @Column(name = "startTime", nullable = false)

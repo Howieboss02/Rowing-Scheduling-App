@@ -132,6 +132,19 @@ public class EventService {
         return toUpdate;
     }
 
+    public Optional<Event> enqueueById(Long id, User user, PositionName position) {
+        if (!eventRepo.existsById(id)) {
+            return Optional.empty();
+        } else {
+            Optional<Event> toUpdate = eventRepo.findById(id);
+            toUpdate.get().enqueue(user.getNetId(), position);
+
+            eventRepo.save(toUpdate.get());
+            return toUpdate;
+        }
+
+    }
+
     /**finds the events a user is suitable for.
      *
      * @param user the user for which the returned events should match

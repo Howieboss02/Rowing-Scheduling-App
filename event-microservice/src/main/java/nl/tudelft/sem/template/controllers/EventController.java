@@ -128,8 +128,9 @@ public class EventController {
      * @return "NOT_FOUND" if the ids don't match something or "ENQUEUED" if task gets completed
      */
     @PutMapping("/enqueue/{eventId}/")
-    public ResponseEntity<String> enqueue(@PathVariable("eventId") Long eventId, @RequestParam("userId") Long userId,
-                                          @RequestBody PositionName position) {
+    public ResponseEntity<String> enqueue(@PathVariable("eventId") Long eventId,
+                                          @RequestParam("userId") Long userId,
+                                          @RequestParam PositionName position) {
         Optional<Event> event = eventService.getById(eventId);
         if (event.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -143,7 +144,7 @@ public class EventController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         User user = response.block();
-        event.get().enqueue(user.getNetId(), position);
+        eventService.enqueueById(eventId, user, position);
         return ResponseEntity.ok("ENQUEUED");
     }
 
