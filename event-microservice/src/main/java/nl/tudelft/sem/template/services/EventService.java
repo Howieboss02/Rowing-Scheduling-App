@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.database.EventRepository;
 import nl.tudelft.sem.template.shared.domain.Position;
+import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.Certificate;
@@ -142,8 +143,32 @@ public class EventService {
             eventRepo.save(toUpdate.get());
             return toUpdate;
         }
-
     }
+
+    public boolean dequeueById(Long id, Request request) {
+        if (!eventRepo.existsById(id)) {
+            return false;
+        } else {
+            Optional<Event> toUpdate = eventRepo.findById(id);
+            boolean success = toUpdate.get().dequeue(request);
+
+            eventRepo.save(toUpdate.get());
+            return success;
+        }
+    }
+
+    public boolean removePositionById(Long id, PositionName position) {
+        if (!eventRepo.existsById(id)) {
+            return false;
+        } else {
+            Optional<Event> toUpdate = eventRepo.findById(id);
+            boolean success = toUpdate.get().removePosition(position);
+
+            eventRepo.save(toUpdate.get());
+            return success;
+        }
+    }
+
 
     /**finds the events a user is suitable for.
      *

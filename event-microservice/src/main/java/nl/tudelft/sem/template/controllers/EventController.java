@@ -163,12 +163,12 @@ public class EventController {
         if (event.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        boolean processed = event.get().dequeue(request);
+        boolean processed = eventService.dequeueById(eventId, request);
         if (!processed) {
             return ResponseEntity.badRequest().build(); // request doesn't exist
         }
         // if the request exists...
-        boolean positionFilled = event.get().removePosition(request.getPosition());
+        boolean positionFilled = eventService.removePositionById(eventId, request.getPosition());
 
         if(!positionFilled) {
             return ResponseEntity.badRequest().build(); // position couldn't be filled
@@ -195,16 +195,12 @@ public class EventController {
         if (event.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        boolean processed = event.get().dequeue(request);
+        boolean processed = eventService.dequeueById(eventId, request);
         if (!processed) {
             return ResponseEntity.badRequest().build(); // request doesn't exist
         }
 
         //send notification
-
-
-
-
         return ResponseEntity.ok("REJECTED");
     }
 }
