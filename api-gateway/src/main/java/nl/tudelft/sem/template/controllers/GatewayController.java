@@ -16,7 +16,7 @@ import org.springframework.web.client.RestTemplate;
 public class GatewayController {
 
     @Autowired
-    private GatewayService gatewayService;
+    private transient GatewayService gatewayService;
 
     @PostMapping(path = "/auth/register")
     public ResponseEntity register(@RequestBody RegistrationRequestModel request) {
@@ -28,5 +28,17 @@ public class GatewayController {
     public ResponseEntity<AuthenticationResponseModel> login(@RequestBody AuthenticationRequestModel request) {
         System.out.println("login");
         return ResponseEntity.ok(gatewayService.login(request));
+    }
+
+    @GetMapping(path = "/user/all")
+    public ResponseEntity getAllUsers() {
+        System.out.println("get all users");
+        return gatewayService.getAllUsers();
+    }
+
+    @GetMapping(path = "/user/getNotifications/{userId}")
+    public ResponseEntity getAllNotifications(@PathVariable String userId) {
+        System.out.println("get all notifications");
+        return gatewayService.getAllNotifications(userId);
     }
 }
