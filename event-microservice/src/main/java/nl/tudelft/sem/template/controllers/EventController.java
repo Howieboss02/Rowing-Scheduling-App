@@ -7,10 +7,8 @@ import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.EventModel;
 import nl.tudelft.sem.template.shared.entities.User;
-import nl.tudelft.sem.template.shared.enums.Certificate;
-import nl.tudelft.sem.template.shared.enums.EventType;
+import nl.tudelft.sem.template.shared.enums.PositionName;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.annotation.Transient;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -123,7 +121,8 @@ public class EventController {
      * @return "NOT_FOUND" if the ids don't match something or "ENQUEUED" if task gets completed
      */
     @PutMapping("/enqueue/{eventId}/")
-    public ResponseEntity<String> enqueue(@PathVariable("eventId") Long eventId, @RequestParam("userId") Long userId) {
+    public ResponseEntity<String> enqueue(@PathVariable("eventId") Long eventId, @RequestParam("userId") Long userId,
+                                          @RequestBody Position position) {
         Optional<Event> event = eventService.getById(eventId);
         if (event.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -133,8 +132,11 @@ public class EventController {
         this.client = WebClient.create();
         Mono<User> response = client.get().uri("http://localhost:8084/api/user/" + userId)
             .retrieve().bodyToMono(User.class).log();
+        if (!response.hasElement().block()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
         User user = response.block();
-        event.get().enqueue(user);
+        event.get().enqueue(user.getNetId(), position.getName());
         return ResponseEntity.ok("ENQUEUED");
     }
 }

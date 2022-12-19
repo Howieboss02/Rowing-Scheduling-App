@@ -53,6 +53,21 @@ public class UserController {
     }
 
     /**
+     * API GET request to retrieve user ny the unique netId.
+     *
+     * @param name the netId of the user
+     * @return information about the user
+     */
+    @GetMapping("/name")
+    public ResponseEntity<User> getUserBynetId(@RequestBody String name) {
+        Optional<User> user = userService.getByNetId(name);
+        if (user.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(user.get());
+    }
+
+    /**
      * GET Http request to retrieve all notifications a user has received.
      *
      * @param id the id of the user

@@ -5,9 +5,14 @@ import java.util.List;
 import javax.persistence.*;
 import lombok.*;
 import nl.tudelft.sem.template.shared.converters.PositionsToFillListConverter;
+import nl.tudelft.sem.template.shared.converters.RequestConverter;
 import nl.tudelft.sem.template.shared.domain.Position;
+import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
+import nl.tudelft.sem.template.shared.enums.PositionName;
+import org.springframework.data.util.Pair;
+
 
 @Getter
 @Setter
@@ -45,9 +50,9 @@ public class Event {
 
     @Column(name = "organisation")
     private String organisation;
-    
-    @OneToMany
-    private List<User> queue;
+
+    @Convert(converter = RequestConverter.class)
+    private List<Request> queue;
     
     /**
      * Constructor for the Event class containing all information.
@@ -84,12 +89,12 @@ public class Event {
         positions.remove(position);
     }
 
-    public void enqueue(User user) {
-        queue.add(user);
+    public void enqueue(String user, PositionName position) {
+        queue.add(new Request(user, position));
     }
 
-    public void dequeue(User user) {
-        queue.remove(user);
+    public void dequeue(Request request) {
+        queue.remove(request);
     }
 
     /**
