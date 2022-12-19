@@ -1,9 +1,9 @@
 package nl.tudelft.sem.template.shared.domain;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import nl.tudelft.sem.template.shared.enums.PositionName;
 
+@Data
 public class Position {
 
   private PositionName name;
@@ -20,7 +20,6 @@ public class Position {
   public Position() {
   }
 
-  @Override
   public int compareTo(Position o) {
       return this.name.compareTo(o.getName());
   }
