@@ -44,6 +44,25 @@ public class UserService {
     }
 
     /**
+     * Identify user by unique netId.
+     *
+     * @param name the netId of the user
+     * @return information about the user
+     */
+    public Optional<User> getByNetId(String name) {
+        if (name.isEmpty()) {
+            return Optional.empty();
+        }
+        List<User> all = userRepo.findAll();
+        for (User user : all) {
+            if (user.getNetId().equals(name)) {
+                return Optional.of(user);
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
      * Add user to the database.
      *
      * @param user full information about a user

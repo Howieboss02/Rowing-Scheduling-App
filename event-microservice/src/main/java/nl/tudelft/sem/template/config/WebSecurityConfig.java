@@ -22,6 +22,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     //TODO change permitAll() once authentication is implemented
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()

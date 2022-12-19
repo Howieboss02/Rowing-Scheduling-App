@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class EventService {
     private final transient EventRepository eventRepo;
-
+    
     @Autowired
     public EventService(EventRepository eventRepo) {
         this.eventRepo = eventRepo;
