@@ -15,8 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -56,6 +58,35 @@ public class AuthenticationGatewayTest {
         mockMvc.perform(post("/api/auth/register").contentType(APPLICATION_JSON_UTF8)
                         .content(requestJson))
                 .andExpect(status().isOk()).andExpect(content().string(containsString("testNetId")));
+    }
+
+    //test /register endpoint when there is an exception
+    @Test
+    public void testingIncorrectRegisterRouting() throws Exception {
+        RegistrationRequestModel request = new RegistrationRequestModel();
+        request.setName("test");
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(request);
+        when(gatewayService.registerUser(request)).thenThrow(new IllegalArgumentException());
+        mockMvc.perform(post("/api/auth/register").contentType(APPLICATION_JSON_UTF8)
+                        .content(requestJson))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    public void testingIncorrectRegisterRoutingWithRestTemplateError() throws Exception {
+        RegistrationRequestModel request = new RegistrationRequestModel();
+        request.setName("test");
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson=ow.writeValueAsString(request);
+        when(gatewayService.registerUser(request)).thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        mockMvc.perform(post("/api/auth/register").contentType(APPLICATION_JSON_UTF8)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest());
     }
 
     @Test

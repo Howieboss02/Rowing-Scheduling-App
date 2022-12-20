@@ -34,25 +34,7 @@ public class RestTemplateResponseErrorHandler
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, httpResponse.getStatusText());
 
         } else if (httpResponse.getStatusCode().series() == HttpStatus.Series.CLIENT_ERROR) {
-            if (httpResponse.getStatusCode() == HttpStatus.NOT_FOUND) {
-                throw new ResponseStatusException(HttpStatus.NOT_FOUND, httpResponse.getStatusText());
-            } else if (httpResponse.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-                throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, httpResponse.getStatusText());
-            } else if (httpResponse.getStatusCode() == HttpStatus.BAD_REQUEST) {
-                throw new ResponseStatusException(HttpStatus.BAD_REQUEST, httpResponse.getStatusText());
-            } else if (httpResponse.getStatusCode() == HttpStatus.FORBIDDEN) {
-                throw new ResponseStatusException(HttpStatus.FORBIDDEN, httpResponse.getStatusText());
-            } else if (httpResponse.getStatusCode() == HttpStatus.CONFLICT) {
-                throw new ResponseStatusException(HttpStatus.CONFLICT, httpResponse.getStatusText());
-            } else if (httpResponse.getStatusCode() == HttpStatus.PRECONDITION_FAILED) {
-                throw new ResponseStatusException(HttpStatus.PRECONDITION_FAILED, httpResponse.getStatusText());
-            } else if (httpResponse.getStatusCode() == HttpStatus.UNPROCESSABLE_ENTITY) {
-                throw new ResponseStatusException(HttpStatus.UNPROCESSABLE_ENTITY, httpResponse.getStatusText());
-            } else if (httpResponse.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
-                throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, httpResponse.getStatusText());
-            }
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, httpResponse.getStatusText());
-
+           throw new ResponseStatusException(httpResponse.getStatusCode(), httpResponse.getStatusText());
         }
     }
 }

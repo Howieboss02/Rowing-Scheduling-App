@@ -29,10 +29,10 @@ public class GatewayService {
     @Autowired
     private RestTemplate restTemplate;
 
-    @Autowired
-    public GatewayService(RestTemplateBuilder restTemplateBuilder) {
-        this.restTemplate = restTemplateBuilder.errorHandler(new RestTemplateResponseErrorHandler()).build();
+    public GatewayService(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
     }
+
 
     //TODO: add other services and try catch statements along with proper ResponseEntity return types
 
