@@ -2,6 +2,8 @@ package nl.tudelft.sem.template.controllers;
 
 import java.util.List;
 import java.util.Optional;
+
+import nl.tudelft.sem.template.database.UserRepository;
 import nl.tudelft.sem.template.services.UserService;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
@@ -20,11 +22,13 @@ public class UserController {
 
     private static final String uid = "userId";
     private final transient UserService userService;
+    private  final transient UserRepository repo;
 
 
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserRepository repo) {
         this.userService = userService;
+        this.repo = repo;
     }
 
     /**
@@ -203,10 +207,13 @@ public class UserController {
     public ResponseEntity<?> addNotification(@PathVariable(uid) Long userId,
                                              @RequestParam(required = false) String notification
     ) {
-        if (userService.addNotification(userId, notification).isEmpty()) {
+        Optional<User> user = userService.getById(userId);
+        if(user.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok().build();
+        User u = user.get();
+        u.getNotifications().add(notification);
+        return ResponseEntity.ok(repo.save(u));
     }
 
     /**
