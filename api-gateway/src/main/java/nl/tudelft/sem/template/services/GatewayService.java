@@ -25,9 +25,11 @@ public class GatewayService {
 
     private static final String apiPrefix = "http://localhost:";
     private static final String userPath = "/api/user";
+
     @Autowired
     private RestTemplate restTemplate;
 
+    @Autowired
     public GatewayService(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplate = restTemplateBuilder.errorHandler(new RestTemplateResponseErrorHandler()).build();
     }

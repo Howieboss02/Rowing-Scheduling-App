@@ -15,14 +15,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 @RestController
-@RequestMapping(path = "/api")
+@RequestMapping(path = "/api/auth")
 public class GatewayAuthenticationController {
     @Autowired
     private transient GatewayService gatewayService;
 
     // AUTHENTICATION MS
 
-    @PostMapping(path = "/auth/register")
+    @PostMapping(path = "/register")
     public ResponseEntity<User> register(@RequestBody RegistrationRequestModel request) {
         try {
             User response = gatewayService.registerUser(request);
@@ -34,7 +34,7 @@ public class GatewayAuthenticationController {
         }
     }
 
-    @PostMapping(path = "/auth/login")
+    @PostMapping(path = "/login")
     public ResponseEntity<AuthenticationResponseModel> login(@RequestBody AuthenticationRequestModel request) {
         return ResponseEntity.ok(gatewayService.login(request));
     }

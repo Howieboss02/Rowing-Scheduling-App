@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 /**
- * A DDD service for registering a new user.
+ * A DDD nl.tudelft.sem.template.service for registering a new user.
  */
 @Service
 public class RegistrationService {

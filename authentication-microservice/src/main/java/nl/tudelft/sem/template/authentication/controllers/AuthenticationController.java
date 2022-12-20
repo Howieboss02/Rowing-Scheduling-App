@@ -38,8 +38,8 @@ public class AuthenticationController {
      *
      * @param authenticationManager the authentication manager
      * @param jwtTokenGenerator     the token generator
-     * @param jwtUserDetailsService the user service
-     * @param registrationService   the registration service
+     * @param jwtUserDetailsService the user nl.tudelft.sem.template.service
+     * @param registrationService   the registration nl.tudelft.sem.template.service
      */
     @Autowired
     public AuthenticationController(AuthenticationManager authenticationManager,
