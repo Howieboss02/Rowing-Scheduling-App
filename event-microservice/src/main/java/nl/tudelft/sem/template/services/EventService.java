@@ -217,9 +217,7 @@ public class EventService {
                                                             user.getId(), EventType.COMPETITION);
         List<Event> matchedEvents = new ArrayList<>();
         List<Position> positions = new ArrayList<>();
-        for (Position position : user.getPositions()) {
-            positions.add(position);
-        }
+        positions.addAll(user.getPositions());
 
         for (Event e : e1) {
             for (Position p : positions) {

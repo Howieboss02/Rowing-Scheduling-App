@@ -50,12 +50,12 @@ public class EventController {
     /**
      * Get a list of requests for a given event.
      *
-     * @param eventId the id of the event
+     * @param id the id of the event
      * @return List of requests for that event
      */
-    @GetMapping("/queue/{ eventId }")
-    public List<Request> getRequests(@PathVariable("eventId") Long eventId) {
-        return eventService.getRequests(eventId);
+    @GetMapping("/queue/{ id }")
+    public List<Request> getRequests(@PathVariable("id") Long id) {
+        return eventService.getRequests(id);
     }
 
     /** matches suitable events with a user.
@@ -102,13 +102,13 @@ public class EventController {
     /**
      * DELETE API to delete an event from the platform.
      *
-     * @param eventId the event's id
+     * @param id the event's id
      * @return an ok message if it goes right
      */
-    @DeleteMapping("/delete/{ eventId }")
-    public ResponseEntity<?> deleteEvent(@PathVariable("eventId") Long eventId) {
+    @DeleteMapping("/delete/{ id }")
+    public ResponseEntity<?> deleteEvent(@PathVariable("id") Long id) {
         try {
-            eventService.deleteById(eventId);
+            eventService.deleteById(id);
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
         }
@@ -118,14 +118,14 @@ public class EventController {
     /**
      * PUT API to update an already existent event.
      *
-     * @param eventId the event's id
+     * @param id the event's id
      * @param eventModel a dummy-like event object
      * @return the newly updated event
      */
-    @PutMapping("edit/{ eventId }")
-    public ResponseEntity<?> updateEvent(@PathVariable("eventId") Long eventId,
+    @PutMapping("edit/{ id }")
+    public ResponseEntity<?> updateEvent(@PathVariable("id") Long id,
                                          @RequestBody EventModel eventModel) {
-        Optional<Event> returned = eventService.updateById(eventModel.getOwningUser(), eventId, eventModel.getLabel(),
+        Optional<Event> returned = eventService.updateById(eventModel.getOwningUser(), id, eventModel.getLabel(),
             eventModel.getPositions(), eventModel.getStartTime(), eventModel.getEndTime(),
             eventModel.getCertificate(), eventModel.getType(), eventModel.isCompetitive(), eventModel.getOrganisation());
         if (returned.isPresent()) {
