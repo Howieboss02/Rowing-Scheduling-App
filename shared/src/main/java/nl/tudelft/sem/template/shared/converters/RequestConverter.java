@@ -37,9 +37,9 @@ public class RequestConverter implements AttributeConverter<List<Request>, Strin
         String[] queueString = dbData.split(OBJECT_SPLIT_CHAR);
         List<Request> queue = new ArrayList<>();
         for (String object : queueString) {
-            List<String> requestFileds = Arrays.asList(object.split(FIELD_SPLIT_CHAR));
+            List<String> requestFields = Arrays.asList(object.split(FIELD_SPLIT_CHAR));
 
-            queue.add(new Request(requestFileds.get(0), PositionName.valueOf(requestFileds.get(1))));
+            queue.add(new Request(requestFields.get(0), PositionName.valueOf(requestFields.get(1))));
         }
         return queue;
     }

@@ -167,4 +167,9 @@ public class TestEventRepository implements EventRepository {
                                                 Long id, EventType competition) {
         return null;
     }
+
+    @Override
+    public List<Event> findByOwningUser(Long userId) {
+        return null;
+    }
 }
