@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.database.EventRepository;
 import nl.tudelft.sem.template.shared.domain.Position;
+import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
+import nl.tudelft.sem.template.shared.enums.PositionName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,13 +27,18 @@ public class EventService {
         return eventRepo.findAll();
     }
 
+    public List<Event> getAllEventsByUser(Long userId) {
+        return eventRepo.findByOwningUser(userId);
+    }
+
     /**
      * Insert an event into the database.
      *
      * @param event the type of event
      * @return List of events
+     * @throws IllegalArgumentException exception when the event is not found
      */
-    public Event insert(Event event) throws Exception {
+    public Event insert(Event event) throws IllegalArgumentException {
         if (event == null) {
             throw new IllegalArgumentException("Event cannot be null");
         } else {
@@ -43,7 +50,7 @@ public class EventService {
      * Delete an event from the database.
      *
      * @param eventId id of the event to delete
-     * @throws Exception exception when the event is not found
+     * @throws Exception the exception when the event is not found
      */
     public void deleteById(Long eventId) throws Exception {
         if (!eventRepo.existsById(eventId)) {
@@ -57,7 +64,7 @@ public class EventService {
      *
      * @param id of the event to get
      * @return the event
-     * @throws Exception exception when the event is not found
+     * @throws IllegalArgumentException exception when the event is not found
      */
     public Optional<Event> getById(Long id) {
         if (!eventRepo.existsById(id)) {
@@ -81,9 +88,9 @@ public class EventService {
      * @param organisation organisation of the event
      * @return the updated event
      */
-    public Optional<Event> updateById(Long userId, Long eventId, String label, List<Position> positions,
+    public Optional<Event> updateById(Long userId, Long eventId, String label, List<PositionName> positions,
                                       String startTime, String endTime, Certificate certificate,
-                                      EventType type, String organisation) {
+                                      EventType type, boolean isCompetitive, String organisation) {
         Optional<Event> toUpdate = getById(eventId);
         if (toUpdate.isPresent()) {
             if (!toUpdate.get().getOwningUser().equals(userId)) {
@@ -110,6 +117,10 @@ public class EventService {
                 toUpdate.get().setType(type);
             }
 
+            if (type != null) {
+                toUpdate.get().setCompetitive(isCompetitive);
+            }
+
             if (organisation != null) {
                 toUpdate.get().setOrganisation(organisation);
             }
@@ -123,7 +134,80 @@ public class EventService {
         return toUpdate;
     }
 
-    /**finds the events a user is suitable for.
+    /**
+     * Gets the request queue for an event.
+     *
+     * @param id the id of the event
+     * @return the queue of requests
+     */
+    public List<Request> getRequests(Long id) {
+        Optional<Event> event = getById(id);
+        if (event.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return event.get().getQueue();
+    }
+
+    /**
+     * Adds a request to the queue of an event.
+     *
+     * @param id the id of the event
+     * @param user the user who wants to enqueue
+     * @param position the position the user wants to fill
+     */
+    public void enqueueById(Long id, User user, PositionName position) {
+        Optional<Event> event = getById(id);
+
+        if (event.isPresent()) {
+            event.get().enqueue(user.getNetId(), position);
+
+            eventRepo.save(event.get());
+        }
+    }
+
+    /**
+     * Removes a request from the queue of an event.
+     *
+     * @param id the id of the event
+     * @param request the request to remove
+     * @return true if the request was removed, otherwise false
+     */
+    public boolean dequeueById(Long id, Request request) {
+        Optional<Event> event = getById(id);
+
+        if (event.isEmpty()) {
+            return false;
+        } else {
+            boolean success = event.get().dequeue(request);
+
+            eventRepo.save(event.get());
+            return success;
+        }
+    }
+
+    /**
+     * Removes a position from the position list of an event.
+     *
+     * @param id the id of the event
+     * @param position the name of the position to remove
+     * @return true if the position was removed, otherwise false
+     */
+    public boolean removePositionById(Long id, PositionName position) {
+        Optional<Event> event = getById(id);
+
+        if (event.isEmpty()) {
+            return false;
+        } else {
+            boolean success = event.get().removePosition(position);
+
+            eventRepo.save(event.get());
+            return success;
+        }
+    }
+
+
+    /**
+     * finds the events a user is suitable for.
      *
      * @param user the user for which the returned events should match
      * @return events that match the user
@@ -135,9 +219,10 @@ public class EventService {
         List<Event> matchedEvents = new ArrayList<>();
         List<Position> positions = new ArrayList<>();
         positions.addAll(user.getPositions());
+
         for (Event e : e1) {
             for (Position p : positions) {
-                if (e.getPositions().contains(p)) {
+                if (e.getPositions().contains(p.getName()) && e.isCompetitive() == p.isCompetitive()) {
                     matchedEvents.add(e);
                     break;
                 }
@@ -145,7 +230,7 @@ public class EventService {
         }
         for (Event e : e2) {
             for (Position p : positions) {
-                if (e.getPositions().contains(p)) {
+                if (e.getPositions().contains(p.getName()) && e.isCompetitive() == p.isCompetitive()) {
                     matchedEvents.add(e);
                     break;
                 }

@@ -1,6 +1,5 @@
 package nl.tudelft.sem.template.shared.domain;
 
-
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import lombok.AllArgsConstructor;
@@ -17,4 +16,5 @@ public class Request {
 
     @Enumerated(EnumType.STRING)
     PositionName position;
+
 }

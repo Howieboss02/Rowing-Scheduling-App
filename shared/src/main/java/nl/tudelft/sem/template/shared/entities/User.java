@@ -60,7 +60,6 @@ public class User {
     /**
     * Constructor for the User class containing all information.
     *
-    * @param id           the id inside the DB
     * @param netId        the netId of a user used to log in
     * @param name         the name and surname of the user
     * @param organization the organization it joined
@@ -69,9 +68,8 @@ public class User {
     * @param certificate  the biggest certificate it holds
     * @param positions    the list of positions it can handle
      */
-    public User(Long id, String netId, String name, String organization, String email, String gender,
+    public User(String netId, String name, String organization, String email, String gender,
               Certificate certificate, List<Position> positions) {
-        this.id = id;
         this.netId = netId;
         this.name = name;
         this.organization = organization;
@@ -84,12 +82,12 @@ public class User {
     /**
     * Constructor for the class used when creating account.
     *
-    * @param id the id of the user
+    * @param netId the netId of the user
     * @param name the user's name
     * @param email the user's email
     */
-    public User(Long id, String name, String email) {
-        this.id = id;
+    public User(String netId, String name, String email) {
+        this.netId = netId;
         this.name = name;
         this.email = email;
     }
