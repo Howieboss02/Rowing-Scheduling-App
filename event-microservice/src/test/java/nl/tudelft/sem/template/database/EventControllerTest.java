@@ -23,7 +23,7 @@ public class EventControllerTest {
     /**
      * Method to create a list of positions for testing.
      *
-     * @return the list fo positions needed for an event
+     * @return the list for positions needed for an event
      */
     private static List<PositionName> createPositions() {
         List<PositionName> list = new ArrayList<>();
@@ -141,6 +141,30 @@ public class EventControllerTest {
             sut.registerNewEvent(getEventModel("A", 2L, Certificate.B2, EventType.COMPETITION));
             sut.updateEvent(1L, getEventModel("B", 1L, Certificate.B5, EventType.COMPETITION));
             assertEquals(sut.getEvents().get(0), ev);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void getEventsByUserTest() {
+        try {
+            Event event = getEvent("B", 2L, Certificate.B5, EventType.COMPETITION);
+            sut.registerNewEvent(getEventModel("A", 2L, Certificate.B2, EventType.COMPETITION));
+            sut.registerNewEvent(getEventModel("B", 1L, Certificate.B5, EventType.COMPETITION));
+            assertEquals(sut.getEventsByUser(2L), event);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void getRequestsTest() {
+        try {
+            Event event = getEvent("B", 2L, Certificate.B5, EventType.COMPETITION);
+            sut.registerNewEvent(getEventModel("A", 2L, Certificate.B2, EventType.COMPETITION));
+            sut.registerNewEvent(getEventModel("B", 1L, Certificate.B5, EventType.COMPETITION));
+            assertEquals(sut.getEventsByUser(2L), event);
         } catch (Exception e) {
             e.printStackTrace();
         }
