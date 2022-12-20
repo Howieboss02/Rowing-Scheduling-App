@@ -15,6 +15,42 @@ public class TimeSlot {
     private Integer week;
     private Day day;
     private Pair<Integer, Integer> time;
+    
+    /** tests weather the received schedule can incorporate this timeslot.
+     *
+     * @param schedule to scan against
+     * @return weather this timeslot is available in the schedule
+     */
+    public boolean matchSchedule(Schedule schedule) {
+        List<TimeSlot> recurring = new ArrayList<>(schedule.getRecurringSlots());
+        List<TimeSlot> removed = new ArrayList<>(schedule.getRemovedSlots());
+        List<TimeSlot> slots = new ArrayList<>(schedule.getAddedSlots());
+        for (TimeSlot ts : removed){
+            if(ts.week == this.week){
+                recurring.remove(ts);
+            }
+        }
+        for (TimeSlot ts : recurring) {
+            if(!this.day.equals(ts.day)) {
+                continue;
+            }
+            if(ts.time.getFirst() <= this.time.getFirst() && ts.time.getSecond() >= this.time.getSecond()) {
+                return true;
+            }
+        }
+        for (TimeSlot ts : slots) {
+            if(this.week != ts.week) {
+                continue;
+            }
+            if(!this.day.equals(ts.day)) {
+                continue;
+            }
+            if(ts.time.getFirst() <= this.time.getFirst() && ts.time.getSecond() >= this.time.getSecond()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Calculate the intersection between the time of this timeslot
