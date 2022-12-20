@@ -89,8 +89,8 @@ public class Event {
         return positions.remove(position);
     }
 
-    public void enqueue(String name, PositionName position) {
-        queue.add(new Request(name, position));
+    public void enqueue(String netId, PositionName position) {
+        queue.add(new Request(netId, position));
     }
 
     public boolean dequeue(Request request) {
