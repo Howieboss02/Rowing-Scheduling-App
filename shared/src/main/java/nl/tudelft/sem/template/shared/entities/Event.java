@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
 import lombok.*;
-import nl.tudelft.sem.template.shared.converters.PositionsToFillListConverter;
 import nl.tudelft.sem.template.shared.converters.RequestConverter;
 import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.enums.Certificate;
@@ -32,7 +31,6 @@ public class Event {
 
     @Column(name = "positions")
     @ElementCollection(targetClass = PositionName.class)
-    //@Convert(converter = PositionsToFillListConverter.class)
     private List<PositionName> positions = new ArrayList<>();
 
     @Column(name = "startTime", nullable = false)
@@ -91,8 +89,8 @@ public class Event {
         return positions.remove(position);
     }
 
-    public boolean enqueue(String name, PositionName position) {
-        return queue.add(new Request(name, position));
+    public void enqueue(String name, PositionName position) {
+        queue.add(new Request(name, position));
     }
 
     public boolean dequeue(Request request) {

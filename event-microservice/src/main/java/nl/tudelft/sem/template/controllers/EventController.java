@@ -3,7 +3,6 @@ package nl.tudelft.sem.template.controllers;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.services.EventService;
-import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.EventModel;
@@ -43,7 +42,7 @@ public class EventController {
      * @param userId the id of the user we want to see the events of
      * @return List of events belonging to user
      */
-    @GetMapping("/ownedBy/{userId}")
+    @GetMapping("/ownedBy/{ userId}")
     public List<Event> getEventsByUser(@PathVariable("userId") Long userId) {
         return eventService.getAllEventsByUser(userId);
     }
@@ -54,7 +53,7 @@ public class EventController {
      * @param eventId the id of the event
      * @return List of requests for that event
      */
-    @GetMapping("/queue/{eventId}")
+    @GetMapping("/queue/{ eventId }")
     public List<Request> getRequests(@PathVariable("eventId") Long eventId) {
         return eventService.getRequests(eventId);
     }
@@ -106,7 +105,7 @@ public class EventController {
      * @param eventId the event's id
      * @return an ok message if it goes right
      */
-    @DeleteMapping("/delete/{eventId}")
+    @DeleteMapping("/delete/{ eventId }")
     public ResponseEntity<?> deleteEvent(@PathVariable("eventId") Long eventId) {
         try {
             eventService.deleteById(eventId);
@@ -123,7 +122,7 @@ public class EventController {
      * @param eventModel a dummy-like event object
      * @return the newly updated event
      */
-    @PutMapping("edit/{eventId}")
+    @PutMapping("edit/{ eventId }")
     public ResponseEntity<?> updateEvent(@PathVariable("eventId") Long eventId,
                                          @RequestBody EventModel eventModel) {
         Optional<Event> returned = eventService.updateById(eventModel.getOwningUser(), eventId, eventModel.getLabel(),
@@ -144,7 +143,7 @@ public class EventController {
      * @param userId the id of the user
      * @return "NOT_FOUND" if the ids don't match something or "ENQUEUED" if task gets completed
      */
-    @PutMapping("/enqueue/{eventId}/")
+    @PutMapping("/enqueue/{ eventId }")
     public ResponseEntity<String> enqueue(@PathVariable("eventId") Long eventId,
                                           @RequestParam("userId") Long userId,
                                           @RequestParam PositionName position) {
@@ -167,14 +166,13 @@ public class EventController {
 
 
     /**
-     * PUT API for accepting a user into the event
+     * PUT API for accepting a user into the event.
      *
      * @param eventId the id of the event
      * @param request the request should be accepted
-     * @return "NOT_FOUND" if the event doesn't exist, badRequest if there is no matching request,
-     * or "ACCEPTED" if task gets completed
+     * @return "NOT_FOUND" if the event doesn't exist, badRequest if there is no matching request, otherwise "ACCEPTED"
      */
-    @PutMapping("/accept/{eventId}")
+    @PutMapping("/accept/{ eventId }")
     public ResponseEntity<String> accept(@PathVariable("eventId") Long eventId,
                                           @RequestBody Request request) {
         Optional<Event> event = eventService.getById(eventId);
@@ -188,26 +186,23 @@ public class EventController {
         // if the request exists...
         boolean positionFilled = eventService.removePositionById(eventId, request.getPosition());
 
-        if(!positionFilled) {
+        if (!positionFilled) {
             return ResponseEntity.badRequest().build(); // position couldn't be filled
         }
 
         //send notification
-
-
+        
         return ResponseEntity.ok("ACCEPTED");
-
     }
 
     /**
-     * PUT API for rejecting a user who wants to join an event
+     * PUT API for rejecting a user who wants to join an event.
      *
      * @param eventId the id of the event
      * @param request the request should be rejected
-     * @return "NOT_FOUND" if the event doesn't exist, badRequest if there is no matching request,
-     * or "REJECTED" if task gets completed
-     * */
-    @PutMapping("/reject/{eventId}")
+     * @return "NOT_FOUND" if the event doesn't exist, badRequest if there is no matching request, otherwise "REJECTED"
+     */
+    @PutMapping("/reject/{ eventId }")
     public ResponseEntity<String> reject(@PathVariable("eventId") Long eventId,
                                          @RequestBody Request request) {
         Optional<Event> event = eventService.getById(eventId);

@@ -134,21 +134,21 @@ public class EventService {
     }
 
     /**
-     * Gets the request queue for an event
+     * Gets the request queue for an event.
      *
      * @param id the id of the event
      * @return the queue of requests
      */
     public List<Request> getRequests(Long id) {
         Optional<Event> event = getById(id);
-        if(event.isEmpty()){
+        if (event.isEmpty()) {
             return new ArrayList<>();
         }
         return event.get().getQueue();
     }
 
     /**
-     * Adds a request to the queue of an event
+     * Adds a request to the queue of an event.
      *
      * @param id the id of the event
      * @param user the user who wants to enqueue
@@ -168,7 +168,7 @@ public class EventService {
     }
 
     /**
-     * Removes a request from the queue of an event
+     * Removes a request from the queue of an event.
      *
      * @param id the id of the event
      * @param request the request to remove
@@ -187,7 +187,7 @@ public class EventService {
     }
 
     /**
-     * Removes a position from the position list of an event
+     * Removes a position from the position list of an event.
      *
      * @param id the id of the event
      * @param position the name of the position to remove
