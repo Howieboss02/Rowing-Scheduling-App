@@ -73,7 +73,7 @@ public class UserController {
      * @param id the id of the user
      * @return a list of notifications
      */
-    @GetMapping(path = "getNotifications/{ userId }")
+    @GetMapping(path = "getNotifications/{userId}")
     public ResponseEntity<List<String>> getNotifications(@PathVariable(uid) Long id) {
         if (userService.getNotifications(id).isEmpty()) {
             return ResponseEntity.badRequest().build();

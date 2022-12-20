@@ -42,7 +42,7 @@ public class EventController {
      * @param userId the id of the user we want to see the events of
      * @return List of events belonging to user
      */
-    @GetMapping("/ownedBy/{ userId}")
+    @GetMapping("/ownedBy/{userId}")
     public List<Event> getEventsByUser(@PathVariable("userId") Long userId) {
         return eventService.getAllEventsByUser(userId);
     }
@@ -53,7 +53,7 @@ public class EventController {
      * @param id the id of the event
      * @return List of requests for that event
      */
-    @GetMapping("/queue/{ id }")
+    @GetMapping("/queue/{id}")
     public List<Request> getRequests(@PathVariable("id") Long id) {
         return eventService.getRequests(id);
     }
@@ -105,7 +105,7 @@ public class EventController {
      * @param id the event's id
      * @return an ok message if it goes right
      */
-    @DeleteMapping("/delete/{ id }")
+    @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> deleteEvent(@PathVariable("id") Long id) {
         try {
             eventService.deleteById(id);
@@ -122,7 +122,7 @@ public class EventController {
      * @param eventModel a dummy-like event object
      * @return the newly updated event
      */
-    @PutMapping("edit/{ id }")
+    @PutMapping("edit/{id}")
     public ResponseEntity<?> updateEvent(@PathVariable("id") Long id,
                                          @RequestBody EventModel eventModel) {
         Optional<Event> returned = eventService.updateById(eventModel.getOwningUser(), id, eventModel.getLabel(),
@@ -143,7 +143,7 @@ public class EventController {
      * @param userId the id of the user
      * @return "NOT_FOUND" if the ids don't match something or "ENQUEUED" if task gets completed
      */
-    @PutMapping("/enqueue/{ eventId }")
+    @PutMapping("/enqueue/{eventId}")
     public ResponseEntity<String> enqueue(@PathVariable("eventId") Long eventId,
                                           @RequestParam("userId") Long userId,
                                           @RequestParam PositionName position) {
@@ -172,7 +172,7 @@ public class EventController {
      * @param request the request should be accepted
      * @return "NOT_FOUND" if the event doesn't exist, badRequest if there is no matching request, otherwise "ACCEPTED"
      */
-    @PutMapping("/accept/{ id }")
+    @PutMapping("/accept/{id}")
     public ResponseEntity<String> accept(@PathVariable("id") Long id,
                                           @RequestBody Request request) {
         Optional<Event> event = eventService.getById(id);
@@ -202,7 +202,7 @@ public class EventController {
      * @param request the request should be rejected
      * @return "NOT_FOUND" if the event doesn't exist, badRequest if there is no matching request, otherwise "REJECTED"
      */
-    @PutMapping("/reject/{ id }")
+    @PutMapping("/reject/{id}")
     public ResponseEntity<String> reject(@PathVariable("id") Long id,
                                          @RequestBody Request request) {
         Optional<Event> event = eventService.getById(id);
