@@ -36,6 +36,15 @@ public class EventController {
         return eventService.getAllEvents();
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<Event> getById(@PathVariable("id") Long id) {
+        Optional<Event> event = eventService.getById(id);
+        if(event.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(event.get());
+    }
+
     /** matches suitable events with a user.
      *
      * @param user the user to match the events to
