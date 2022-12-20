@@ -76,6 +76,18 @@ public class User {
     this.gender = gender;
     this.positions = positions;
   }
+
+  /**
+   * Constructor for the User class containing only fields that can be edited by the client using the API.
+   */
+  public User(String name, String organization, String gender, Certificate certificate, List<Position> positions){
+      this.name = name;
+      this.organization = organization;
+      this.gender = gender;
+      this.certificate = certificate;
+      this.positions = positions;
+  }
+
   /**
    * Constructor for the class used when creating account
    * @param id the id of the user
