@@ -216,10 +216,14 @@ public class EventService {
         List<Event> e2 = eventRepo.findMatchingCompetitions(user.getCertificate(), user.getOrganization(),
                                                             user.getId(), EventType.COMPETITION);
         List<Event> matchedEvents = new ArrayList<>();
-        List<Position> positions = new ArrayList<>(user.getPositions());
+        List<Position> positions = new ArrayList<>();
+        for(Position position : user.getPositions()) {
+            positions.add(position);
+        }
+
         for (Event e : e1) {
             for (Position p : positions) {
-                if (e.getPositions().contains(p.getName())) {
+                if (e.getPositions().contains(p.getName()) && e.isCompetitive() == p.isCompetitive()) {
                     matchedEvents.add(e);
                     break;
                 }
@@ -227,7 +231,7 @@ public class EventService {
         }
         for (Event e : e2) {
             for (Position p : positions) {
-                if (e.getPositions().contains(p.getName())) {
+                if (e.getPositions().contains(p.getName()) && e.isCompetitive() == p.isCompetitive()) {
                     matchedEvents.add(e);
                     break;
                 }

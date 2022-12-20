@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.List;
 import nl.tudelft.sem.template.controllers.EventController;
 import nl.tudelft.sem.template.services.EventService;
-import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.EventModel;
 import nl.tudelft.sem.template.shared.enums.Certificate;

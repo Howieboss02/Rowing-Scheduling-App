@@ -168,23 +168,23 @@ public class EventController {
     /**
      * PUT API for accepting a user into the event.
      *
-     * @param eventId the id of the event
+     * @param id the id of the event
      * @param request the request should be accepted
      * @return "NOT_FOUND" if the event doesn't exist, badRequest if there is no matching request, otherwise "ACCEPTED"
      */
-    @PutMapping("/accept/{ eventId }")
-    public ResponseEntity<String> accept(@PathVariable("eventId") Long eventId,
+    @PutMapping("/accept/{ id }")
+    public ResponseEntity<String> accept(@PathVariable("id") Long id,
                                           @RequestBody Request request) {
-        Optional<Event> event = eventService.getById(eventId);
+        Optional<Event> event = eventService.getById(id);
         if (event.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        boolean processed = eventService.dequeueById(eventId, request);
+        boolean processed = eventService.dequeueById(id, request);
         if (!processed) {
             return ResponseEntity.badRequest().build(); // request doesn't exist
         }
         // if the request exists...
-        boolean positionFilled = eventService.removePositionById(eventId, request.getPosition());
+        boolean positionFilled = eventService.removePositionById(id, request.getPosition());
 
         if (!positionFilled) {
             return ResponseEntity.badRequest().build(); // position couldn't be filled
@@ -198,18 +198,18 @@ public class EventController {
     /**
      * PUT API for rejecting a user who wants to join an event.
      *
-     * @param eventId the id of the event
+     * @param id the id of the event
      * @param request the request should be rejected
      * @return "NOT_FOUND" if the event doesn't exist, badRequest if there is no matching request, otherwise "REJECTED"
      */
-    @PutMapping("/reject/{ eventId }")
-    public ResponseEntity<String> reject(@PathVariable("eventId") Long eventId,
+    @PutMapping("/reject/{ id }")
+    public ResponseEntity<String> reject(@PathVariable("id") Long id,
                                          @RequestBody Request request) {
-        Optional<Event> event = eventService.getById(eventId);
+        Optional<Event> event = eventService.getById(id);
         if (event.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        boolean processed = eventService.dequeueById(eventId, request);
+        boolean processed = eventService.dequeueById(id, request);
         if (!processed) {
             return ResponseEntity.badRequest().build(); // request doesn't exist
         }
