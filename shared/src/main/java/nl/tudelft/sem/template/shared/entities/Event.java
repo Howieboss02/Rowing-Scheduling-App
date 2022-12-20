@@ -3,15 +3,15 @@ package nl.tudelft.sem.template.shared.entities;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-import nl.tudelft.sem.template.shared.converters.PositionsToFillListConverter;
-import nl.tudelft.sem.template.shared.domain.Position;
+import lombok.*;
+import nl.tudelft.sem.template.shared.converters.RequestConverter;
+import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
+import nl.tudelft.sem.template.shared.enums.PositionName;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "event")
 @AllArgsConstructor
@@ -30,8 +30,8 @@ public class Event {
     private String label;
 
     @Column(name = "positions")
-    @Convert(converter = PositionsToFillListConverter.class)
-    private List<Position> positions = new ArrayList<>();
+    @ElementCollection(targetClass = PositionName.class)
+    private List<PositionName> positions = new ArrayList<>();
 
     @Column(name = "startTime", nullable = false)
     private String startTime;
@@ -42,13 +42,16 @@ public class Event {
     @Column(name = "certificate", nullable = false)
     private Certificate certificate;
 
-    private boolean isCompetitive;
-
     private EventType type;
+
+    private boolean isCompetitive;
 
     @Column(name = "organisation")
     private String organisation;
 
+    @Convert(converter = RequestConverter.class)
+    private List<Request> queue;
+    
     /**
      * Constructor for the Event class containing all information.
      *
@@ -58,31 +61,40 @@ public class Event {
      * @param startTime the start time of the event
      * @param endTime the end time of the event
      * @param certificate the certificate that is required for the event
-     * @param isCompetitive whether the event is competitive or not
      * @param type the type of the event
+     * @param isCompetitive the competitiveness of the event
      * @param organisation the organisation that created the event
      * @throws IllegalArgumentException if any of the parameters are null
      */
-    public Event(Long owningUser, String label, List<Position> positions, String startTime,
-                 String endTime, Certificate certificate, boolean isCompetitive,
-                 EventType type, String organisation) throws IllegalArgumentException {
+    public Event(Long owningUser, String label, List<PositionName> positions, String startTime,
+                 String endTime, Certificate certificate,
+                 EventType type, boolean isCompetitive, String organisation) throws IllegalArgumentException {
         this.owningUser = owningUser;
         this.label = label;
         this.positions = positions;
         this.startTime = startTime;
         this.endTime = endTime;
         this.certificate = certificate;
-        this.isCompetitive = isCompetitive;
         this.type = type;
+        this.isCompetitive = isCompetitive;
         this.organisation = organisation;
+        this.queue = new ArrayList<>();
     }
 
-    public void addPosition(Position position) {
+    public void addPosition(PositionName position) {
         positions.add(position);
     }
 
-    public void removePosition(Position position) {
-        positions.remove(position);
+    public boolean removePosition(PositionName position) {
+        return positions.remove(position);
+    }
+
+    public void enqueue(String name, PositionName position) {
+        queue.add(new Request(name, position));
+    }
+
+    public boolean dequeue(Request request) {
+        return queue.remove(request);
     }
 
     /**
@@ -93,6 +105,5 @@ public class Event {
     public String messageConverter() {
         return getLabel() + " - " + getType() + " from " + getStartTime() + " until " + getEndTime() + ".\n";
     }
-
 }
 

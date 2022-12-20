@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 public class EmailStrategyTest {
-  public User user = new User(1L, "Bob", "Bob@b.ob");
-  public Event event = new Event(1L, 1L, "Training 1", new ArrayList<>(), "12:00", "14:00", Certificate.B1, true, EventType.TRAINING, "Bob's camp");
+  public User user = new User("BobID", "Bob", "Bob@b.ob");
+  public Event event = new Event(1L, "Training 1", new ArrayList<>(), "12:00", "14:00", Certificate.B1, EventType.TRAINING, true, "Bob's camp");
 
   @Test
   public void testEmailAccepted() {

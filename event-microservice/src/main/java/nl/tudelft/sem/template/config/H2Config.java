@@ -10,11 +10,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-
 @Configuration
 @EnableJpaRepositories("nl.tudelft.sem.template.database")
-@PropertySource("classpath:application-dev.properties")
 @EnableTransactionManagement
+@PropertySource("classpath:application-dev.properties")
+
 public class H2Config {
 
     @Getter

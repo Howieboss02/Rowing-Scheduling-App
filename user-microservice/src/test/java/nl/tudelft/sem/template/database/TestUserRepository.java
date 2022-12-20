@@ -106,7 +106,6 @@ public class TestUserRepository implements UserRepository {
         return null;
     }
 
-
     @Override
     public void deleteInBatch(Iterable<User> entities) {
 
@@ -122,8 +121,7 @@ public class TestUserRepository implements UserRepository {
     public User getOne(Long aLong) {
         return null;
     }
-
-
+    
     @Override
     public <S extends User> Optional<S> findOne(Example<S> example) {
         return Optional.empty();
