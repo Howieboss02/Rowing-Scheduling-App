@@ -84,10 +84,10 @@ public class GatewayService {
 //                + "/delete/{" + userId + "}", ResponseEntity.class);
 //    }
 
-    public ResponseEntity updateUser(String userId, String name, String organization, String email, String gender, Certificate certificate, List<Position> positions) {
+    /*public ResponseEntity updateUser(String userId, String name, String organization, String email, String gender, Certificate certificate, List<Position> positions) {
         return restTemplate.put(this.apiPrefix + MicroservicePorts.USER.port + userPath
-                + "/update/{" + userId + "}",  ,ResponseEntity.class);
-    }
+                + "/update/{" + userId + "}", ,ResponseEntity.class);
+    }*/
 
     public ResponseEntity setName(String userId, String name) {
         return restTemplate.postForObject(this.apiPrefix + MicroservicePorts.USER.port + userPath
@@ -103,9 +103,5 @@ public class GatewayService {
         return restTemplate.postForObject(this.apiPrefix + MicroservicePorts.USER.port + userPath
                         + "/certificate/{" + userId + "}", certificate, ResponseEntity.class);
     }
-
-
-
-
 
 }
