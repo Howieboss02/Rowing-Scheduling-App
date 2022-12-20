@@ -1,0 +1,17 @@
+#AGENDA MEETING 2
+Date: 20.12.2022
+
+Chairman: Alex Preda
+
+Note taker: Keyleigh Jones
+
+##QUESTIONS:
+* What type of testing should we implement until the 23th? (mock and/or integration);
+
+##PROGRESS:
+* Implemented the enqueueing 
+* Implemented the event listing
+* Gateway is being implemented
+* Implemented Accepting/Rejecting users
+
+##NOTES:
