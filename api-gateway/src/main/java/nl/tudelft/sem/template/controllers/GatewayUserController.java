@@ -21,7 +21,7 @@ public class GatewayUserController {
     @Autowired
     private transient GatewayService gatewayService;
 
-    @GetMapping(path = "/all")
+    /*@GetMapping(path = "/all")
     public ResponseEntity<List<User>> getAllUsers() {
         try {
             return ResponseEntity.ok((List<User>) gatewayService.getAllUsers());
@@ -124,5 +124,5 @@ public class GatewayUserController {
             return ResponseEntity.badRequest().build();
         }
     }
-
+*/
 }

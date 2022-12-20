@@ -1,6 +1,8 @@
 package nl.tudelft.sem.template.services;
 
+import nl.tudelft.sem.template.components.RestTemplateResponseErrorHandler;
 import nl.tudelft.sem.template.shared.domain.Position;
+import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.MicroservicePorts;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
@@ -10,6 +12,7 @@ import nl.tudelft.sem.template.shared.models.RegistrationRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
 
 
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -23,7 +26,11 @@ public class GatewayService {
     private static final String apiPrefix = "http://localhost:";
     private static final String userPath = "/api/user";
     @Autowired
-    private static RestTemplate restTemplate;
+    private RestTemplate restTemplate;
+
+    public GatewayService(RestTemplateBuilder restTemplateBuilder) {
+        this.restTemplate = restTemplateBuilder.errorHandler(new RestTemplateResponseErrorHandler()).build();
+    }
 
     //TODO: add other services and try catch statements along with proper ResponseEntity return types
 
@@ -35,9 +42,9 @@ public class GatewayService {
      * @param request the registration request
      * @return the response entity
      */
-    public ResponseEntity registerUser(RegistrationRequestModel request) {
+    public User registerUser(RegistrationRequestModel request) {
         return restTemplate.postForObject(this.apiPrefix + MicroservicePorts.AUTHENTICATION.port
-                + "/register", request, ResponseEntity.class);
+                + "/register", request, User.class);
     }
 
     /**

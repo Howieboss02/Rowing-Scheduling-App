@@ -72,6 +72,7 @@ public class UserService {
         if (user == null || user.getName().isEmpty()) {
             return null;
         }
+        System.out.println("Inserting user: " + user.getId());
         //We are currently not checking if the user already exists
         return userRepo.save(user);
     }

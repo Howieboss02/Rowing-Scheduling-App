@@ -19,7 +19,7 @@ public class RegistrationService {
     private static final String userPath = "/api/user";
 
     @Autowired
-    private static RestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
     /**
      * Instantiates a new UserService.

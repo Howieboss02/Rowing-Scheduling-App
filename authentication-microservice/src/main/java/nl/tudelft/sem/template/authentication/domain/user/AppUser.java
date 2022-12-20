@@ -1,11 +1,7 @@
 package nl.tudelft.sem.template.authentication.domain.user;
 
 import java.util.Objects;
-import javax.persistence.Column;
-import javax.persistence.Convert;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +20,7 @@ public class AppUser extends HasEvents {
      * Identifier for the application user.
      */
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Getter
     @Column(name = "id", nullable = false)
     private int id;

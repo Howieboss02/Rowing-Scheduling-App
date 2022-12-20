@@ -97,7 +97,9 @@ public class AuthenticationController {
 
             User user = request.getUser();
             user.setId((long) registeredUser.getId());
+            System.out.println(user.getId());
             User response = registrationService.registerUserDetails(user);
+            System.out.println(2);
             return ResponseEntity.ok(response);
 
         } catch (Exception e) {
