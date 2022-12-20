@@ -15,7 +15,7 @@ public class UserTest {
 
     @Test
     public void testConstructor() {
-        User u = new User("Bob", "Bob@b.ob");
+        User u = new User("BobID", "Bob", "Bob@b.ob");
         assertEquals(u.getNotifications().size(), 0);
         assertEquals(u.getName(), "Bob");
         assertEquals(u.getEmail(), "Bob@b.ob");
@@ -42,8 +42,8 @@ public class UserTest {
 
     @Test
     public void tesEqualHashCode() {
-        User u = new User("Bob", "Bob@b.ob");
-        User u1 = new User("Bob", "Bob@b.ob");
+        User u = new User("BobID", "Bob", "Bob@b.ob");
+        User u1 = new User("BobID", "Bob", "Bob@b.ob");
         assertEquals(u, u1);
         assertEquals(u.hashCode(), u1.hashCode());
     }

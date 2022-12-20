@@ -83,10 +83,12 @@ public class User {
     /**
     * Constructor for the class used when creating account.
     *
+    * @param netId the netId of the user
     * @param name the user's name
     * @param email the user's email
     */
-    public User(String name, String email) {
+    public User(String netId, String name, String email) {
+        this.netId = netId;
         this.name = name;
         this.email = email;
     }
