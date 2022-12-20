@@ -18,15 +18,4 @@ public class Request {
     @Enumerated(EnumType.STRING)
     PositionName position;
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Request request = (Request) o;
-        return Objects.equals(name, request.name) && position == request.position;
-    }
 }
