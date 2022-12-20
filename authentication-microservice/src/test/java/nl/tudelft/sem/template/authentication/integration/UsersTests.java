@@ -12,9 +12,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import nl.tudelft.sem.template.authentication.authentication.JwtTokenGenerator;
 import nl.tudelft.sem.template.authentication.domain.user.*;
 import nl.tudelft.sem.template.authentication.integration.utils.JsonUtil;
-import nl.tudelft.sem.template.authentication.models.AuthenticationRequestModel;
-import nl.tudelft.sem.template.authentication.models.AuthenticationResponseModel;
-import nl.tudelft.sem.template.authentication.models.RegistrationRequestModel;
+import nl.tudelft.sem.template.shared.models.AuthenticationRequestModel;
+import nl.tudelft.sem.template.shared.models.AuthenticationResponseModel;
+import nl.tudelft.sem.template.shared.models.RegistrationRequestModel;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
