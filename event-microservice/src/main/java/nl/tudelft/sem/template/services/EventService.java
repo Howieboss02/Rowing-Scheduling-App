@@ -36,8 +36,9 @@ public class EventService {
      *
      * @param event the type of event
      * @return List of events
+     * @throws IllegalArgumentException exception when the event is not found
      */
-    public Event insert(Event event) {
+    public Event insert(Event event) throws IllegalArgumentException {
         if (event == null) {
             throw new IllegalArgumentException("Event cannot be null");
         } else {
@@ -49,7 +50,7 @@ public class EventService {
      * Delete an event from the database.
      *
      * @param eventId id of the event to delete
-     * @throws IllegalArgumentException exception when the event is not found
+     * @throws Exception the exception when the event is not found
      */
     public void deleteById(Long eventId) throws Exception {
         if (!eventRepo.existsById(eventId)) {
