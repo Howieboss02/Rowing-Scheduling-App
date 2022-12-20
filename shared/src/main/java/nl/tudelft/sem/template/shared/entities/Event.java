@@ -5,7 +5,9 @@ import java.util.List;
 import javax.persistence.*;
 import lombok.*;
 import nl.tudelft.sem.template.shared.converters.RequestConverter;
+import nl.tudelft.sem.template.shared.converters.TimeSlotConverter;
 import nl.tudelft.sem.template.shared.domain.Request;
+import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
 import nl.tudelft.sem.template.shared.enums.PositionName;
@@ -33,11 +35,9 @@ public class Event {
     @ElementCollection(targetClass = PositionName.class)
     private List<PositionName> positions = new ArrayList<>();
 
-    @Column(name = "startTime", nullable = false)
-    private String startTime;
-
-    @Column(name = "endTime", nullable = false)
-    private String endTime;
+    @Column(name = "time")
+    @Convert(converter = TimeSlotConverter.class)
+    private TimeSlot time = new TimeSlot();
 
     @Column(name = "certificate", nullable = false)
     private Certificate certificate;
@@ -58,22 +58,19 @@ public class Event {
      * @param owningUser the id of the user that created the event
      * @param label the name of the event
      * @param positions the positions that need to be filled
-     * @param startTime the start time of the event
-     * @param endTime the end time of the event
+     * @param time the time and date of the event
      * @param certificate the certificate that is required for the event
      * @param type the type of the event
      * @param isCompetitive the competitiveness of the event
      * @param organisation the organisation that created the event
      * @throws IllegalArgumentException if any of the parameters are null
      */
-    public Event(Long owningUser, String label, List<PositionName> positions, String startTime,
-                 String endTime, Certificate certificate,
+    public Event(Long owningUser, String label, List<PositionName> positions, TimeSlot time, Certificate certificate,
                  EventType type, boolean isCompetitive, String organisation) throws IllegalArgumentException {
         this.owningUser = owningUser;
         this.label = label;
         this.positions = positions;
-        this.startTime = startTime;
-        this.endTime = endTime;
+        this.time = time;
         this.certificate = certificate;
         this.type = type;
         this.isCompetitive = isCompetitive;
@@ -103,7 +100,8 @@ public class Event {
      * @return a string containing relevant data for a user
      */
     public String messageConverter() {
-        return getLabel() + " - " + getType() + " from " + getStartTime() + " until " + getEndTime() + ".\n";
+        return getLabel() + " - " + getType() + " from " + time.getTime().getFirst() + " until "
+                + time.getTime().getSecond() + " in week " + time.getWeek() + ", on " + time.getDay().toString() + ".\n";
     }
 }
 

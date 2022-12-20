@@ -6,6 +6,7 @@ import java.util.Optional;
 import nl.tudelft.sem.template.database.EventRepository;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.Request;
+import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.Certificate;
@@ -81,16 +82,15 @@ public class EventService {
      * @param eventId event id
      * @param label label of the event
      * @param positions positions of the event
-     * @param startTime start time of the event
-     * @param endTime endtime of the event
+     * @param time the time and date of the event
      * @param certificate certificate of the event
      * @param type type of the event
      * @param organisation organisation of the event
      * @return the updated event
      */
     public Optional<Event> updateById(Long userId, Long eventId, String label, List<PositionName> positions,
-                                      String startTime, String endTime, Certificate certificate,
-                                      EventType type, boolean isCompetitive, String organisation) {
+                                       TimeSlot time, Certificate certificate,
+                                       EventType type, boolean isCompetitive, String organisation) {
         Optional<Event> toUpdate = getById(eventId);
         if (toUpdate.isPresent()) {
             if (!toUpdate.get().getOwningUser().equals(userId)) {
@@ -101,12 +101,8 @@ public class EventService {
                 toUpdate.get().setLabel(label);
             }
 
-            if (startTime != null) {
-                toUpdate.get().setStartTime(startTime);
-            }
-
-            if (endTime != null) {
-                toUpdate.get().setEndTime(endTime);
+            if  (time != null) {
+                toUpdate.get().setTime(time);
             }
 
             if (certificate != null) {
@@ -222,7 +218,8 @@ public class EventService {
 
         for (Event e : e1) {
             for (Position p : positions) {
-                if (e.getPositions().contains(p.getName()) && e.isCompetitive() == p.isCompetitive()) {
+                if (e.getPositions().contains(p.getName()) && e.isCompetitive() == p.isCompetitive()
+                        && e.getTime().matchSchedule(user.getSchedule())) {
                     matchedEvents.add(e);
                     break;
                 }
@@ -230,7 +227,8 @@ public class EventService {
         }
         for (Event e : e2) {
             for (Position p : positions) {
-                if (e.getPositions().contains(p.getName()) && e.isCompetitive() == p.isCompetitive()) {
+                if (e.getPositions().contains(p.getName()) && e.isCompetitive() == p.isCompetitive()
+                        && e.getTime().matchSchedule(user.getSchedule())) {
                     matchedEvents.add(e);
                     break;
                 }
