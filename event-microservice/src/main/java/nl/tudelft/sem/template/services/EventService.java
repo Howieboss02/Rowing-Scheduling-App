@@ -133,6 +133,28 @@ public class EventService {
         return toUpdate;
     }
 
+    /**
+     * Gets the request queue for an event
+     *
+     * @param id the id of the event
+     * @return the queue of requests
+     */
+    public List<Request> getRequests(Long id) {
+        Optional<Event> event = getById(id);
+        if(event.isEmpty()){
+            return new ArrayList<>();
+        }
+        return event.get().getQueue();
+    }
+
+    /**
+     * Adds a request to the queue of an event
+     *
+     * @param id the id of the event
+     * @param user the user who wants to enqueue
+     * @param position the position the user wants to fill
+     * @return the updated event
+     */
     public Optional<Event> enqueueById(Long id, User user, PositionName position) {
         if (!eventRepo.existsById(id)) {
             return Optional.empty();
@@ -145,6 +167,13 @@ public class EventService {
         }
     }
 
+    /**
+     * Removes a request from the queue of an event
+     *
+     * @param id the id of the event
+     * @param request the request to remove
+     * @return true if the request was removed, otherwise false
+     */
     public boolean dequeueById(Long id, Request request) {
         if (!eventRepo.existsById(id)) {
             return false;
@@ -157,6 +186,13 @@ public class EventService {
         }
     }
 
+    /**
+     * Removes a position from the position list of an event
+     *
+     * @param id the id of the event
+     * @param position the name of the position to remove
+     * @return true if the position was removed, otherwise false
+     */
     public boolean removePositionById(Long id, PositionName position) {
         if (!eventRepo.existsById(id)) {
             return false;
@@ -170,7 +206,8 @@ public class EventService {
     }
 
 
-    /**finds the events a user is suitable for.
+    /**
+     * finds the events a user is suitable for.
      *
      * @param user the user for which the returned events should match
      * @return events that match the user

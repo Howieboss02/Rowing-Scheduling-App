@@ -37,9 +37,26 @@ public class EventController {
         return eventService.getAllEvents();
     }
 
+    /**
+     * Get all events belonging to a user.
+     *
+     * @param userId the id of the user we want to see the events of
+     * @return List of events belonging to user
+     */
     @GetMapping("/ownedBy/{userId}")
     public List<Event> getEventsByUser(@PathVariable("userId") Long userId) {
         return eventService.getAllEventsByUser(userId);
+    }
+
+    /**
+     * Get a list of requests for a given event.
+     *
+     * @param eventId the id of the event
+     * @return List of requests for that event
+     */
+    @GetMapping("/queue/{eventId}")
+    public List<Request> getRequests(@PathVariable("eventId") Long eventId) {
+        return eventService.getRequests(eventId);
     }
 
     /** matches suitable events with a user.
@@ -154,7 +171,8 @@ public class EventController {
      *
      * @param eventId the id of the event
      * @param request the request should be accepted
-     * @return
+     * @return "NOT_FOUND" if the event doesn't exist, badRequest if there is no matching request,
+     * or "ACCEPTED" if task gets completed
      */
     @PutMapping("/accept/{eventId}")
     public ResponseEntity<String> accept(@PathVariable("eventId") Long eventId,
@@ -186,8 +204,9 @@ public class EventController {
      *
      * @param eventId the id of the event
      * @param request the request should be rejected
-     * @return
-     */
+     * @return "NOT_FOUND" if the event doesn't exist, badRequest if there is no matching request,
+     * or "REJECTED" if task gets completed
+     * */
     @PutMapping("/reject/{eventId}")
     public ResponseEntity<String> reject(@PathVariable("eventId") Long eventId,
                                          @RequestBody Request request) {
