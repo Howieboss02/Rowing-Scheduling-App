@@ -23,22 +23,6 @@ public class GatewayController {
     @Autowired
     private transient GatewayService gatewayService;
 
-    // AUTHENTICATION MS
-
-    @PostMapping(path = "/auth/register")
-    public ResponseEntity register(@RequestBody RegistrationRequestModel request) {
-        System.out.println("register");
-        return gatewayService.registerUser(request);
-    }
-
-    @PostMapping(path = "/auth/login")
-    public ResponseEntity<AuthenticationResponseModel> login(@RequestBody AuthenticationRequestModel request) {
-        System.out.println("login");
-        return ResponseEntity.ok(gatewayService.login(request));
-    }
-
-
-
     // USER MS
 
     @GetMapping(path = "/user/all")
