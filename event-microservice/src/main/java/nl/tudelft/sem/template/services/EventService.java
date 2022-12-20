@@ -37,7 +37,7 @@ public class EventService {
      * @param event the type of event
      * @return List of events
      */
-    public Event insert(Event event) throws Exception {
+    public Event insert(Event event) {
         if (event == null) {
             throw new IllegalArgumentException("Event cannot be null");
         } else {
@@ -49,7 +49,7 @@ public class EventService {
      * Delete an event from the database.
      *
      * @param eventId id of the event to delete
-     * @throws Exception exception when the event is not found
+     * @throws IllegalArgumentException exception when the event is not found
      */
     public void deleteById(Long eventId) throws Exception {
         if (!eventRepo.existsById(eventId)) {
@@ -63,7 +63,7 @@ public class EventService {
      *
      * @param id of the event to get
      * @return the event
-     * @throws Exception exception when the event is not found
+     * @throws IllegalArgumentException exception when the event is not found
      */
     public Optional<Event> getById(Long id) {
         if (!eventRepo.existsById(id)) {
@@ -153,17 +153,14 @@ public class EventService {
      * @param id the id of the event
      * @param user the user who wants to enqueue
      * @param position the position the user wants to fill
-     * @return the updated event
      */
-    public Optional<Event> enqueueById(Long id, User user, PositionName position) {
-        if (!eventRepo.existsById(id)) {
-            return Optional.empty();
-        } else {
-            Optional<Event> toUpdate = eventRepo.findById(id);
-            toUpdate.get().enqueue(user.getNetId(), position);
+    public void enqueueById(Long id, User user, PositionName position) {
+        Optional<Event> event = getById(id);
 
-            eventRepo.save(toUpdate.get());
-            return toUpdate;
+        if (event.isPresent()) {
+            event.get().enqueue(user.getNetId(), position);
+
+            eventRepo.save(event.get());
         }
     }
 
@@ -175,13 +172,14 @@ public class EventService {
      * @return true if the request was removed, otherwise false
      */
     public boolean dequeueById(Long id, Request request) {
-        if (!eventRepo.existsById(id)) {
+        Optional<Event> event = getById(id);
+
+        if (event.isEmpty()) {
             return false;
         } else {
-            Optional<Event> toUpdate = eventRepo.findById(id);
-            boolean success = toUpdate.get().dequeue(request);
+            boolean success = event.get().dequeue(request);
 
-            eventRepo.save(toUpdate.get());
+            eventRepo.save(event.get());
             return success;
         }
     }
@@ -194,13 +192,14 @@ public class EventService {
      * @return true if the position was removed, otherwise false
      */
     public boolean removePositionById(Long id, PositionName position) {
-        if (!eventRepo.existsById(id)) {
+        Optional<Event> event = getById(id);
+
+        if (event.isEmpty()) {
             return false;
         } else {
-            Optional<Event> toUpdate = eventRepo.findById(id);
-            boolean success = toUpdate.get().removePosition(position);
+            boolean success = event.get().removePosition(position);
 
-            eventRepo.save(toUpdate.get());
+            eventRepo.save(event.get());
             return success;
         }
     }
