@@ -2,9 +2,8 @@ package nl.tudelft.sem.template.controllers;
 
 import java.util.List;
 import java.util.Optional;
-
-import nl.tudelft.sem.template.database.UserRepository;
 import nl.tudelft.sem.template.services.UserService;
+import nl.tudelft.sem.template.shared.domain.Message;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
@@ -22,13 +21,11 @@ public class UserController {
 
     private static final String uid = "userId";
     private final transient UserService userService;
-    private  final transient UserRepository repo;
 
 
     @Autowired
-    public UserController(UserService userService, UserRepository repo) {
+    public UserController(UserService userService) {
         this.userService = userService;
-        this.repo = repo;
     }
 
     /**
@@ -205,15 +202,13 @@ public class UserController {
      */
     @PutMapping(path = "/notification/{userId}")
     public ResponseEntity<?> addNotification(@PathVariable(uid) Long userId,
-                                             @RequestParam(required = false) String notification
+                                             @RequestBody(required = false) Message notification
     ) {
         Optional<User> user = userService.getById(userId);
-        if(user.isEmpty()) {
+        if (user.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        User u = user.get();
-        u.getNotifications().add(notification);
-        return ResponseEntity.ok(repo.save(u));
+        return ResponseEntity.ok(userService.addNotification(userId, notification.getText()));
     }
 
     /**

@@ -1,8 +1,7 @@
 package nl.tudelft.sem.template.shared.converters;
 
-import nl.tudelft.sem.template.shared.enums.Outcome;
-
 import javax.persistence.AttributeConverter;
+import nl.tudelft.sem.template.shared.enums.Outcome;
 
 public class OutcomeConverter implements AttributeConverter<Outcome, String> {
 
@@ -16,7 +15,9 @@ public class OutcomeConverter implements AttributeConverter<Outcome, String> {
 
     @Override
     public Outcome convertToEntityAttribute(String dbData) {
-        if(dbData.isEmpty() || dbData == null) return null;
+        if (dbData == null || dbData.isEmpty()) {
+            return null;
+        }
         return Outcome.valueOf(dbData);
     }
 }

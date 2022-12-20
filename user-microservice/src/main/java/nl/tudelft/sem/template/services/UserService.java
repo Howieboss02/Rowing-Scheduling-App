@@ -188,14 +188,15 @@ public class UserService {
     /**
      * Add a notification to a user.
      */
-    public Optional<User> addNotification(Long id, String notification) {
+    public User addNotification(Long id, String notification) {
         Optional<User> user = getById(id);
-
         if (user.isPresent()) {
-            user.get().addNotification(notification);
-            userRepo.save(user.get());
+            User u = user.get();
+            u.addNotification(notification);
+            userRepo.save(u);
+            return u;
         }
-        return user;
+        return null;
     }
 
     /**

@@ -2,7 +2,6 @@ package nl.tudelft.sem.template.controllers;
 
 import java.util.List;
 import java.util.Optional;
-
 import nl.tudelft.sem.template.database.EventRepository;
 import nl.tudelft.sem.template.services.EventService;
 import nl.tudelft.sem.template.shared.domain.Request;
@@ -62,10 +61,16 @@ public class EventController {
         return eventService.getRequests(id);
     }
 
+    /**
+     * Get event by id.
+     *
+     * @param id the id of the event
+     * @return a specific event
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Event> getById(@PathVariable("id") Long id) {
         Optional<Event> event = eventService.getById(id);
-        if(event.isEmpty()) {
+        if (event.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return ResponseEntity.ok(event.get());
