@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import nl.tudelft.sem.template.shared.converters.PositionsToFillListConverter;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.Schedule;
@@ -25,7 +26,6 @@ import org.springframework.data.util.Pair;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -45,6 +45,7 @@ public class User {
     private List<String> notifications = new ArrayList<>();
 
     @Column
+    @Getter
     private Schedule schedule;
 
     /*

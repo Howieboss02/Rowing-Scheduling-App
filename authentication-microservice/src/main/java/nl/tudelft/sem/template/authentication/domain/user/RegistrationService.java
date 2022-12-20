@@ -1,6 +1,11 @@
 package nl.tudelft.sem.template.authentication.domain.user;
 
+import nl.tudelft.sem.template.shared.entities.User;
+import nl.tudelft.sem.template.shared.enums.MicroservicePorts;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 /**
  * A DDD service for registering a new user.
@@ -9,6 +14,12 @@ import org.springframework.stereotype.Service;
 public class RegistrationService {
     private final transient UserRepository userRepository;
     private final transient PasswordHashingService passwordHashingService;
+
+    private static final String apiPrefix = "http://localhost:";
+    private static final String userPath = "/api/user";
+
+    @Autowired
+    private static RestTemplate restTemplate;
 
     /**
      * Instantiates a new UserService.
@@ -47,6 +58,11 @@ public class RegistrationService {
         } catch (Exception e) {
             throw new Exception("Could not register user", e);
         }
+    }
+
+    public User registerUserDetails(User userToRegister) {
+        return restTemplate.postForObject(this.apiPrefix + MicroservicePorts.USER.port +userPath
+                + "/register", userToRegister, User.class);
     }
 
     public boolean checkNetIdIsUnique(NetId netId) {

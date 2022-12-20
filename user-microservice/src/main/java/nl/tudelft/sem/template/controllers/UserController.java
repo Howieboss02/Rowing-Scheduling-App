@@ -56,7 +56,7 @@ public class UserController {
      * @param user the profile data
      * @return confirmation of registering the user
      */
-    @PostMapping
+    @PostMapping(path = "/register")
     public ResponseEntity<User> registerNewUser(@RequestBody User user) {
         User insertedUser = userService.insert(user);
         if (insertedUser == null) {

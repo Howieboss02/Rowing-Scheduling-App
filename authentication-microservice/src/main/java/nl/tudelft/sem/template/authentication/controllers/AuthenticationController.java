@@ -2,10 +2,8 @@ package nl.tudelft.sem.template.authentication.controllers;
 
 import nl.tudelft.sem.template.authentication.authentication.JwtTokenGenerator;
 import nl.tudelft.sem.template.authentication.authentication.JwtUserDetailsService;
-import nl.tudelft.sem.template.authentication.domain.user.Email;
-import nl.tudelft.sem.template.authentication.domain.user.NetId;
-import nl.tudelft.sem.template.authentication.domain.user.Password;
-import nl.tudelft.sem.template.authentication.domain.user.RegistrationService;
+import nl.tudelft.sem.template.authentication.domain.user.*;
+import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.models.AuthenticationRequestModel;
 import nl.tudelft.sem.template.shared.models.AuthenticationResponseModel;
 import nl.tudelft.sem.template.shared.models.RegistrationRequestModel;
@@ -89,23 +87,21 @@ public class AuthenticationController {
      * @throws Exception if a user with this netid already exists
      */
     @PostMapping("/register")
-    public ResponseEntity register(@RequestBody RegistrationRequestModel request) throws Exception {
+    public ResponseEntity<User> register(@RequestBody RegistrationRequestModel request) throws Exception {
 
         try {
             NetId netId = new NetId(request.getNetId());
             Password password = new Password(request.getPassword());
             Email email = new Email(request.getEmail());
-            // String name = request.getName();
-            // String organization = request.getOrganization();
-            // String email = request.getEmail();
-            // Certificate certificate;
-            // String gender;
-            // String positions;
-            registrationService.registerUser(netId, password, email);
+            AppUser registeredUser = registrationService.registerUser(netId, password, email);
+
+            User user = request.getUser();
+            user.setId((long) registeredUser.getId());
+            User response = registrationService.registerUserDetails(user);
+            return ResponseEntity.ok(response);
+
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
-
-        return ResponseEntity.ok().build();
     }
 }

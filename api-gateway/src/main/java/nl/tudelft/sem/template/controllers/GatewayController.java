@@ -67,7 +67,7 @@ public class GatewayController {
         }
     }
 
-    @PutMapping(path = "/user/schedule/addRecurring/{userId}")
+/*    @PutMapping(path = "/user/schedule/addRecurring/{userId}")
     public ResponseEntity addRecurring(@PathVariable String userId, @RequestBody TimeSlot timeSlot) {
         System.out.println("add recurring");
         try {
@@ -108,7 +108,7 @@ public class GatewayController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
-    }
+    }*/
 
     // EVENT MS
 
