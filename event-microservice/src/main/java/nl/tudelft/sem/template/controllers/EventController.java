@@ -2,6 +2,8 @@ package nl.tudelft.sem.template.controllers;
 
 import java.util.List;
 import java.util.Optional;
+
+import nl.tudelft.sem.template.database.EventRepository;
 import nl.tudelft.sem.template.services.EventService;
 import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.entities.Event;
@@ -20,10 +22,12 @@ import reactor.core.publisher.Mono;
 public class EventController {
     private final transient EventService eventService;
     private static WebClient client;
+    private final transient EventRepository repo;
 
     @Autowired
-    public EventController(EventService eventService) {
+    public EventController(EventService eventService, EventRepository repo) {
         this.eventService = eventService;
+        this.repo = repo;
     }
 
     /**
@@ -169,7 +173,9 @@ public class EventController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         User user = response.block();
-        eventService.enqueueById(eventId, user, position);
+        Event e = event.get();
+        e.enqueue(user.getName(), position);
+        repo.save(e);
         return ResponseEntity.ok("ENQUEUED");
     }
 

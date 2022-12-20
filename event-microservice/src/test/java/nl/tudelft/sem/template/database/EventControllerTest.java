@@ -65,7 +65,7 @@ public class EventControllerTest {
     @BeforeEach
     public void setup() {
         service = new EventService(repo);
-        sut = new EventController(service);
+        sut = new EventController(service, repo);
     }
 
     /**
