@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.integration;
+package components;
 
 
 import static org.assertj.core.api.Assertions.*;
@@ -8,7 +8,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import nl.tudelft.sem.template.components.RestTemplateResponseErrorHandler;
+import nl.tudelft.sem.template.shared.components.RestTemplateResponseErrorHandler;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.utils.JsonUtil;
 import org.junit.jupiter.api.BeforeEach;

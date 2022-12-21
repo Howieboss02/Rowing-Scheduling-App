@@ -14,6 +14,8 @@ import nl.tudelft.sem.template.shared.models.AuthenticationRequestModel;
 import nl.tudelft.sem.template.shared.models.AuthenticationResponseModel;
 import nl.tudelft.sem.template.shared.models.RegistrationRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -134,12 +136,12 @@ public class GatewayService {
 
     public List<Event> getAllEvents() {
         return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/events", List.class);
+                + "/all", List.class);
     }
 
     public List<Event> getAllEventsForUser(Long userId) {
         return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/events/{" + userId + "}", List.class);
+                + "/ownedBy/" + userId, List.class);
     }
 
     public List<Request> getAllRequestsForEvent(Long eventId) {
@@ -147,26 +149,26 @@ public class GatewayService {
                 + "/requests/{" + eventId + "}", List.class);
     }
 
-    public List<Event> getMatchedEventsForUser(Long userId) {
+    public ResponseEntity<List<Event>> getMatchedEventsForUser(Long userId) {
         return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/events/matched/{" + userId + "}", List.class);
+                + "/match/" + userId, ResponseEntity.class);
     }
 
     public Event addNewEvent(EventModel eventModel) {
         return restTemplate.postForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/events", eventModel, Event.class);
+                + "/register", eventModel, Event.class);
     }
 
     public ResponseEntity<Object> deleteEvent(Long eventId) {
         restTemplate.delete(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/events/{" + eventId + "}", Event.class);
+                + "/" + eventId);
         return ResponseEntity.ok().build();
     }
 
-    public EventModel updateEvent(EventModel eventModel, Long id) {
-        restTemplate.patchForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/events/{" + id + "}", eventModel, Event.class);
-        return eventModel;
+    public Event updateEvent(EventModel eventModel, Long id) {
+        HttpEntity<EventModel> requestEntity = new HttpEntity<>(eventModel);
+        return restTemplate.exchange(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                + "/" + id, HttpMethod.PUT, requestEntity, Event.class).getBody();
     }
 
     public String enqueueToEvent(Long eventId, Long userId, PositionName position) {

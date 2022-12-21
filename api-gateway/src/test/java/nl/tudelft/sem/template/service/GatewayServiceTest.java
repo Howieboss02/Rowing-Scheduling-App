@@ -5,7 +5,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import nl.tudelft.sem.template.components.RestTemplateResponseErrorHandler;
+import nl.tudelft.sem.template.shared.components.RestTemplateResponseErrorHandler;
 import nl.tudelft.sem.template.services.GatewayService;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.MicroservicePorts;
