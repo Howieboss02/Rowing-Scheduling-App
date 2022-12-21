@@ -8,12 +8,11 @@ import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.Day;
-import nl.tudelft.sem.template.shared.models.AuthenticationRequestModel;
-import nl.tudelft.sem.template.shared.models.AuthenticationResponseModel;
-import nl.tudelft.sem.template.shared.models.RegistrationRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 
 @RestController
@@ -31,9 +30,10 @@ public class GatewayUserController {
     public ResponseEntity<List<User>> getAllUsers() {
         try {
             return ResponseEntity.ok(gatewayService.getAllUsers());
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (Exception e) {
-            System.out.println("Unable to get all users");
-            return ResponseEntity.badRequest().build();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -44,9 +44,10 @@ public class GatewayUserController {
     public ResponseEntity<List<String>> getAllNotifications(@PathVariable(uid) Long userId) {
         try {
             return ResponseEntity.ok(gatewayService.getAllNotifications(userId));
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (Exception e) {
-            System.out.println("Unable to get all notifications");
-            return ResponseEntity.badRequest().build();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -54,13 +55,14 @@ public class GatewayUserController {
      * Delete a user.
      */
     @DeleteMapping(path = "/deleteUser/{userId}")
-    public ResponseEntity<User> deleteUser(@PathVariable(uid) Long userId) {
+    public ResponseEntity<Boolean> deleteUser(@PathVariable(uid) Long userId) {
         try {
             gatewayService.deleteUser(userId);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(true);
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (Exception e) {
-            System.out.println("Unable to delete user");
-            return ResponseEntity.badRequest().build();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -80,9 +82,10 @@ public class GatewayUserController {
         try {
             User user = new User(name, organization, gender, certificate, positions);
             return ResponseEntity.ok(gatewayService.updateUser(userId, user));
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (Exception e) {
-            System.out.println("Unable to update user");
-            return ResponseEntity.badRequest().build();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 

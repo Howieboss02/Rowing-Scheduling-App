@@ -105,10 +105,10 @@ public class UserController {
      * @return a confirmation of deleting it
      */
     @DeleteMapping(path = "/delete/{userId}")
-    public ResponseEntity<?> deleteUser(@PathVariable(uid) Long userId) {
+    public ResponseEntity<Boolean> deleteUser(@PathVariable(uid) Long userId) {
         try{
             userService.deleteById(userId);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(true);
         }
         catch (Exception e){
             return ResponseEntity.badRequest().build();
