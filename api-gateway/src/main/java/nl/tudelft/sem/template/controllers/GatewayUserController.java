@@ -67,12 +67,10 @@ public class GatewayUserController {
         }
     }
 
-    // TODO MAKE SURE IT WORKS
-
     /**
      * Update a user.
      */
-    @PatchMapping(path = "/updateUser/{userId}")
+    @PutMapping(path = "/updateUser/{userId}")
     public ResponseEntity<User> updateUser(@PathVariable(uid) Long userId,
                                            @RequestParam(required = false) String name,
                                            @RequestParam(required = false) String organization,
@@ -95,10 +93,8 @@ public class GatewayUserController {
      */
     @PostMapping(path = "/schedule/addRecurring/{userId}")
     public ResponseEntity<TimeSlot> addRecurring(@PathVariable(uid) Long userId,
-                                                 @RequestBody Day day,
-                                                 @RequestBody Node time) {
+                                                 @RequestBody TimeSlot timeSlot) {
         try {
-            TimeSlot timeSlot = new TimeSlot(-1, day, time);
             return ResponseEntity.ok(gatewayService.addRecurring(userId, timeSlot));
         } catch (Exception e) {
             System.out.println("Unable to add the recurring time slot");
@@ -111,11 +107,8 @@ public class GatewayUserController {
      */
     @PostMapping(path = "/schedule/removeRecurring/{userId}")
     public ResponseEntity<TimeSlot> removeRecurring(@PathVariable(uid) Long userId,
-                                                    @RequestBody Day day,
-                                                    @RequestBody Node time) {
+                                                    @RequestBody TimeSlot timeSlot) {
         try {
-            TextTimeToMinutesConverter conv = new TextTimeToMinutesConverter();
-            TimeSlot timeSlot = new TimeSlot(-1, day, time);
             return ResponseEntity.ok(gatewayService.removeRecurring(userId, timeSlot));
         } catch (Exception e) {
             System.out.println("Unable to remove the recurring time slot");
