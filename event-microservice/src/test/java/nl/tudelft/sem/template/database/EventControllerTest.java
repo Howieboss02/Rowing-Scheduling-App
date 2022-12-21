@@ -4,7 +4,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -22,9 +21,9 @@ import nl.tudelft.sem.template.shared.enums.EventType;
 import nl.tudelft.sem.template.shared.enums.PositionName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.reactive.function.client.WebClient;
-import org.springframework.data.util.Pair;
 
 public class EventControllerTest {
 
@@ -82,6 +81,7 @@ public class EventControllerTest {
      */
     @BeforeEach
     public void setup() {
+        repo = new TestEventRepository();
         service = new EventService(repo);
         sut = new EventController(service);
 
@@ -98,10 +98,9 @@ public class EventControllerTest {
         try {
             var actual = sut.registerNewEvent(getEventModel("A", 1L, Certificate.B2, EventType.COMPETITION,
                     new TimeSlot(1, Day.MONDAY, Pair.of(1, 2))));
-            assertEquals(actual.getBody().getId(), 1);
             assertEquals(actual.getBody().getLabel(), "A");
             assertEquals(actual.getBody().getCertificate(), Certificate.B2);
-            assertEquals(actual.getBody().getType(), EventType.TRAINING);
+            assertEquals(actual.getBody().getType(), EventType.COMPETITION);
             assertEquals(actual.getBody().getQueue().size(), 0);
             assertEquals(actual.getBody().getTime(), new TimeSlot(1, Day.MONDAY, Pair.of(1, 2)));
         } catch (Exception e) {
@@ -190,8 +189,8 @@ public class EventControllerTest {
         try {
             TimeSlot t = new TimeSlot(1, Day.MONDAY, Pair.of(1, 2));
             Event event = getEvent("B", 2L, Certificate.B5, EventType.COMPETITION, t);
-            sut.registerNewEvent(getEventModel("A", 2L, Certificate.B2, EventType.COMPETITION, t));
-            sut.registerNewEvent(getEventModel("B", 1L, Certificate.B5, EventType.COMPETITION, t));
+            sut.registerNewEvent(getEventModel("A", 1L, Certificate.B2, EventType.COMPETITION, t));
+            sut.registerNewEvent(getEventModel("B", 2L, Certificate.B5, EventType.COMPETITION, t));
             assertEquals(sut.getEventsByUser(2L), List.of(event));
         } catch (Exception e) {
             e.printStackTrace();
@@ -296,7 +295,7 @@ public class EventControllerTest {
     @Test
     public void rejectTestNoRequest() {
         TimeSlot t = new TimeSlot(1, Day.MONDAY, Pair.of(1, 2));
-        Event event = getEvent("B", 2L, Certificate.B5, EventType.COMPETITION,t);
+        Event event = getEvent("B", 2L, Certificate.B5, EventType.COMPETITION, t);
         Request r = new Request("A", PositionName.Cox);
         when(mockedService.getById(1L)).thenReturn(Optional.of(event));
         when(mockedService.dequeueById(1L, r)).thenReturn(false);

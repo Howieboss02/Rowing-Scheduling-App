@@ -6,7 +6,6 @@ import static org.mockito.Mockito.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import nl.tudelft.sem.template.database.EventRepository;
 import nl.tudelft.sem.template.database.TestEventRepository;
 import nl.tudelft.sem.template.shared.domain.Request;
@@ -85,7 +84,7 @@ class EventServiceTest {
 
     @Test
     void testDeleteById() {
-        try{
+        try {
             when(mockedRepo.existsById(1L)).thenReturn(true);
             mockedService.deleteById(1L);
             verify(mockedRepo, times(1)).deleteById(1L);
@@ -123,7 +122,7 @@ class EventServiceTest {
     @Test
     void testUpdateById() {
         Event event = getEvent("A", 1L, Certificate.B2, EventType.COMPETITION);
-        Event updated = getEvent("B", 1L, Certificate.B5, EventType.COMPETITION);
+
         TimeSlot ts = new TimeSlot(1, Day.FRIDAY, Pair.of(2, 3));
 
         when(mockedRepo.existsById(1L)).thenReturn(true);
@@ -131,6 +130,8 @@ class EventServiceTest {
 
         assertEquals(Optional.of(event), mockedService.updateById(1L, 1L, "B", createPositions(), ts,
                 Certificate.B5, EventType.COMPETITION, true, "B"));
+
+        Event updated = getEvent("B", 1L, Certificate.B5, EventType.COMPETITION);
         assertEquals(updated, event);
 
     }
@@ -172,12 +173,13 @@ class EventServiceTest {
     void testEnqueueById() {
         Request r = new Request("Bob", PositionName.Cox);
 
-        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
         Event correctEvent = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
         correctEvent.getQueue().add(r);
 
         User user = new User();
         user.setNetId("Bob");
+
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
 
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
