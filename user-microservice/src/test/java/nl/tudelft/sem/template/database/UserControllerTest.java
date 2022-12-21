@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import nl.tudelft.sem.template.controllers.UserController;
 import nl.tudelft.sem.template.services.UserService;
+import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
@@ -110,11 +111,11 @@ public class UserControllerTest {
     public void testAddSchedule() {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
-        assertEquals(sut.addRecurringTimeSlot(1L, Day.MONDAY, Pair.of(10, 14)).getStatusCode(), HttpStatus.OK);
+        assertEquals(sut.addRecurringTimeSlot(1L, Day.MONDAY, new Node(10, 14)).getStatusCode(), HttpStatus.OK);
         assertEquals(u.getId(), 1L);
         assertEquals(sut.getUser(1L).getBody(), u);
         assertEquals(sut.getUser(1L).getBody().getSchedule().getRecurringSlots().get(0),
-                new TimeSlot(-1, Day.MONDAY, Pair.of(10, 14)));
+                new TimeSlot(-1, Day.MONDAY, new Node(10, 14)));
         assertEquals(sut.getUser(1L).getBody().getSchedule().getAddedSlots().size(), 0);
         assertEquals(sut.getUser(1L).getBody().getSchedule().getRemovedSlots().size(), 0);
     }
@@ -123,8 +124,8 @@ public class UserControllerTest {
     public void testRemoveSchedule() {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
-        assertEquals(sut.addRecurringTimeSlot(1L, Day.MONDAY, Pair.of(10, 14)).getStatusCode(), HttpStatus.OK);
-        assertEquals(sut.removeRecurringTimeSlot(1L, Day.MONDAY, Pair.of(10, 14)).getStatusCode(), HttpStatus.OK);
+        assertEquals(sut.addRecurringTimeSlot(1L, Day.MONDAY, new Node(10, 14)).getStatusCode(), HttpStatus.OK);
+        assertEquals(sut.removeRecurringTimeSlot(1L, Day.MONDAY, new Node(10, 14)).getStatusCode(), HttpStatus.OK);
         assertEquals(sut.getUser(1L).getBody().getSchedule().getRecurringSlots().size(), 0);
     }
 
@@ -132,13 +133,13 @@ public class UserControllerTest {
     public void testFailedAddSchedule() {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
-        assertEquals(sut.addRecurringTimeSlot(2L, Day.MONDAY, Pair.of(10, 14)).getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertEquals(sut.addRecurringTimeSlot(2L, Day.MONDAY, new Node(10, 14)).getStatusCode(), HttpStatus.BAD_REQUEST);
 
     }
 
     @Test
     public void testAddTimeSlot() {
-        TimeSlot time = new TimeSlot(1, Day.FRIDAY, Pair.of(10, 12));
+        TimeSlot time = new TimeSlot(1, Day.FRIDAY, new Node(10, 12));
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
         assertEquals(sut.addTimeSlot(1L, time).getStatusCode(), HttpStatus.OK);
