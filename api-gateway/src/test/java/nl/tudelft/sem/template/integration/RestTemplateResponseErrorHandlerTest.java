@@ -1,11 +1,15 @@
 package nl.tudelft.sem.template.integration;
 
+
+import static org.assertj.core.api.Assertions.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+
 import com.fasterxml.jackson.core.JsonProcessingException;
 import nl.tudelft.sem.template.components.RestTemplateResponseErrorHandler;
 import nl.tudelft.sem.template.shared.entities.User;
-
-import static org.assertj.core.api.Assertions.*;
-
 import nl.tudelft.sem.template.shared.utils.JsonUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,12 +25,8 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-@ContextConfiguration(classes = { User.class })
+@ContextConfiguration(classes = {User.class})
 @RestClientTest
 public class RestTemplateResponseErrorHandlerTest {
 
@@ -38,6 +38,9 @@ public class RestTemplateResponseErrorHandlerTest {
 
     private RestTemplate restTemplate;
 
+    /**
+     * Setup the restTemplate.
+     */
     @BeforeEach
     public void setUp() {
         this.restTemplate = this.builder
@@ -47,7 +50,7 @@ public class RestTemplateResponseErrorHandlerTest {
     }
 
     @Test
-    public void  givenRemoteApiCall_when404Error_thenThrowNotFound() {
+    public void givenRemoteApiCall_when404Error_thenThrowNotFound() {
         this.server.expect(ExpectedCount.once(), requestTo("/api/user/nonexistent"))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.NOT_FOUND));
@@ -58,7 +61,7 @@ public class RestTemplateResponseErrorHandlerTest {
     }
 
     @Test
-    public void  givenRemoteApiCall_when500Error_thenThrowInternalServerError() {
+    public void givenRemoteApiCall_when500Error_thenThrowInternalServerError() {
         this.server.expect(ExpectedCount.once(), requestTo("/api/user/internalservererror"))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.INTERNAL_SERVER_ERROR));
@@ -69,7 +72,7 @@ public class RestTemplateResponseErrorHandlerTest {
     }
 
     @Test
-    public void  givenRemoteApiCall_when400Error_thenThrowBadRequest() {
+    public void givenRemoteApiCall_when400Error_thenThrowBadRequest() {
         this.server.expect(ExpectedCount.once(), requestTo("/api/user/badrequest"))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withStatus(HttpStatus.BAD_REQUEST));
@@ -79,8 +82,9 @@ public class RestTemplateResponseErrorHandlerTest {
         }).isInstanceOf(ResponseStatusException.class).hasMessage("400 BAD_REQUEST \"Bad Request\"");
     }
     //test hasError function form RestTemplateResponseErrorHandler
+
     @Test
-    public void  givenRemoteApiCall_when200Error_thenNoError() throws JsonProcessingException {
+    public void givenRemoteApiCall_when200Error_thenNoError() throws JsonProcessingException {
         User expected = new User("testNetID", "testName", "testEmail");
         this.server.expect(ExpectedCount.once(), requestTo("/api/user/ok"))
                 .andExpect(method(HttpMethod.GET))

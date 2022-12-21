@@ -1,8 +1,15 @@
 package nl.tudelft.sem.template.controllers;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import java.nio.charset.StandardCharsets;
 import nl.tudelft.sem.template.services.GatewayService;
 import nl.tudelft.sem.template.shared.authentication.JwtAuthenticationEntryPoint;
 import nl.tudelft.sem.template.shared.authentication.JwtRequestFilter;
@@ -20,20 +27,12 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-
-import static org.hamcrest.Matchers.containsString;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 @WebMvcTest(GatewayAuthenticationController.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class AuthenticationGatewayTest {
 
-    public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(), MediaType.APPLICATION_JSON.getSubtype(), StandardCharsets.UTF_8);
+    public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
+            MediaType.APPLICATION_JSON.getSubtype(), StandardCharsets.UTF_8);
 
     @Autowired
     private MockMvc mockMvc;
@@ -53,7 +52,7 @@ public class AuthenticationGatewayTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-        String requestJson=ow.writeValueAsString(request);
+        String requestJson = ow.writeValueAsString(request);
         when(gatewayService.registerUser(request)).thenReturn(new User("testNetId", "name", "email"));
         mockMvc.perform(post("/api/auth/register").contentType(APPLICATION_JSON_UTF8)
                         .content(requestJson))
@@ -68,7 +67,7 @@ public class AuthenticationGatewayTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-        String requestJson=ow.writeValueAsString(request);
+        String requestJson = ow.writeValueAsString(request);
         when(gatewayService.registerUser(request)).thenThrow(new IllegalArgumentException());
         mockMvc.perform(post("/api/auth/register").contentType(APPLICATION_JSON_UTF8)
                         .content(requestJson))
@@ -82,7 +81,7 @@ public class AuthenticationGatewayTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-        String requestJson=ow.writeValueAsString(request);
+        String requestJson = ow.writeValueAsString(request);
         when(gatewayService.registerUser(request)).thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST));
         mockMvc.perform(post("/api/auth/register").contentType(APPLICATION_JSON_UTF8)
                         .content(requestJson))
@@ -97,7 +96,7 @@ public class AuthenticationGatewayTest {
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-        String requestJson=ow.writeValueAsString(request);
+        String requestJson = ow.writeValueAsString(request);
         when(gatewayService.login(request)).thenReturn(new AuthenticationResponseModel("testToken"));
         mockMvc.perform(post("/api/auth/login").contentType(APPLICATION_JSON_UTF8)
                         .content(requestJson))
