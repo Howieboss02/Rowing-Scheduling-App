@@ -14,6 +14,8 @@ import nl.tudelft.sem.template.shared.models.AuthenticationRequestModel;
 import nl.tudelft.sem.template.shared.models.AuthenticationResponseModel;
 import nl.tudelft.sem.template.shared.models.RegistrationRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -159,14 +161,14 @@ public class GatewayService {
 
     public ResponseEntity<Object> deleteEvent(Long eventId) {
         restTemplate.delete(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/events/{" + eventId + "}", Event.class);
+                + "/" + eventId);
         return ResponseEntity.ok().build();
     }
 
-    public EventModel updateEvent(EventModel eventModel, Long id) {
-        restTemplate.patchForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/events/{" + id + "}", eventModel, Event.class);
-        return eventModel;
+    public Event updateEvent(EventModel eventModel, Long id) {
+        HttpEntity<EventModel> requestEntity = new HttpEntity<>(eventModel);
+        return restTemplate.exchange(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                + "/" + id, HttpMethod.PUT, requestEntity, Event.class).getBody();
     }
 
     public String enqueueToEvent(Long eventId, Long userId, PositionName position) {

@@ -119,12 +119,13 @@ public class EventController {
      * @param id the event's id
      * @return an ok message if it goes right
      */
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteEvent(@PathVariable("id") Long id) {
+        System.out.println("id: " + id);
         try {
             eventService.deleteById(id);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
         }
         return ResponseEntity.ok().build();
     }
@@ -136,7 +137,7 @@ public class EventController {
      * @param eventModel a dummy-like event object
      * @return the newly updated event
      */
-    @PutMapping("edit/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateEvent(@PathVariable("id") Long id,
                                          @RequestBody EventModel eventModel) {
         Optional<Event> returned = eventService.updateById(eventModel.getOwningUser(), id, eventModel.getLabel(),

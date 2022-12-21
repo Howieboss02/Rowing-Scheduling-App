@@ -83,27 +83,32 @@ public class GatewayEventController {
         }
     }
 
-    @DeleteMapping("{id}")
-    public ResponseEntity<?> deleteEvent(@PathVariable("id") Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteEvent(@PathVariable("id") Long id) {
         try {
+            System.out.println("deleteEvent");
             return gatewayService.deleteEvent(id);
         } catch (ResponseStatusException e) {
+            System.out.println("deleteEvent exception " + e.getMessage());
             throw e;
         }
         catch (Exception e) {
+            System.out.println("deleteEvent exception " + e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
 
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateEvent(@PathVariable("id") Long id,
                                          @RequestBody EventModel eventModel) {
         try {
             return ResponseEntity.ok(gatewayService.updateEvent(eventModel, id));
         } catch (ResponseStatusException e) {
+            System.out.println("updateEvent exception " + e.getMessage());
             throw e;
         }
         catch (Exception e) {
+            System.out.println("updateEvent exception " + e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -115,9 +120,11 @@ public class GatewayEventController {
         try {
             return ResponseEntity.ok(gatewayService.enqueueToEvent(userId, eventId, position));
         } catch (ResponseStatusException e) {
+            System.out.println("enqueue exception " + e.getMessage());
             throw e;
         }
         catch (Exception e) {
+            System.out.println("enqueue exception " + e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
