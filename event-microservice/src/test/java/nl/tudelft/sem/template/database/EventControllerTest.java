@@ -233,35 +233,6 @@ public class EventControllerTest {
         }
     }
 
-    /*@Test
-    @SuppressWarnings("unchecked")
-    public void enqueueTest() {
-        Mono<User> mono = (Mono<User>) mock(Mono.class);
-
-        when(mockedClient.get().uri("http://localhost:8084/api/user/1").retrieve().bodyToMono(User.class).log())
-                .thenReturn(mono);
-        when(mono.hasElement().block()).thenReturn(true);
-        when(mono.block()).thenReturn(null);
-        verify(mockedService, times(1)).enqueueById(1L, null, PositionName.Cox);
-
-        assertEquals(mockedSut.enqueue(1L, null, PositionName.Cox).getStatusCode(), HttpStatus.OK);
-
-
-    }
-
-    @Test
-    @SuppressWarnings("unchecked")
-    public void enqueueTestFail() {
-        Mono<User> mono = (Mono<User>) mock(Mono.class);
-        WebClient.RequestHeadersUriSpec spec = mock(WebClient.RequestHeadersUriSpec.class);
-        when(mockedClient.get()).thenReturn(spec);
-        when(mockedClient.get().uri("http://localhost:8084/api/user/1").retrieve().bodyToMono(User.class).log())
-                .thenReturn(mono);
-        when(mono.hasElement().block()).thenReturn(false);
-
-        assertEquals(mockedSut.enqueue(1L, null, PositionName.Cox).getStatusCode(), HttpStatus.NOT_FOUND);
-    }*/
-
     @Test
     public void acceptTestNoEvent() {
         Request r = new Request("A", PositionName.Cox);
