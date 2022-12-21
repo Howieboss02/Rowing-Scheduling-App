@@ -13,7 +13,7 @@ import org.springframework.data.util.Pair;
 @Converter
 public class ScheduleConverter implements AttributeConverter<Schedule, String> {
 
-    private static final String LIST_SPLIT_CHAR = "-";
+    private static final String LIST_SPLIT_CHAR = "/";
     private static final String SLOT_SPLIT_CHAR = ";";
 
     private static TimeSlotConverter tsConverter = new TimeSlotConverter();
@@ -74,9 +74,11 @@ public class ScheduleConverter implements AttributeConverter<Schedule, String> {
      */
     private void timeSlotListToString(StringBuilder scheduleString,
                                           List<TimeSlot> slots) {
-        for (TimeSlot slot : slots) {
-            scheduleString.append(tsConverter.convertToDatabaseColumn(slot))
-                    .append(SLOT_SPLIT_CHAR);
+        for(int i = 0; i < slots.size(); i++) {
+            scheduleString.append(tsConverter.convertToDatabaseColumn(slots.get(i)));
+            if (i != slots.size() - 1) {
+                scheduleString.append(SLOT_SPLIT_CHAR);
+            }
         }
     }
 
