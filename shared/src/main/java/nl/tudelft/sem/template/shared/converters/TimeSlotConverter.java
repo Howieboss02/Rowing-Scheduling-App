@@ -28,7 +28,7 @@ public class TimeSlotConverter implements AttributeConverter<TimeSlot, String> {
         timeSlotString.append(timeslot.getWeek()).append(SPLIT)
                 .append(timeslot.getDay()).append(SPLIT)
                 .append(timeslot.getTime().getFirst()).append(SPLIT)
-                .append(timeslot.getTime().getSecond()).append(SPLIT);
+                .append(timeslot.getTime().getSecond());
 
         return timeSlotString.toString();
     }
