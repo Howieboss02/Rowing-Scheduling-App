@@ -86,8 +86,7 @@ public class EventController {
             Event event = new Event(eventModel.getOwningUser(),
                     eventModel.getLabel(),
                     eventModel.getPositions(),
-                    eventModel.getStartTime(),
-                    eventModel.getEndTime(),
+                    eventModel.getTime(),
                     eventModel.getCertificate(),
                     eventModel.getType(),
                     eventModel.isCompetitive(),
@@ -126,7 +125,7 @@ public class EventController {
     public ResponseEntity<?> updateEvent(@PathVariable("id") Long id,
                                          @RequestBody EventModel eventModel) {
         Optional<Event> returned = eventService.updateById(eventModel.getOwningUser(), id, eventModel.getLabel(),
-            eventModel.getPositions(), eventModel.getStartTime(), eventModel.getEndTime(),
+            eventModel.getPositions(), eventModel.getTime(),
             eventModel.getCertificate(), eventModel.getType(), eventModel.isCompetitive(), eventModel.getOrganisation());
         if (returned.isPresent()) {
             return ResponseEntity.ok(returned.get());
