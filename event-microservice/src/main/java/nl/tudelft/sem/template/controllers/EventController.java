@@ -237,6 +237,6 @@ public class EventController {
 
         //send notification
         String mess = client.post().uri("http://localhost:8085/api/notification/" + event.get().getId() + "/" + id + "/?outcome=REJECTED").retrieve().bodyToMono(String.class).block();
-        return ResponseEntity.ok("REJECTED");
+        return ResponseEntity.ok("REJECTED\n" + mess);
     }
 }
