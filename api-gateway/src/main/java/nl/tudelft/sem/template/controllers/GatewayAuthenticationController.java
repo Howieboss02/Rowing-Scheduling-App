@@ -22,6 +22,9 @@ public class GatewayAuthenticationController {
 
     // AUTHENTICATION MS
 
+    /**
+     * register a new user.
+     */
     @PostMapping(path = "/register")
     public ResponseEntity<User> register(@RequestBody RegistrationRequestModel request) {
         try {
@@ -34,6 +37,9 @@ public class GatewayAuthenticationController {
         }
     }
 
+    /**
+     * login a user.
+     */
     @PostMapping(path = "/login")
     public ResponseEntity<AuthenticationResponseModel> login(@RequestBody AuthenticationRequestModel request) {
         return ResponseEntity.ok(gatewayService.login(request));

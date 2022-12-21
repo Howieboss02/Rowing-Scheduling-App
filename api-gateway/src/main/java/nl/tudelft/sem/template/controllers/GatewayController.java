@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.controllers;
 
-
+import java.util.List;
+import javax.persistence.Convert;
 import nl.tudelft.sem.template.services.GatewayService;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
@@ -12,8 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
-import javax.persistence.Convert;
-import java.util.List;
 
 
 @RestController
@@ -25,7 +24,7 @@ public class GatewayController {
 
     // USER MS
 
-    @GetMapping(path = "/user/all")
+    /*@GetMapping(path = "/user/all")
     public ResponseEntity<List<User>> getAllUsers() {
         System.out.println("get all users");
         try {

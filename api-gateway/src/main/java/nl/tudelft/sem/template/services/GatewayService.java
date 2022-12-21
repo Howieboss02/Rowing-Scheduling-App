@@ -1,24 +1,16 @@
 package nl.tudelft.sem.template.services;
 
-import nl.tudelft.sem.template.components.RestTemplateResponseErrorHandler;
-import nl.tudelft.sem.template.shared.domain.Position;
+import java.util.List;
+import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.MicroservicePorts;
-import nl.tudelft.sem.template.shared.enums.Certificate;
-import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.models.AuthenticationRequestModel;
 import nl.tudelft.sem.template.shared.models.AuthenticationResponseModel;
 import nl.tudelft.sem.template.shared.models.RegistrationRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
-
-
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.List;
 
 @Service
 public class GatewayService {
@@ -27,7 +19,7 @@ public class GatewayService {
     private static final String userPath = "/api/user";
 
     @Autowired
-    private RestTemplate restTemplate;
+    private transient RestTemplate restTemplate;
 
     public GatewayService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -36,7 +28,7 @@ public class GatewayService {
 
     //TODO: add other services and try catch statements along with proper ResponseEntity return types
 
-    // Auhtehtication microservice
+    // Authentication microservice
 
     /**
      * Registers a user.
@@ -65,52 +57,64 @@ public class GatewayService {
     /**
      * Gets all users.
      */
-    public ResponseEntity getAllUsers() {
+    public List<User> getAllUsers() {
         return restTemplate.getForObject(this.apiPrefix + MicroservicePorts.USER.port + userPath
-                + "/all", ResponseEntity.class);
+                + "/all", List.class);
     }
 
     /**
-     * get all notifications for a user.
+     * Get all notifications for a user.
      */
-    public ResponseEntity getAllNotifications(String userId) {
+    public List<String> getAllNotifications(Long userId) {
         return restTemplate.getForObject(this.apiPrefix + MicroservicePorts.USER.port + userPath
-                + "/getNotifications/{" + userId + "}", ResponseEntity.class);
+                + "/getNotifications/{" + userId + "}", List.class);
     }
 
     /**
-     * add a notification for a user.
+     * Delete a user.
      */
-    public ResponseEntity addNotification(String userId, String notification) {
-        return restTemplate.postForObject(this.apiPrefix + MicroservicePorts.USER.port + userPath
-                + "/addNotification/{" + userId + "}", notification, ResponseEntity.class);
+    public void deleteUser(Long userId) {
+        restTemplate.delete(this.apiPrefix + MicroservicePorts.USER.port + userPath
+                + "/delete/{" + userId + "}");
     }
 
-    // TODO register user endpoint! Should it be done here or should it only be done by the authentication microservice?
-
-//    public ResponseEntity deleteUser(String userId) {
-//        return restTemplate.delete(this.apiPrefix + MicroservicePorts.USER.port + userPath
-//                + "/delete/{" + userId + "}", ResponseEntity.class);
-//    }
-
-    /*public ResponseEntity updateUser(String userId, String name, String organization, String email, String gender, Certificate certificate, List<Position> positions) {
-        return restTemplate.put(this.apiPrefix + MicroservicePorts.USER.port + userPath
-                + "/update/{" + userId + "}", ,ResponseEntity.class);
-    }*/
-
-    public ResponseEntity setName(String userId, String name) {
-        return restTemplate.postForObject(this.apiPrefix + MicroservicePorts.USER.port + userPath
-                        + "/name/{" + userId + "}", name, ResponseEntity.class);
+    /**
+     * Update a user.
+     */
+    public User updateUser(Long userId, User user) {
+        return restTemplate.patchForObject(this.apiPrefix + MicroservicePorts.USER.port + userPath
+                + "/update/{" + userId + "}", user, User.class);
     }
 
-    public ResponseEntity setOrganization(String userId, String organization) {
+    /**
+     * Add a recurring time slot.
+     */
+    public TimeSlot addRecurring(Long userId, TimeSlot timeSlot) {
         return restTemplate.postForObject(this.apiPrefix + MicroservicePorts.USER.port + userPath
-                        + "/organization/{" + userId + "}", organization, ResponseEntity.class);
+                + "/schedule/add/{" + userId + "}", timeSlot, TimeSlot.class);
     }
 
-    public ResponseEntity setCertificate(String userId, Certificate certificate) {
+    /**
+     * Remove a recurring time slot.
+     */
+    public TimeSlot removeRecurring(Long userId, TimeSlot timeSlot) {
         return restTemplate.postForObject(this.apiPrefix + MicroservicePorts.USER.port + userPath
-                        + "/certificate/{" + userId + "}", certificate, ResponseEntity.class);
+                + "/schedule/remove/{" + userId + "}", timeSlot, TimeSlot.class);
     }
 
+    /**
+     * Add a one-time time slot.
+     */
+    public TimeSlot addOneTimeTimeSlot(Long userId, TimeSlot timeSlot) {
+        return restTemplate.postForObject(this.apiPrefix + MicroservicePorts.USER.port + userPath
+                + "/schedule/include/{" + userId + "}", timeSlot, TimeSlot.class);
+    }
+
+    /**
+     * Remove a one-time time slot.
+     */
+    public TimeSlot removeOneTimeTimeSlot(Long userId, TimeSlot timeSlot) {
+        return restTemplate.postForObject(this.apiPrefix + MicroservicePorts.USER.port + userPath
+                + "/schedule/exclude/{" + userId + "}", timeSlot, TimeSlot.class);
+    }
 }

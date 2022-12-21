@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 public class RestTemplateConfig {
 
     @Autowired
-    RestTemplateBuilder restTemplateBuilder;
+    transient RestTemplateBuilder restTemplateBuilder;
 
     @Bean
     public RestTemplate restTemplate() {
