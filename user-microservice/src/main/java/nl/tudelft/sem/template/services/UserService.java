@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.services;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.database.UserRepository;
+import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;

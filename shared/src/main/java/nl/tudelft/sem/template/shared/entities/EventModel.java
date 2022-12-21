@@ -14,10 +14,11 @@ public class EventModel {
     private Long owningUser;
     private String label;
     private List<PositionName> positions;
-    private TimeSlot time;
+    private TimeSlot timeslot;
     private Certificate certificate;
     private EventType type;
     private boolean isCompetitive;
+    private String gender;
     private String organisation;
 
 }

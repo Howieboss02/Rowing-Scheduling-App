@@ -101,10 +101,11 @@ public class EventController {
             Event event = new Event(eventModel.getOwningUser(),
                     eventModel.getLabel(),
                     eventModel.getPositions(),
-                    eventModel.getTime(),
+                    eventModel.getTimeslot(),
                     eventModel.getCertificate(),
                     eventModel.getType(),
                     eventModel.isCompetitive(),
+                    eventModel.getGender(),
                     eventModel.getOrganisation());
             Event receivedEvent = eventService.insert(event);
             return ResponseEntity.ok(receivedEvent);
@@ -139,10 +140,12 @@ public class EventController {
      */
     @PutMapping("/{id}")
     public ResponseEntity<?> updateEvent(@PathVariable("id") Long id,
-                                         @RequestBody EventModel eventModel) {
+                                         @RequestBody EventModel eventModel,
+                                         @RequestParam boolean updateIsCompetitive) {
         Optional<Event> returned = eventService.updateById(eventModel.getOwningUser(), id, eventModel.getLabel(),
-            eventModel.getPositions(), eventModel.getTime(),
-            eventModel.getCertificate(), eventModel.getType(), eventModel.isCompetitive(), eventModel.getOrganisation());
+            eventModel.getPositions(), eventModel.getTimeslot(),
+            eventModel.getCertificate(), eventModel.getType(), eventModel.isCompetitive(),
+                eventModel.getGender(), eventModel.getOrganisation(), updateIsCompetitive);
         if (returned.isPresent()) {
             return ResponseEntity.ok(returned.get());
         } else {
