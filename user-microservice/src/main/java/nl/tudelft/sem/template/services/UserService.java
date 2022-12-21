@@ -126,14 +126,14 @@ public class UserService {
      * Update the availability of a user.
      *
      * @param id the id of the user
-     * @param day the day of the week
+     * @param timeSlot to be added
      * @return the updated user
      */
-    public Optional<User> addRecurringTimeSlot(Long id, Day day, Pair<Integer, Integer> time) {
+    public Optional<User> addRecurringTimeSlot(Long id, TimeSlot timeSlot) {
         Optional<User> user = getById(id);
 
         if (user.isPresent()) {
-            user.get().addRecurringSlot(day, time);
+            user.get().addRecurringSlot(timeSlot);
             userRepo.save(user.get());
         }
         return user;
@@ -141,12 +141,14 @@ public class UserService {
 
     /**
      * Remove a recurring time slot from a user.
+     * @param id the id of the user
+     * @param timeSlot to be removed
      */
-    public Optional<User> removeRecurringTimeSlot(Long id, Day day, Pair<Integer, Integer> time) {
+    public Optional<User> removeRecurringTimeSlot(Long id, TimeSlot timeSlot) {
         Optional<User> user = getById(id);
 
         if (user.isPresent()) {
-            user.get().removeRecurringSlot(day, time);
+            user.get().removeRecurringSlot(timeSlot);
             userRepo.save(user.get());
         }
         return user;

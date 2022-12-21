@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.controllers;
 
+import java.sql.Time;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.services.UserService;
@@ -103,98 +104,102 @@ public class UserController {
      * @param userId the id of the user we want to delete
      * @return a confirmation of deleting it
      */
-    @DeleteMapping(path = "{userId}")
+    @DeleteMapping(path = "/delete/{userId}")
     public ResponseEntity<?> deleteUser(@PathVariable(uid) Long userId) {
-        if (!userService.deleteById(userId)) {
+        try{
+            userService.deleteById(userId);
+            return ResponseEntity.ok().build();
+        }
+        catch (Exception e){
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok().build();
     }
 
     /**
      * Update everything about a user at once by giving all possible parameters.
      */
-    @PutMapping(path = "{userId}")
-    public ResponseEntity<?> updateUser(@PathVariable(uid) Long userId,
-                                        @RequestParam(required = false) String name,
-                                        @RequestParam(required = false) String organization,
-                                        @RequestParam(required = false) String email,
-                                        @RequestParam(required = false) String gender,
-                                        @RequestParam(required = false) Certificate certificate,
-                                        @RequestParam(required = false) List<Position> positions
-    ) {
-        if (userService.updateById(userId, name, organization, email, gender, certificate, positions).isEmpty()) {
+    @PutMapping(path = "/update/{userId}")
+    public ResponseEntity<?> updateUser(@PathVariable(uid) Long userId, @RequestParam() User user) {
+        if (userService.updateById(
+                userId,
+                user.getName(),
+                user.getOrganization(),
+                user.getEmail(),
+                user.getGender(),
+                user.getCertificate(),
+                user.getPositions()
+                ).isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
 
         return ResponseEntity.ok().build();
     }
 
-    /**
-     * Update the user's name.
-     */
-    @PutMapping(path = "/name/{userId}")
-    public ResponseEntity<?> setName(@PathVariable(uid) Long userId,
-                                     @RequestParam(required = false) String name
-    ) {
-        if (userService.setName(userId, name).isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok().build();
-    }
-
-    /**
-     * Update the user's organization.
-     */
-    @PutMapping(path = "/organization/{userId}")
-    public ResponseEntity<?> setOrganization(@PathVariable(uid) Long userId,
-                                             @RequestParam(required = false) String organization
-    ) {
-        if (userService.setOrganization(userId, organization).isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok().build();
-    }
-
-
-    /**
-     * Update the user's gender.
-     */
-    @PutMapping(path = "/gender/{userId}")
-    public ResponseEntity<?> setGender(@PathVariable(uid) Long userId,
-                                       @RequestParam(required = false) String gender
-    ) {
-        if (userService.setGender(userId, gender).isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok().build();
-    }
-
-    /**
-     * Update the user's certificate.
-     */
-    @PutMapping(path = "/certificate/{userId}")
-    public ResponseEntity<?> setCertificate(@PathVariable(uid) Long userId,
-                                            @RequestParam(required = false) Certificate certificate
-    ) {
-        if (userService.setCertificate(userId, certificate).isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok().build();
-    }
-
-    /**
-     * Update the user's positions.
-     */
-    @PutMapping(path = "/positions/{userId}")
-    public ResponseEntity<?> setPositions(@PathVariable(uid) Long userId,
-                                          @RequestParam(required = false) List<Position> positions
-    ) {
-        if (userService.setPositions(userId, positions).isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok().build();
-    }
+//    /**
+//     * Update the user's name.
+//     */
+//    @PutMapping(path = "/name/{userId}")
+//    public ResponseEntity<?> setName(@PathVariable(uid) Long userId,
+//                                     @RequestParam(required = false) String name
+//    ) {
+//        if (userService.setName(userId, name).isEmpty()) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//        return ResponseEntity.ok().build();
+//    }
+//
+//    /**
+//     * Update the user's organization.
+//     */
+//    @PutMapping(path = "/organization/{userId}")
+//    public ResponseEntity<?> setOrganization(@PathVariable(uid) Long userId,
+//                                             @RequestParam(required = false) String organization
+//    ) {
+//        if (userService.setOrganization(userId, organization).isEmpty()) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//        return ResponseEntity.ok().build();
+//    }
+//
+//
+//    /**
+//     * Update the user's gender.
+//     */
+//    @PutMapping(path = "/gender/{userId}")
+//    public ResponseEntity<?> setGender(@PathVariable(uid) Long userId,
+//                                       @RequestParam(required = false) String gender
+//    ) {
+//        if (userService.setGender(userId, gender).isEmpty()) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//        return ResponseEntity.ok().build();
+//    }
+//
+//    /**
+//     * Update the user's certificate.
+//     */
+//    @PutMapping(path = "/certificate/{userId}")
+//    public ResponseEntity<?> setCertificate(@PathVariable(uid) Long userId,
+//                                            @RequestParam(required = false) Certificate certificate
+//    ) {
+//        if (userService.setCertificate(userId, certificate).isEmpty()) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//        return ResponseEntity.ok().build();
+//    }
+//
+//    /**
+//     * Update the user's positions.
+//     */
+//    @PutMapping(path = "/positions/{userId}")
+//    public ResponseEntity<?> setPositions(@PathVariable(uid) Long userId,
+//                                          @RequestParam(required = false) List<Position> positions
+//    ) {
+//        if (userService.setPositions(userId, positions).isEmpty()) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//        return ResponseEntity.ok().build();
+//    }
 
     /**
      * Add a notification to the user's list of notifications.
@@ -211,56 +216,56 @@ public class UserController {
 
     /**
      * Add a recurring timeslot (day of the week + time) to the user's schedule.
+     * Add in the API call indicates that the timeslot is recurring.
+     * include in the API call indicates that the timeslot is one time.
      */
-    @PutMapping(path = "/schedule/add/{userId}")
-    public ResponseEntity<?> addRecurringTimeSlot(@PathVariable(uid) Long userId,
-                                                  @RequestParam(required = false) Day day,
-                                                  @RequestParam(required = false) Pair<Integer, Integer> time
+    @PostMapping(path = "/schedule/add/{userId}")
+    public ResponseEntity<TimeSlot> addRecurringTimeSlot(@PathVariable(uid) Long userId,
+                                                  @RequestParam TimeSlot timeSlot
     ) {
-        if (userService.addRecurringTimeSlot(userId, day, time).isEmpty()) {
+        if (userService.addRecurringTimeSlot(userId, timeSlot).isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(timeSlot);
     }
 
     /**
      * Remove a recurring timeslot (day of the week + time) from the user's schedule.
      */
     @PutMapping(path = "/schedule/remove/{userId}")
-    public ResponseEntity<?> removeRecurringTimeSlot(@PathVariable(uid) Long userId,
-                                                     @RequestParam(required = false) Day day,
-                                                     @RequestParam(required = false) Pair<Integer, Integer> time
+    public ResponseEntity<TimeSlot> removeRecurringTimeSlot(@PathVariable(uid) Long userId,
+                                                            @RequestParam TimeSlot timeSlot
     ) {
-        if (userService.removeRecurringTimeSlot(userId, day, time).isEmpty()) {
+        if (userService.removeRecurringTimeSlot(userId, timeSlot).isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(timeSlot);
     }
 
     /**
      * Include a one-time-only timeslot in the user schedule.
      */
     @PutMapping(path = "/schedule/include/{userId}")
-    public ResponseEntity<?> addTimeSlot(@PathVariable(uid) Long userId,
-                                         @RequestParam(required = false) TimeSlot timeslot
+    public ResponseEntity<TimeSlot> addTimeSlot(@PathVariable(uid) Long userId,
+                                            @RequestParam TimeSlot timeslot
     ) {
         if (userService.addTimeSlot(userId, timeslot).isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(timeslot);
     }
 
     /**
      * Exclude one instance of a timeslot from the user's schedule.
      */
     @PutMapping(path = "/schedule/exclude/{userId}")
-    public ResponseEntity<?> removeTimeSlot(@PathVariable(uid) Long userId,
-                                            @RequestParam(required = false) TimeSlot timeslot
+    public ResponseEntity<TimeSlot> removeTimeSlot(@PathVariable(uid) Long userId,
+                                            @RequestParam TimeSlot timeslot
     ) {
         if (userService.removeTimeSlot(userId, timeslot).isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(timeslot);
     }
 
 
