@@ -30,7 +30,7 @@ public class TimeSlot {
         slots.addAll(schedule.getAddedSlots());
         for (TimeSlot ts : removed) {
             if (ts.week.equals(this.week)) {
-                recurring.remove(ts);
+                recurring.removeIf(toRemove -> toRemove.day.equals(ts.day) && toRemove.time.equals(ts.time));
             }
         }
         for (TimeSlot ts : recurring) {
