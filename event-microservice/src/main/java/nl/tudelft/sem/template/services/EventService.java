@@ -218,7 +218,7 @@ public class EventService {
     public List<Event> getMatchedEvents(User user) {
         List<Event> e1 = eventRepo.findMatchingTrainings(user.getCertificate(), user.getId(), EventType.TRAINING);
         List<Event> e2 = eventRepo.findMatchingCompetitions(user.getCertificate(), user.getOrganization(),
-                                                            user.getId(), EventType.COMPETITION);
+                                                            user.getId(), EventType.COMPETITION, user.getGender());
         List<Event> matchedEvents = new ArrayList<>();
         List<Position> positions = new ArrayList<>();
         positions.addAll(user.getPositions());
