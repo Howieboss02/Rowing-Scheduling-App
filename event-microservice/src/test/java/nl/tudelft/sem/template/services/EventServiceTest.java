@@ -1,24 +1,30 @@
 package nl.tudelft.sem.template.services;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import nl.tudelft.sem.template.database.EventRepository;
 import nl.tudelft.sem.template.database.TestEventRepository;
 import nl.tudelft.sem.template.shared.domain.Request;
+import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.Certificate;
+import nl.tudelft.sem.template.shared.enums.Day;
 import nl.tudelft.sem.template.shared.enums.EventType;
 import nl.tudelft.sem.template.shared.enums.PositionName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.util.Pair;
 
 class EventServiceTest {
-    public TestEventRepository repo;
 
-    private EventService service;
+    public EventRepository mockedRepo;
+    private EventService mockedService;
 
     /**
      * Method to create a list of positions for testing.
@@ -43,47 +49,35 @@ class EventServiceTest {
      * @return a new event
      */
     private static Event getEvent(String s, Long l, Certificate c, EventType t) {
-        return new Event(l, s, createPositions(), s, s, c, t, false, s);
+        TimeSlot ts = new TimeSlot(1, Day.FRIDAY, Pair.of(2, 3));
+        return new Event(l, s, createPositions(), ts, c, t, true, s);
     }
 
     @BeforeEach
     public void setup() {
-        repo = new TestEventRepository();
-        service = new EventService(repo);
+        mockedRepo = mock(TestEventRepository.class);
+        mockedService = new EventService(mockedRepo);
     }
 
     @Test
     void testGetAllEvents() {
-        try {
-            Event event = getEvent("A", 1L, Certificate.B2, EventType.COMPETITION);
-            List<Event> events = List.of(event);
-
-            service.insert(event);
-            assertEquals(events, service.getAllEvents());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        Event event = getEvent("A", 1L, Certificate.B2, EventType.COMPETITION);
+        when(mockedRepo.findAll()).thenReturn(List.of(event));
+        assertEquals(List.of(event), mockedService.getAllEvents());
     }
 
     @Test
     void testGetAllEventsByUser() {
-        try {
-            Event event = getEvent("A", 1L, Certificate.B2, EventType.COMPETITION);
-            Event event2 = getEvent("A", 2L, Certificate.B2, EventType.COMPETITION);
-            List<Event> events = List.of(event);
+        Event event = getEvent("A", 1L, Certificate.B2, EventType.COMPETITION);
+        when(mockedRepo.findByOwningUser(1L)).thenReturn(List.of(event));
 
-            service.insert(event);
-            service.insert(event2);
-            assertEquals(events, service.getAllEventsByUser(1L));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        assertEquals(List.of(event), mockedService.getAllEventsByUser(1L));
     }
 
     @Test
     void testInsertFail() {
         Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            service.insert(null);
+            mockedService.insert(null);
         });
 
         assertEquals("Event cannot be null", exception.getMessage());
@@ -91,21 +85,21 @@ class EventServiceTest {
 
     @Test
     void testDeleteById() {
-        try {
-            Event event = getEvent("A", 1L, Certificate.B2, EventType.COMPETITION);
-
-            service.insert(event);
-            service.deleteById(1L);
-            assertEquals(new ArrayList<Event>(), service.getAllEvents());
+        try{
+            when(mockedRepo.existsById(1L)).thenReturn(true);
+            mockedService.deleteById(1L);
+            verify(mockedRepo, times(1)).deleteById(1L);
         } catch (Exception e) {
             e.printStackTrace();
         }
+
     }
 
     @Test
     void testDeleteByIdFail() {
+        when(mockedRepo.existsById(1L)).thenReturn(false);
         Exception exception = assertThrows(Exception.class, () -> {
-            service.deleteById(1L);
+            mockedService.deleteById(1L);
         });
 
         assertEquals("ID does not exist", exception.getMessage());
@@ -113,173 +107,143 @@ class EventServiceTest {
 
     @Test
     void testGetById() {
-        try {
-            Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
-            Event event2 = getEvent("B", 5L, Certificate.B2, EventType.COMPETITION);
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
 
-            service.insert(event);
-            service.insert(event2);
-            assertEquals(event, service.getById(1L).get());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
+        assertEquals(Optional.of(event), mockedService.getById(1L));
     }
 
     @Test
     void testGetByIdFail() {
-        try {
-            Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
-            Event event2 = getEvent("B", 5L, Certificate.B2, EventType.COMPETITION);
-
-            service.insert(event);
-            service.insert(event2);
-
-            assertEquals(Optional.empty(), service.getById(3L));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        when(mockedRepo.existsById(1L)).thenReturn(false);
+        assertEquals(Optional.empty(), mockedService.getById(1L));
     }
 
     @Test
     void testUpdateById() {
-        try {
-            Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
-            Event updated = getEvent("B", 1L, Certificate.B5, EventType.COMPETITION);
+        Event event = getEvent("A", 1L, Certificate.B2, EventType.COMPETITION);
+        Event updated = getEvent("B", 1L, Certificate.B5, EventType.COMPETITION);
+        TimeSlot ts = new TimeSlot(1, Day.FRIDAY, Pair.of(2, 3));
 
-            service.insert(event);
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-            assertEquals(event, service.updateById(1L, 1L, "B", createPositions(), "B",
-                    "B", Certificate.B5, EventType.COMPETITION, true, "B").get());
-            assertEquals(updated, service.getById(1L).get());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        assertEquals(Optional.of(event), mockedService.updateById(1L, 1L, "B", createPositions(), ts,
+                Certificate.B5, EventType.COMPETITION, true, "B"));
+        assertEquals(updated, event);
+
     }
 
     @Test
     void testUpdateByIdNoChanges() {
-        try {
-            Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+        Event event = getEvent("A", 1L, Certificate.B2, EventType.COMPETITION);
 
-            service.insert(event);
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-            assertEquals(event, service.updateById(null, null, null, null, null, null, null, null, false, null).get());
-            assertEquals(event, service.getById(1L).get());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        assertEquals(Optional.of(event), mockedService.updateById(1L, 1L, null, null, null, null, null, false, null));
     }
 
     @Test
     void updateByIdNoEvent() {
-        assertEquals(Optional.empty(), service.updateById(null, null, null, null, null, null, null, null, false, null));
+        assertEquals(Optional.empty(), mockedService.updateById(null, null, null, null, null, null, null,  false, null));
     }
 
     @Test
     void testGetRequests() {
-        try {
-            Request r = new Request("Bob", PositionName.Cox);
-            Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
-            event.getQueue().add(r);
+        Request r = new Request("Bob", PositionName.Cox);
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+        event.getQueue().add(r);
 
-            service.insert(event);
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-            assertEquals(List.of(r), service.getRequests(1L));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        assertEquals(List.of(r), mockedService.getRequests(1L));
     }
 
     @Test
     void testGetRequestsFail() {
-        assertEquals(new ArrayList<Request>(), service.getRequests(1L));
+        when(mockedRepo.existsById(1L)).thenReturn(false);
+        assertEquals(new ArrayList<Request>(), mockedService.getRequests(1L));
     }
 
     @Test
     void testEnqueueById() {
-        try {
-            Request r = new Request("Bob", PositionName.Cox);
-            Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
-            Event correctEvent = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
-            correctEvent.getQueue().add(r);
-            User user = new User();
-            user.setNetId("Bob");
+        Request r = new Request("Bob", PositionName.Cox);
 
-            service.insert(event);
-            service.enqueueById(1L, user, PositionName.Cox);
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+        Event correctEvent = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+        correctEvent.getQueue().add(r);
 
-            assertEquals(List.of(r), service.getById(1L).get().getQueue());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        User user = new User();
+        user.setNetId("Bob");
+
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
+
+        mockedService.enqueueById(1L, user, PositionName.Cox);
+
+        verify(mockedRepo, times(1)).save(event);
+        assertEquals(List.of(r), event.getQueue());
     }
 
     @Test
     void testEnqueueByIdNoEvent() {
         User user = new User();
         user.setNetId("Bob");
-        service.enqueueById(1L, user, PositionName.Cox);
 
-        assertEquals(new ArrayList<>(), service.getAllEvents());
+        when(mockedRepo.existsById(1L)).thenReturn(false);
+
+        mockedService.enqueueById(1L, user, PositionName.Cox);
+
+        assertEquals(new ArrayList<>(), mockedService.getAllEvents());
 
     }
 
     @Test
     void testDequeueById() {
-        try {
-            Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
-            User user = new User();
-            user.setNetId("Bob");
+        Request r = new Request("Bob", PositionName.Cox);
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+        event.getQueue().add(r);
+        User user = new User();
+        user.setNetId("Bob");
 
-            service.insert(event);
-            service.enqueueById(1L, user, PositionName.Cox);
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-            assertTrue(service.dequeueById(1L, new Request("Bob", PositionName.Cox)));
-            assertEquals(new ArrayList<>(), service.getById(1L).get().getQueue());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        assertTrue(mockedService.dequeueById(1L, new Request("Bob", PositionName.Cox)));
+        verify(mockedRepo, times(1)).save(event);
+        assertEquals(new ArrayList<>(), event.getQueue());
     }
 
     @Test
     void testDequeueByIdNoEvent() {
+        when(mockedRepo.existsById(1L)).thenReturn(false);
         Request r = new Request("Bob", PositionName.Cox);
-        assertFalse(service.dequeueById(1L, r));
-    }
-
-    @Test
-    void testDequeueByIdNoRequest() {
-        try {
-            Request r = new Request("Bob", PositionName.Cox);
-            Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
-
-            service.insert(event);
-
-            assertFalse(service.dequeueById(1L, r));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        assertFalse(mockedService.dequeueById(1L, r));
     }
 
     @Test
     void removePositionById() {
-        try {
-            Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
-            List<PositionName> positions = createPositions();
-            positions.remove(PositionName.Cox);
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
 
-            service.insert(event);
+        List<PositionName> positions = createPositions();
+        positions.remove(PositionName.Cox);
 
-            assertTrue(service.removePositionById(1L, PositionName.Cox));
-            assertEquals(positions, service.getById(1L).get().getPositions());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
+
+        assertTrue(mockedService.removePositionById(1L, PositionName.Cox));
+        verify(mockedRepo, times(1)).save(event);
+        assertEquals(positions, event.getPositions());
     }
 
     @Test
     void removePositionByIdFail() {
-        assertFalse(service.removePositionById(1L, PositionName.Cox));
+        when(mockedRepo.existsById(1L)).thenReturn(false);
+
+        assertFalse(mockedService.removePositionById(1L, PositionName.Cox));
     }
 
     @Test

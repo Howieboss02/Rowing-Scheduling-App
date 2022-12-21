@@ -5,11 +5,14 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
 import nl.tudelft.sem.template.shared.domain.Request;
+import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.enums.Certificate;
+import nl.tudelft.sem.template.shared.enums.Day;
 import nl.tudelft.sem.template.shared.enums.EventType;
 import nl.tudelft.sem.template.shared.enums.PositionName;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.util.Pair;
 
 public class EventTest {
 
@@ -37,12 +40,11 @@ public class EventTest {
     @Test
     public void testConstructor() {
         Event e = new Event(1L, "A", new ArrayList<>(),
-                "A", "A", Certificate.B5, EventType.COMPETITION, true, "A");
+                new TimeSlot(-1, Day.FRIDAY, Pair.of(1, 2)), Certificate.B5, EventType.COMPETITION, true, "A");
         assertEquals(1L, e.getOwningUser());
         assertEquals("A", e.getLabel());
         assertEquals(new ArrayList<>(), e.getPositions());
-        assertEquals("A", e.getStartTime());
-        assertEquals("A", e.getEndTime());
+        assertEquals(new TimeSlot(-1, Day.FRIDAY, Pair.of(1, 2)), e.getTime());
         assertEquals(Certificate.B5, e.getCertificate());
         assertEquals(EventType.COMPETITION, e.getType());
         assertTrue(e.isCompetitive());
@@ -73,8 +75,8 @@ public class EventTest {
     @Test
     public void messageConverterTest() {
         Event e = new Event(1L, "competition", new ArrayList<>(),
-                "1", "2", Certificate.B5, EventType.COMPETITION, true, "A");
+                new TimeSlot(-1, Day.FRIDAY, Pair.of(1, 2)), Certificate.B5, EventType.COMPETITION, true, "A");
 
-        assertEquals("competition - COMPETITION from 1 until 2.\n", e.messageConverter());
+        assertEquals("competition - COMPETITION from 1 until 2 in week -1, on FRIDAY.\n", e.messageConverter());
     }
 }
