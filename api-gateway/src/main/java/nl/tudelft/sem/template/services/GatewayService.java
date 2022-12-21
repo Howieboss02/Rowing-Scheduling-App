@@ -81,9 +81,10 @@ public class GatewayService {
     /**
      * Delete a user.
      */
-    public void deleteUser(Long userId) {
+    public Boolean deleteUser(Long userId) {
         restTemplate.delete(apiPrefix + MicroservicePorts.USER.port + userPath
                 + "/delete/{" + userId + "}");
+        return true;
     }
 
     /**

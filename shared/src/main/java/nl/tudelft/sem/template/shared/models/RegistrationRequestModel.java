@@ -25,6 +25,7 @@ public class RegistrationRequestModel {
     private String name;
 
     public User getUser() {
-        return new User(this.getNetId(), this.getEmail(), this.getName(), this.getOrganization(), this.getGender(), this.getCertificate(), this.getPositions());
+        return new User(this.getNetId(), this.getEmail(), this.getName(), this.getOrganization(), this.getGender(),
+                this.getCertificate(), this.getPositions());
     }
 }
