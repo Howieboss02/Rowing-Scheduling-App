@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.shared.domain;
 
+import javax.persistence.Convert;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -8,8 +9,6 @@ import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.shared.converters.TextTimeToMinutesConverter;
 import nl.tudelft.sem.template.shared.enums.Day;
 import org.springframework.data.util.Pair;
-
-import javax.persistence.Convert;
 
 @AllArgsConstructor
 @NoArgsConstructor

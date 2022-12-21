@@ -24,6 +24,10 @@ public class TextTimeToMinutesConverter implements AttributeConverter<Pair<Integ
         if (time == null || time.isEmpty()) {
             return null;
         }
+        // if the time contains invalid characters, return null
+        if (!time.matches("^[0-9]{2}:[0-9]{2}-[0-9]{2}:[0-9]{2}$")) {
+            return null;
+        }
         String[] times = time.split(SPLIT_CHAR);
         return Pair.of(Integer.parseInt(times[0].split(":")[0]) * 60
                 + Integer.parseInt(times[0].split(":")[1]),
