@@ -98,25 +98,32 @@ public class UserService {
      * @param id           the id of the user we want to update
      * @param name         the netId of the user
      * @param organization the organization the user is part of
-     * @param email        the email the profile is registered with
      * @param gender       the gender of the rower
      * @param certificate  the biggest certificate a user holds
      * @param positions    the list of position they can fill
      * @return the new profile
      */
-    public Optional<User> updateById(Long id, String name, String organization, String email, String gender,
+    public Optional<User> updateById(Long id, String name, String organization, String gender,
                                      Certificate certificate, List<Position> positions) {
 
         Optional<User> toUpdate = getById(id);
 
         if (toUpdate.isPresent()) {
-            toUpdate.get().setName(name);
-            toUpdate.get().setOrganization(organization);
-            toUpdate.get().setEmail(email);
-            toUpdate.get().setGender(gender);
-            toUpdate.get().setCertificate(certificate);
-            toUpdate.get().setPositions(positions);
-
+            if (name != null) {
+                toUpdate.get().setName(name);
+            }
+            if (organization != null) {
+                toUpdate.get().setOrganization(organization);
+            }
+            if (gender != null) {
+                toUpdate.get().setGender(gender);
+            }
+            if (certificate != null) {
+                toUpdate.get().setCertificate(certificate);
+            }
+            if (positions != null) {
+                toUpdate.get().setPositions(positions);
+            }
             userRepo.save(toUpdate.get());
         }
         return toUpdate;
@@ -141,6 +148,7 @@ public class UserService {
 
     /**
      * Remove a recurring time slot from a user.
+     *
      * @param id the id of the user
      * @param timeSlot to be removed
      */

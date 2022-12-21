@@ -81,7 +81,7 @@ public class UserControllerTest {
     public void testUpdate() {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
-        sut.updateUser(1L, "Bob", "", "", "", Certificate.B2, new ArrayList<>());
+        sut.updateUser(1L, new User("bbb", "Bob", "", "", "", Certificate.B2, new ArrayList<>()));
         assertEquals(sut.getUsers().get(1).getName(), "Bob");
         assertEquals(sut.getUsers().get(0).getCertificate(), Certificate.B2);
     }
@@ -101,16 +101,18 @@ public class UserControllerTest {
     public void testUpdateNonExistent() {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
-        assertEquals(sut.updateUser(2L, "Bob", "", "", "", Certificate.B1,
-                new ArrayList<>()), ResponseEntity.badRequest().build());
+        assertEquals(sut.updateUser(2L, new User("bbb", "Bob", "", "", "",
+                Certificate.B1, new ArrayList<>())), ResponseEntity.badRequest().build());
         assertEquals(sut.getUsers().get(0).getName(), "A");
     }
+
 
     @Test
     public void testAddSchedule() {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
-        assertEquals(sut.addRecurringTimeSlot(1L, Day.MONDAY, Pair.of(10, 14)).getStatusCode(), HttpStatus.OK);
+        assertEquals(sut.addRecurringTimeSlot(1L,
+                new TimeSlot(-1, Day.MONDAY, Pair.of(10, 14))).getStatusCode(), HttpStatus.OK);
         assertEquals(u.getId(), 1L);
         assertEquals(sut.getUser(1L).getBody(), u);
         assertEquals(sut.getUser(1L).getBody().getSchedule().getRecurringSlots().get(0),
@@ -123,8 +125,10 @@ public class UserControllerTest {
     public void testRemoveSchedule() {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
-        assertEquals(sut.addRecurringTimeSlot(1L, Day.MONDAY, Pair.of(10, 14)).getStatusCode(), HttpStatus.OK);
-        assertEquals(sut.removeRecurringTimeSlot(1L, Day.MONDAY, Pair.of(10, 14)).getStatusCode(), HttpStatus.OK);
+        assertEquals(sut.addRecurringTimeSlot(1L,
+                new TimeSlot(-1, Day.MONDAY, Pair.of(10, 14))).getStatusCode(), HttpStatus.OK);
+        assertEquals(sut.removeRecurringTimeSlot(1L,
+                new TimeSlot(-1, Day.MONDAY, Pair.of(10, 14))).getStatusCode(), HttpStatus.OK);
         assertEquals(sut.getUser(1L).getBody().getSchedule().getRecurringSlots().size(), 0);
     }
 
@@ -132,7 +136,8 @@ public class UserControllerTest {
     public void testFailedAddSchedule() {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
-        assertEquals(sut.addRecurringTimeSlot(2L, Day.MONDAY, Pair.of(10, 14)).getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertEquals(sut.addRecurringTimeSlot(2L,
+                new TimeSlot(-1, Day.MONDAY, Pair.of(10, 14))).getStatusCode(), HttpStatus.BAD_REQUEST);
 
     }
 
