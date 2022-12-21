@@ -42,8 +42,13 @@ public class GatewayAuthenticationController {
      */
     @PostMapping(path = "/login")
     public ResponseEntity<AuthenticationResponseModel> login(@RequestBody AuthenticationRequestModel request) {
-        return ResponseEntity.ok(gatewayService.login(request));
+        try {
+            AuthenticationResponseModel response = gatewayService.login(request);
+            return ResponseEntity.ok(response);
+        } catch (ResponseStatusException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+        }
     }
-
-    // test line who edited it
 }

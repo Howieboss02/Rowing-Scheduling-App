@@ -59,7 +59,6 @@ public class AuthenticationGatewayTest {
                 .andExpect(status().isOk()).andExpect(content().string(containsString("testNetId")));
     }
 
-    //test /register endpoint when there is an exception
     @Test
     public void testingIncorrectRegisterRouting() throws Exception {
         RegistrationRequestModel request = new RegistrationRequestModel();
@@ -103,5 +102,34 @@ public class AuthenticationGatewayTest {
                 .andExpect(status().isOk()).andExpect(content().string(containsString("testToken")));
     }
 
+    @Test
+    public void testingIncorrectLoginRouting() throws Exception {
+        AuthenticationRequestModel request = new AuthenticationRequestModel();
+        request.setNetId("testNetID");
+        request.setPassword("testPassword");
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson = ow.writeValueAsString(request);
+        when(gatewayService.login(request)).thenThrow(new IllegalArgumentException());
+        mockMvc.perform(post("/api/auth/login").contentType(APPLICATION_JSON_UTF8)
+                        .content(requestJson))
+                .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    public void testingIncorrectLoginRoutingWithRestTemplateError() throws Exception {
+        AuthenticationRequestModel request = new AuthenticationRequestModel();
+        request.setNetId("testNetID");
+        request.setPassword("testPassword");
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson = ow.writeValueAsString(request);
+        when(gatewayService.login(request)).thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST));
+        mockMvc.perform(post("/api/auth/login").contentType(APPLICATION_JSON_UTF8)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest());
+    }
 
 }
