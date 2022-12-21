@@ -1,24 +1,38 @@
 package nl.tudelft.sem.template.database;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
 import nl.tudelft.sem.template.controllers.EventController;
 import nl.tudelft.sem.template.services.EventService;
+import nl.tudelft.sem.template.shared.domain.Position;
+import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.EventModel;
+import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
 import nl.tudelft.sem.template.shared.enums.PositionName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.reactive.function.client.WebClient;
 
 public class EventControllerTest {
 
     public TestEventRepository repo;
     public EventService service;
     private EventController sut;
+
+    public EventService mockedService;
+    public EventController mockedSut;
+
+    public WebClient mockedClient;
 
     /**
      * Method to create a list of positions for testing.
@@ -66,6 +80,10 @@ public class EventControllerTest {
     public void setup() {
         service = new EventService(repo);
         sut = new EventController(service);
+
+        mockedService = mock(EventService.class);
+        mockedSut = new EventController(mockedService);
+        mockedClient = mock(WebClient.class);
     }
 
     /**
@@ -85,18 +103,16 @@ public class EventControllerTest {
         }
     }
 
-    /*
     @Test
     public void addEventFailTest() {
-        try {
-            var actual = sut.registerNewEvent(getEventModel(null, 1L, true, Certificate.B2, EventType.TRAINING));
-            assertEquals(actual.getStatusCode(), HttpStatus.BAD_REQUEST);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        EventModel eventModel = getEventModel("A", 1L, Certificate.B2, EventType.COMPETITION);
+        when(mockedService.insert(any(Event.class))).thenThrow(IllegalArgumentException.class);
+
+        var actual = mockedSut.registerNewEvent(eventModel);
+        assertEquals(HttpStatus.BAD_REQUEST, actual.getStatusCode());
 
     }
-     */
+
 
     /**
      * Testing if adding events has an impact on the database.
@@ -147,12 +163,22 @@ public class EventControllerTest {
     }
 
     @Test
+    public void updateTestFail() {
+        try {
+            Event ev = getEvent("B", 1L, Certificate.B5, EventType.COMPETITION);
+            assertEquals(sut.updateEvent(1L, getEventModel("B", 1L, Certificate.B5, EventType.COMPETITION)).getStatusCode(), HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
     public void getEventsByUserTest() {
         try {
             Event event = getEvent("B", 2L, Certificate.B5, EventType.COMPETITION);
             sut.registerNewEvent(getEventModel("A", 2L, Certificate.B2, EventType.COMPETITION));
             sut.registerNewEvent(getEventModel("B", 1L, Certificate.B5, EventType.COMPETITION));
-            assertEquals(sut.getEventsByUser(2L), event);
+            assertEquals(sut.getEventsByUser(2L), List.of(event));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -160,14 +186,138 @@ public class EventControllerTest {
 
     @Test
     public void getRequestsTest() {
+        Request r = new Request("A", PositionName.Cox);
+        when(mockedService.getRequests(1L)).thenReturn(List.of(r));
+        assertEquals(mockedSut.getRequests(1L), List.of(r));
+    }
+
+    @Test
+    public void matchEventsTest() {
+        User u = new User("A", "A", "A", "A", "A", Certificate.B5, List.of(new Position()));
+        Event event = getEvent("B", 2L, Certificate.B5, EventType.COMPETITION);
+        when(mockedService.getMatchedEvents(u)).thenReturn(List.of(event));
+        assertEquals(List.of(event),mockedSut.matchEvents(u));
+
+    }
+
+    @Test
+    public void matchEventsTestNoCertificate() {
+        User u = new User("A", "A", "A", "A", "A", null, List.of(new Position()));
+        Exception e = assertThrows(IllegalArgumentException.class, () -> {mockedSut.matchEvents(u);});
+        assertEquals("Profile is not (fully) completed", e.getMessage());
+    }
+
+    @Test
+    public void deleteEventTest() {
         try {
-            Event event = getEvent("B", 2L, Certificate.B5, EventType.COMPETITION);
-            sut.registerNewEvent(getEventModel("A", 2L, Certificate.B2, EventType.COMPETITION));
-            sut.registerNewEvent(getEventModel("B", 1L, Certificate.B5, EventType.COMPETITION));
-            assertEquals(sut.getEventsByUser(2L), event);
-        } catch (Exception e) {
+            var response = mockedSut.deleteEvent(1L);
+            verify(mockedService, times(1)).deleteById(1L);
+            assertEquals(response.getStatusCode(), HttpStatus.OK);
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    @Test
+    public void deleteEventTestFail() {
+        try {
+            doThrow(new Exception()).when(mockedService).deleteById(1L);
+
+            assertEquals(mockedSut.deleteEvent(1L).getStatusCode(), HttpStatus.BAD_REQUEST);
+
+        } catch (Exception e){
             e.printStackTrace();
         }
     }
 
+    /*@Test
+    @SuppressWarnings("unchecked")
+    public void enqueueTest() {
+        Mono<User> mono = (Mono<User>) mock(Mono.class);
+
+        when(mockedClient.get().uri("http://localhost:8084/api/user/1").retrieve().bodyToMono(User.class).log())
+                .thenReturn(mono);
+        when(mono.hasElement().block()).thenReturn(true);
+        when(mono.block()).thenReturn(null);
+        verify(mockedService, times(1)).enqueueById(1L, null, PositionName.Cox);
+
+        assertEquals(mockedSut.enqueue(1L, null, PositionName.Cox).getStatusCode(), HttpStatus.OK);
+
+
+    }
+
+    @Test
+    @SuppressWarnings("unchecked")
+    public void enqueueTestFail() {
+        Mono<User> mono = (Mono<User>) mock(Mono.class);
+        WebClient.RequestHeadersUriSpec spec = mock(WebClient.RequestHeadersUriSpec.class);
+        when(mockedClient.get()).thenReturn(spec);
+        when(mockedClient.get().uri("http://localhost:8084/api/user/1").retrieve().bodyToMono(User.class).log())
+                .thenReturn(mono);
+        when(mono.hasElement().block()).thenReturn(false);
+
+        assertEquals(mockedSut.enqueue(1L, null, PositionName.Cox).getStatusCode(), HttpStatus.NOT_FOUND);
+    }*/
+
+    @Test
+    public void acceptTestNoEvent() {
+        Request r = new Request("A", PositionName.Cox);
+        when(mockedService.getById(1L)).thenReturn(Optional.empty());
+        assertEquals(mockedSut.accept(1L, r).getStatusCode(), HttpStatus.NOT_FOUND);
+    }
+    @Test
+    public void acceptTestNoRequest() {
+        Event event = getEvent("B", 2L, Certificate.B5, EventType.COMPETITION);
+        Request r = new Request("A", PositionName.Cox);
+        when(mockedService.getById(1L)).thenReturn(Optional.of(event));
+        when(mockedService.dequeueById(1L, r)).thenReturn(false);
+        assertEquals(mockedSut.accept(1L, r).getStatusCode(), HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void acceptTestFilledPosition() {
+        Event event = getEvent("B", 2L, Certificate.B5, EventType.COMPETITION);
+        Request r = new Request("A", PositionName.Cox);
+        when(mockedService.getById(1L)).thenReturn(Optional.of(event));
+        when(mockedService.dequeueById(1L, r)).thenReturn(true);
+        when(mockedService.removePositionById(1L, PositionName.Cox)).thenReturn(false);
+        assertEquals(mockedSut.accept(1L, r).getStatusCode(), HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void acceptTest() {
+        Event event = getEvent("B", 2L, Certificate.B5, EventType.COMPETITION);
+        Request r = new Request("A", PositionName.Cox);
+        when(mockedService.getById(1L)).thenReturn(Optional.of(event));
+        when(mockedService.dequeueById(1L, r)).thenReturn(true);
+        when(mockedService.removePositionById(1L, PositionName.Cox)).thenReturn(true);
+        assertEquals(mockedSut.accept(1L, r).getStatusCode(), HttpStatus.OK);
+    }
+
+    @Test
+    public void rejectTestNoEvent() {
+        Request r = new Request("A", PositionName.Cox);
+        when(mockedService.getById(1L)).thenReturn(Optional.empty());
+        assertEquals(mockedSut.reject(1L, r).getStatusCode(), HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    public void rejectTestNoRequest() {
+        Event event = getEvent("B", 2L, Certificate.B5, EventType.COMPETITION);
+        Request r = new Request("A", PositionName.Cox);
+        when(mockedService.getById(1L)).thenReturn(Optional.of(event));
+        when(mockedService.dequeueById(1L, r)).thenReturn(false);
+        assertEquals(mockedSut.reject(1L, r).getStatusCode(), HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void rejectTest() {
+        Event event = getEvent("B", 2L, Certificate.B5, EventType.COMPETITION);
+        Request r = new Request("A", PositionName.Cox);
+        when(mockedService.getById(1L)).thenReturn(Optional.of(event));
+        when(mockedService.dequeueById(1L, r)).thenReturn(true);
+        assertEquals(mockedSut.reject(1L, r).getStatusCode(), HttpStatus.OK);
+    }
 }

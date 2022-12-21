@@ -67,7 +67,7 @@ public class EventController {
     @GetMapping("/matchEvents")
     public List<Event> matchEvents(@RequestBody User user) throws IllegalArgumentException {
         if (user.getCertificate() == null || user.getPositions() == null || user.getPositions().size() == 0
-                || user.getCertificate() == null || user.getOrganization() == null) {
+                || user.getOrganization() == null) {
             throw new IllegalArgumentException("Profile is not (fully) completed");
         }
         return eventService.getMatchedEvents(user);
@@ -81,7 +81,7 @@ public class EventController {
      * @throws Exception if something goes wrong
      */
     @PostMapping("/register")
-    public ResponseEntity<Event> registerNewEvent(@RequestBody EventModel eventModel) throws Exception {
+    public ResponseEntity<Event> registerNewEvent(@RequestBody EventModel eventModel) {
         try {
             Event event = new Event(eventModel.getOwningUser(),
                     eventModel.getLabel(),
@@ -153,9 +153,17 @@ public class EventController {
         }
 
         //Getting the User info from the database
-        this.client = WebClient.create();
+        // We recreate the client if it does not exist
+        // This makes it easier to test
+        if (client == null) {
+            client = WebClient.create();
+        }
         Mono<User> response = client.get().uri("http://localhost:8084/api/user/" + userId)
             .retrieve().bodyToMono(User.class).log();
+
+        // We set the client to null again
+        client = null;
+
         if (!response.hasElement().block()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
