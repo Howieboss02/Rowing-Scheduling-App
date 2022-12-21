@@ -15,9 +15,8 @@ public class ScheduleConverter implements AttributeConverter<Schedule, String> {
 
     private static final String LIST_SPLIT_CHAR = "-";
     private static final String SLOT_SPLIT_CHAR = ";";
-    private static final String FIELD_SPLIT_CHAR = ",";
 
-    TimeSlotConverter tsConverter = new TimeSlotConverter();
+    private static TimeSlotConverter tsConverter = new TimeSlotConverter();
 
     /**
      * Converts a Schedule to a string.
