@@ -92,6 +92,17 @@ public class User {
     }
 
     /**
+     * Constructor for the class used when editing account using API call.
+     */
+    public User(String name, String organization, String gender, Certificate certificate, List<Position> positions) {
+        this.name = name;
+        this.organization = organization;
+        this.gender = gender;
+        this.certificate = certificate;
+        this.positions = positions;
+    }
+
+    /**
     * Method to add another position to the list (for editing).
      *
     * @param position the new position
@@ -102,22 +113,16 @@ public class User {
 
     /**
     * Add a recurring slot.
-    *
-    * @param day  the day of the slot
-    * @param time the time interval in seconds of the slot
     */
-    public void addRecurringSlot(Day day, Pair<Integer, Integer> time) {
-        schedule.addRecurringSlot(new TimeSlot(-1, day, time));
+    public void addRecurringSlot(TimeSlot timeSlot) {
+        schedule.addRecurringSlot(timeSlot);
     }
 
     /**
     * Remove a recurring slot.
-    *
-    * @param day  the day of the slot
-    * @param time the time interval in seconds of the slot
     */
-    public void removeRecurringSlot(Day day, Pair<Integer, Integer> time) {
-        schedule.removeRecurringSlot(new TimeSlot(-1, day, time));
+    public void removeRecurringSlot(TimeSlot timeSlot) {
+        schedule.removeRecurringSlot(timeSlot);
     }
 
     /**

@@ -5,8 +5,11 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nl.tudelft.sem.template.shared.converters.TextTimeToMinutesConverter;
 import nl.tudelft.sem.template.shared.enums.Day;
 import org.springframework.data.util.Pair;
+
+import javax.persistence.Convert;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,6 +17,7 @@ import org.springframework.data.util.Pair;
 public class TimeSlot {
     private Integer week;
     private Day day;
+    @Convert(converter = TextTimeToMinutesConverter.class)
     private Pair<Integer, Integer> time;
 
     /**
