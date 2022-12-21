@@ -8,8 +8,8 @@ import lombok.Setter;
 @Setter
 @EqualsAndHashCode
 public class Node {
-    int first;
-    int second;
+    private int first;
+    private int second;
 
     public Node(int first, int second) {
         this.first = first;

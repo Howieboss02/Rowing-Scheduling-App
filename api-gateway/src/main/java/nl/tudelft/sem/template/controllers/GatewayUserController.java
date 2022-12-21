@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.controllers;
 import java.util.List;
 import nl.tudelft.sem.template.services.GatewayService;
 import nl.tudelft.sem.template.shared.converters.TextTimeToMinutesConverter;
+import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
@@ -95,10 +96,9 @@ public class GatewayUserController {
     @PostMapping(path = "/schedule/addRecurring/{userId}")
     public ResponseEntity<TimeSlot> addRecurring(@PathVariable(uid) Long userId,
                                                  @RequestBody Day day,
-                                                 @RequestBody String time) {
+                                                 @RequestBody Node time) {
         try {
-            TextTimeToMinutesConverter conv = new TextTimeToMinutesConverter();
-            TimeSlot timeSlot = new TimeSlot(-1, day, conv.convertToEntityAttribute(time));
+            TimeSlot timeSlot = new TimeSlot(-1, day, time);
             return ResponseEntity.ok(gatewayService.addRecurring(userId, timeSlot));
         } catch (Exception e) {
             System.out.println("Unable to add the recurring time slot");
@@ -112,10 +112,10 @@ public class GatewayUserController {
     @PostMapping(path = "/schedule/removeRecurring/{userId}")
     public ResponseEntity<TimeSlot> removeRecurring(@PathVariable(uid) Long userId,
                                                     @RequestBody Day day,
-                                                    @RequestBody String time) {
+                                                    @RequestBody Node time) {
         try {
             TextTimeToMinutesConverter conv = new TextTimeToMinutesConverter();
-            TimeSlot timeSlot = new TimeSlot(-1, day, conv.convertToEntityAttribute(time));
+            TimeSlot timeSlot = new TimeSlot(-1, day, time);
             return ResponseEntity.ok(gatewayService.removeRecurring(userId, timeSlot));
         } catch (Exception e) {
             System.out.println("Unable to remove the recurring time slot");
