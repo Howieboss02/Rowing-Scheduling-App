@@ -6,13 +6,16 @@ import java.util.ArrayList;
 import java.util.List;
 import nl.tudelft.sem.template.controllers.EventController;
 import nl.tudelft.sem.template.services.EventService;
+import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.EventModel;
 import nl.tudelft.sem.template.shared.enums.Certificate;
+import nl.tudelft.sem.template.shared.enums.Day;
 import nl.tudelft.sem.template.shared.enums.EventType;
 import nl.tudelft.sem.template.shared.enums.PositionName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.data.util.Pair;
 
 public class EventControllerTest {
 
@@ -40,10 +43,11 @@ public class EventControllerTest {
      * @param l a long to be used
      * @param c a certificate needed
      * @param t the type of event
+     * @param ts a timeslot
      * @return a new event
      */
-    private static Event getEvent(String s, Long l, Certificate c, EventType t) {
-        return new Event(l, s, createPositions(), s, s, c, t, false, s);
+    private static Event getEvent(String s, Long l, Certificate c, EventType t, TimeSlot ts) {
+        return new Event(l, s, createPositions(), ts, c, t, false, s);
     }
 
     /**
@@ -55,8 +59,8 @@ public class EventControllerTest {
      * @param t an event type
      * @return a new event model
      */
-    private static EventModel getEventModel(String s, Long l, Certificate c, EventType t) {
-        return new EventModel(l, s, createPositions(), s, s, c, t, false, s);
+    private static EventModel getEventModel(String s, Long l, Certificate c, EventType t, TimeSlot ts) {
+        return new EventModel(l, s, createPositions(), ts, c, t, false, s);
     }
 
     /**
@@ -74,12 +78,14 @@ public class EventControllerTest {
     @Test
     public void addEventTest() {
         try {
-            var actual = sut.registerNewEvent(getEventModel("A", 1L, Certificate.B2, EventType.COMPETITION));
+            var actual = sut.registerNewEvent(getEventModel("A", 1L, Certificate.B2, EventType.COMPETITION,
+                    new TimeSlot(1, Day.MONDAY, Pair.of(1, 2))));
             assertEquals(actual.getBody().getId(), 1);
             assertEquals(actual.getBody().getLabel(), "A");
             assertEquals(actual.getBody().getCertificate(), Certificate.B2);
             assertEquals(actual.getBody().getType(), EventType.TRAINING);
             assertEquals(actual.getBody().getQueue().size(), 0);
+            assertEquals(actual.getBody().getTime(), new TimeSlot(1, Day.MONDAY, Pair.of(1, 2)));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -104,8 +110,10 @@ public class EventControllerTest {
     @Test
     public void getAllTest() {
         try {
-            sut.registerNewEvent(getEventModel("B", 1L, Certificate.B5, EventType.COMPETITION));
-            sut.registerNewEvent(getEventModel("A", 2L, Certificate.B2, EventType.TRAINING));
+            sut.registerNewEvent(getEventModel("B", 1L, Certificate.B5, EventType.COMPETITION,
+                    new TimeSlot(1, Day.MONDAY, Pair.of(1, 2))));
+            sut.registerNewEvent(getEventModel("A", 2L, Certificate.B2, EventType.TRAINING,
+                    new TimeSlot(1, Day.MONDAY, Pair.of(1, 2))));
             assertEquals(sut.getEvents().size(), 2);
         } catch (Exception e) {
             e.printStackTrace();
@@ -118,11 +126,14 @@ public class EventControllerTest {
     @Test
     public void deleteTest() {
         try {
-            sut.registerNewEvent(getEventModel("B", 1L, Certificate.B5, EventType.COMPETITION));
-            sut.registerNewEvent(getEventModel("A", 2L, Certificate.B2, EventType.COMPETITION));
+            sut.registerNewEvent(getEventModel("B", 1L, Certificate.B5, EventType.COMPETITION,
+                    new TimeSlot(1, Day.MONDAY, Pair.of(1, 2))));
+            sut.registerNewEvent(getEventModel("A", 2L, Certificate.B2, EventType.COMPETITION,
+                    new TimeSlot(1, Day.MONDAY, Pair.of(1, 2))));
             assertEquals(sut.getEvents().size(), 2);
 
-            Event ev = getEvent("B", 1L, Certificate.B5, EventType.COMPETITION);
+            Event ev = getEvent("B", 1L, Certificate.B5, EventType.COMPETITION,
+                    new TimeSlot(1, Day.MONDAY, Pair.of(1, 2)));
             assertEquals(sut.deleteEvent(1L), ev);
             assertEquals(sut.getEvents().size(), 1);
 
@@ -137,9 +148,12 @@ public class EventControllerTest {
     @Test
     public void updateTest() {
         try {
-            Event ev = getEvent("B", 1L, Certificate.B5, EventType.COMPETITION);
-            sut.registerNewEvent(getEventModel("A", 2L, Certificate.B2, EventType.COMPETITION));
-            sut.updateEvent(1L, getEventModel("B", 1L, Certificate.B5, EventType.COMPETITION));
+            Event ev = getEvent("B", 1L, Certificate.B5, EventType.COMPETITION,
+                    new TimeSlot(1, Day.MONDAY, Pair.of(1, 2)));
+            sut.registerNewEvent(getEventModel("A", 2L, Certificate.B2, EventType.COMPETITION,
+                    new TimeSlot(1, Day.MONDAY, Pair.of(1, 2))));
+            sut.updateEvent(1L, getEventModel("B", 1L, Certificate.B5, EventType.COMPETITION,
+                    new TimeSlot(1, Day.MONDAY, Pair.of(1, 2))));
             assertEquals(sut.getEvents().get(0), ev);
         } catch (Exception e) {
             e.printStackTrace();

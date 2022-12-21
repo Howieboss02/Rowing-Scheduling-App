@@ -18,6 +18,45 @@ public class TimeSlot {
     private Day day;
     @Convert(converter = TextTimeToMinutesConverter.class)
     private Pair<Integer, Integer> time;
+    
+    /** tests weather the received schedule can incorporate this timeslot.
+     *
+     * @param schedule to scan against
+     * @return weather this timeslot is available in the schedule
+     */
+    public boolean matchSchedule(Schedule schedule) {
+        List<TimeSlot> recurring = new ArrayList<>();
+        recurring.addAll(schedule.getRecurringSlots());
+        List<TimeSlot> removed = new ArrayList<>();
+        removed.addAll(schedule.getRemovedSlots());
+        List<TimeSlot> slots = new ArrayList<>();
+        slots.addAll(schedule.getAddedSlots());
+        for (TimeSlot ts : removed) {
+            if (ts.week.equals(this.week)) {
+                recurring.removeIf(toRemove -> toRemove.day.equals(ts.day) && toRemove.time.equals(ts.time));
+            }
+        }
+        for (TimeSlot ts : recurring) {
+            if (!this.day.equals(ts.day)) {
+                continue;
+            }
+            if (ts.time.getFirst() <= this.time.getFirst() && ts.time.getSecond() >= this.time.getSecond()) {
+                return true;
+            }
+        }
+        for (TimeSlot ts : slots) {
+            if (!this.week.equals(ts.week)) {
+                continue;
+            }
+            if (!this.day.equals(ts.day)) {
+                continue;
+            }
+            if (ts.time.getFirst() <= this.time.getFirst() && ts.time.getSecond() >= this.time.getSecond()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     /**
      * Calculate the intersection between the time of this timeslot

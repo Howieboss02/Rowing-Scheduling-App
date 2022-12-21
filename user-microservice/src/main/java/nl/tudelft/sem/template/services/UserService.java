@@ -69,7 +69,7 @@ public class UserService {
      * @return the information of the added user
      */
     public User insert(User user) {
-        if (user == null || user.getName().isEmpty()) {
+        if (user == null || user.getNetId().isEmpty()) {
             return null;
         }
         System.out.println("Inserting user: " + user.getId());
