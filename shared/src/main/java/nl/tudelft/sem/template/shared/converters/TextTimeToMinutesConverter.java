@@ -2,15 +2,16 @@ package nl.tudelft.sem.template.shared.converters;
 
 import javax.persistence.AttributeConverter;
 import org.springframework.data.util.Pair;
+import nl.tudelft.sem.template.shared.domain.Node;
 
 // Converter from a Pair of Integers being minutes to a String
 // representing the time in the format HH:MM-HH:MM
 
-public class TextTimeToMinutesConverter implements AttributeConverter<Pair<Integer, Integer>, String> {
+public class TextTimeToMinutesConverter implements AttributeConverter<Node, String> {
     private static final String SPLIT_CHAR = "-";
 
     @Override
-    public String convertToDatabaseColumn(Pair<Integer, Integer> time) {
+    public String convertToDatabaseColumn(Node time) {
         if (time == null) {
             return "";
         }
@@ -20,7 +21,7 @@ public class TextTimeToMinutesConverter implements AttributeConverter<Pair<Integ
     }
 
     @Override
-    public Pair<Integer, Integer> convertToEntityAttribute(String time) {
+    public Node convertToEntityAttribute(String time) {
         if (time == null || time.isEmpty()) {
             return null;
         }
@@ -28,7 +29,7 @@ public class TextTimeToMinutesConverter implements AttributeConverter<Pair<Integ
             return null;
         }
         String[] times = time.split(SPLIT_CHAR);
-        return Pair.of(Integer.parseInt(times[0].split(":")[0]) * 60
+        return new Node (Integer.parseInt(times[0].split(":")[0]) * 60
                 + Integer.parseInt(times[0].split(":")[1]),
                 Integer.parseInt(times[1].split(":")[0]) * 60
                         + Integer.parseInt(times[1].split(":")[1]));

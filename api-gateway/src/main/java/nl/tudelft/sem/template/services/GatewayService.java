@@ -1,8 +1,6 @@
 package nl.tudelft.sem.template.services;
 
 import java.util.List;
-
-import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.Event;
@@ -77,7 +75,7 @@ public class GatewayService {
      */
     public List<String> getAllNotifications(Long userId) {
         return restTemplate.getForObject(apiPrefix + MicroservicePorts.USER.port + userPath
-                + "/getNotifications/{" + userId + "}", List.class);
+                + "/getNotifications/" + userId, List.class);
     }
 
     /**
@@ -85,7 +83,7 @@ public class GatewayService {
      */
     public Boolean deleteUser(Long userId) {
         restTemplate.delete(apiPrefix + MicroservicePorts.USER.port + userPath
-                + "/delete/{" + userId + "}");
+                + "/delete/" + userId);
         return true;
     }
 
@@ -93,8 +91,9 @@ public class GatewayService {
      * Update a user.
      */
     public User updateUser(Long userId, User user) {
-        return restTemplate.patchForObject(apiPrefix + MicroservicePorts.USER.port + userPath
-                + "/update/{" + userId + "}", user, User.class);
+        HttpEntity<User> requestEntity = new HttpEntity<>(user);
+        return restTemplate.exchange(apiPrefix + MicroservicePorts.USER.port + userPath
+                + "/update/" + userId, HttpMethod.PUT, requestEntity, User.class).getBody();
     }
 
     /**
@@ -102,7 +101,7 @@ public class GatewayService {
      */
     public TimeSlot addRecurring(Long userId, TimeSlot timeSlot) {
         return restTemplate.postForObject(apiPrefix + MicroservicePorts.USER.port + userPath
-                + "/schedule/add/{" + userId + "}", timeSlot, TimeSlot.class);
+                + "/schedule/add/" + userId, timeSlot, TimeSlot.class);
     }
 
     /**
@@ -110,7 +109,7 @@ public class GatewayService {
      */
     public TimeSlot removeRecurring(Long userId, TimeSlot timeSlot) {
         return restTemplate.postForObject(apiPrefix + MicroservicePorts.USER.port + userPath
-                + "/schedule/remove/{" + userId + "}", timeSlot, TimeSlot.class);
+                + "/schedule/remove/" + userId, timeSlot, TimeSlot.class);
     }
 
     /**
@@ -118,7 +117,7 @@ public class GatewayService {
      */
     public TimeSlot addOneTimeTimeSlot(Long userId, TimeSlot timeSlot) {
         return restTemplate.postForObject(apiPrefix + MicroservicePorts.USER.port + userPath
-                + "/schedule/include/{" + userId + "}", timeSlot, TimeSlot.class);
+                + "/schedule/include/" + userId, timeSlot, TimeSlot.class);
     }
 
     /**
@@ -126,12 +125,12 @@ public class GatewayService {
      */
     public TimeSlot removeOneTimeTimeSlot(Long userId, TimeSlot timeSlot) {
         return restTemplate.postForObject(apiPrefix + MicroservicePorts.USER.port + userPath
-                + "/schedule/exclude/{" + userId + "}", timeSlot, TimeSlot.class);
+                + "/schedule/exclude/" + userId, timeSlot, TimeSlot.class);
     }
 
     public User getUser(Long userId) {
         return restTemplate.getForObject(apiPrefix + MicroservicePorts.USER.port + userPath
-                + "/get/{" + userId + "}", User.class);
+                + "/get/" + userId, User.class);
     }
 
     public List<Event> getAllEvents() {
@@ -165,6 +164,9 @@ public class GatewayService {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Update an event.
+     */
     public Event updateEvent(EventModel eventModel, Long id) {
         HttpEntity<EventModel> requestEntity = new HttpEntity<>(eventModel);
         return restTemplate.exchange(apiPrefix + MicroservicePorts.EVENT.port + eventPath

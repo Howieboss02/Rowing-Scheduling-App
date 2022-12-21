@@ -1,13 +1,14 @@
 package nl.tudelft.sem.template.shared.domain;
 
 import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
+import javax.persistence.Convert;
 
-@Getter
-@Setter
+@Data
+@Convert()
 @EqualsAndHashCode
 public class Node {
+
     private int first;
     private int second;
 
