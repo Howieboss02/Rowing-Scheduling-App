@@ -161,8 +161,6 @@ public class EventController {
         Mono<User> response = client.get().uri("http://localhost:8084/api/user/" + userId)
             .retrieve().bodyToMono(User.class).log();
 
-        // We set the client to null again
-        client = null;
 
         if (!response.hasElement().block()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

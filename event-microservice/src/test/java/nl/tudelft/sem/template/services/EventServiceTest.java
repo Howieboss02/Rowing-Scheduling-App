@@ -141,7 +141,38 @@ class EventServiceTest {
     }
 
     @Test
-    void updateById() {
+    void testUpdateById() {
+        try {
+            Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+            Event updated = getEvent("B", 1L, Certificate.B5, EventType.COMPETITION);
+
+            service.insert(event);
+
+            assertEquals(event, service.updateById(1L, 1L, "B", createPositions(), "B",
+                    "B", Certificate.B5, EventType.COMPETITION, true, "B").get());
+            assertEquals(updated, service.getById(1L).get());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void testUpdateByIdNoChanges() {
+        try {
+            Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+
+            service.insert(event);
+
+            assertEquals(event, service.updateById(null, null, null, null, null, null, null, null, false, null).get());
+            assertEquals(event, service.getById(1L).get());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    void updateByIdNoEvent() {
+        assertEquals(Optional.empty(), service.updateById(null, null, null, null, null, null, null, null, false, null));
     }
 
     @Test
@@ -181,6 +212,16 @@ class EventServiceTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Test
+    void testEnqueueByIdNoEvent() {
+        User user = new User();
+        user.setNetId("Bob");
+        service.enqueueById(1L, user, PositionName.Cox);
+
+        assertEquals(new ArrayList<>(), service.getAllEvents());
+
     }
 
     @Test

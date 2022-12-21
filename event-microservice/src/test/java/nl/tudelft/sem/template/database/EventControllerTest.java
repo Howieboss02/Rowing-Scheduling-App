@@ -7,7 +7,6 @@ import static org.mockito.Mockito.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import nl.tudelft.sem.template.controllers.EventController;
 import nl.tudelft.sem.template.services.EventService;
 import nl.tudelft.sem.template.shared.domain.Position;
@@ -166,7 +165,9 @@ public class EventControllerTest {
     public void updateTestFail() {
         try {
             Event ev = getEvent("B", 1L, Certificate.B5, EventType.COMPETITION);
-            assertEquals(sut.updateEvent(1L, getEventModel("B", 1L, Certificate.B5, EventType.COMPETITION)).getStatusCode(), HttpStatus.BAD_REQUEST);
+            assertEquals(sut.updateEvent(1L,
+                    getEventModel("B", 1L, Certificate.B5, EventType.COMPETITION)).getStatusCode(),
+                    HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -196,14 +197,16 @@ public class EventControllerTest {
         User u = new User("A", "A", "A", "A", "A", Certificate.B5, List.of(new Position()));
         Event event = getEvent("B", 2L, Certificate.B5, EventType.COMPETITION);
         when(mockedService.getMatchedEvents(u)).thenReturn(List.of(event));
-        assertEquals(List.of(event),mockedSut.matchEvents(u));
+        assertEquals(List.of(event), mockedSut.matchEvents(u));
 
     }
 
     @Test
     public void matchEventsTestNoCertificate() {
         User u = new User("A", "A", "A", "A", "A", null, List.of(new Position()));
-        Exception e = assertThrows(IllegalArgumentException.class, () -> {mockedSut.matchEvents(u);});
+        Exception e = assertThrows(IllegalArgumentException.class, () -> {
+            mockedSut.matchEvents(u);
+        });
         assertEquals("Profile is not (fully) completed", e.getMessage());
     }
 
@@ -213,8 +216,7 @@ public class EventControllerTest {
             var response = mockedSut.deleteEvent(1L);
             verify(mockedService, times(1)).deleteById(1L);
             assertEquals(response.getStatusCode(), HttpStatus.OK);
-
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
@@ -224,10 +226,9 @@ public class EventControllerTest {
     public void deleteEventTestFail() {
         try {
             doThrow(new Exception()).when(mockedService).deleteById(1L);
-
             assertEquals(mockedSut.deleteEvent(1L).getStatusCode(), HttpStatus.BAD_REQUEST);
 
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -267,6 +268,7 @@ public class EventControllerTest {
         when(mockedService.getById(1L)).thenReturn(Optional.empty());
         assertEquals(mockedSut.accept(1L, r).getStatusCode(), HttpStatus.NOT_FOUND);
     }
+
     @Test
     public void acceptTestNoRequest() {
         Event event = getEvent("B", 2L, Certificate.B5, EventType.COMPETITION);
