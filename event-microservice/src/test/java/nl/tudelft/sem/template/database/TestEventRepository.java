@@ -102,7 +102,7 @@ public class TestEventRepository implements EventRepository {
     @Override
     public <S extends Event> S save(S entity) {
         call("save");
-        entity.setId((long) events.size());
+        events.remove(entity);
         events.add(entity);
         return entity;
     }

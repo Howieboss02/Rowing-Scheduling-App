@@ -77,6 +77,7 @@ public class User {
         this.certificate = certificate;
         this.gender = gender;
         this.positions = positions;
+        this.schedule = new Schedule();
     }
 
     /**
