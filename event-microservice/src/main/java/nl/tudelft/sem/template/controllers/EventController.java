@@ -55,7 +55,7 @@ public class EventController {
      * @param id the id of the event
      * @return List of requests for that event
      */
-    @GetMapping("/queue/{id}")
+    @GetMapping("/{id}/queue")
     public List<Request> getRequests(@PathVariable("id") Long id) {
         return eventService.getRequests(id);
     }
@@ -152,7 +152,7 @@ public class EventController {
 
 
     /**
-     * PUT API for enqueueing a user to an event.
+     * POST API for enqueueing a user to an event.
      *
      * @param eventId the id of the event
      * @param userId the id of the user
@@ -181,13 +181,13 @@ public class EventController {
 
 
     /**
-     * PUT API for accepting a user into the event.
+     * POST API for accepting a user into the event.
      *
      * @param id the id of the event
      * @param request the request should be accepted
      * @return "NOT_FOUND" if the event doesn't exist, badRequest if there is no matching request, otherwise "ACCEPTED"
      */
-    @PostMapping("{id}/accept")
+    @PostMapping("/{id}/accept")
     public ResponseEntity<String> accept(@PathVariable("id") Long id,
                                           @RequestBody Request request) {
         Optional<Event> event = eventService.getById(id);
@@ -196,7 +196,7 @@ public class EventController {
         }
         boolean processed = eventService.dequeueById(id, request);
         if (!processed) {
-            return ResponseEntity.badRequest().build(); // request doesn't exist
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // request doesn't exist
         }
         // if the request exists...
         boolean positionFilled = eventService.removePositionById(id, request.getPosition());
@@ -217,7 +217,7 @@ public class EventController {
      * @param request the request should be rejected
      * @return "NOT_FOUND" if the event doesn't exist, badRequest if there is no matching request, otherwise "REJECTED"
      */
-    @PostMapping("{id}/reject")
+    @PostMapping("/{id}/reject")
     public ResponseEntity<String> reject(@PathVariable("id") Long id,
                                          @RequestBody Request request) {
         Optional<Event> event = eventService.getById(id);

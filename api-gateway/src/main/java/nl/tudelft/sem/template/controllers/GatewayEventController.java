@@ -132,13 +132,15 @@ public class GatewayEventController {
 
     @PostMapping("{id}/accept")
     public ResponseEntity<String> accept(@PathVariable("id") Long id,
-                                         @RequestParam Request request) {
+                                         @RequestBody Request request) {
         try {
             return ResponseEntity.ok(gatewayService.acceptToEvent(id, request));
         } catch (ResponseStatusException e) {
+            System.out.println("accept exception " + e.getMessage());
             throw e;
         }
         catch (Exception e) {
+            System.out.println("accept exception " + e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -146,7 +148,7 @@ public class GatewayEventController {
 
     @PostMapping("{id}/reject")
     public ResponseEntity<String> reject(@PathVariable("id") Long id,
-                                         @RequestParam Request request) {
+                                         @RequestBody Request request) {
         try {
             return ResponseEntity.ok(gatewayService.rejectFromEvent(id, request));
         } catch (ResponseStatusException e) {

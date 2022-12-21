@@ -146,7 +146,7 @@ public class GatewayService {
 
     public List<Request> getAllRequestsForEvent(Long eventId) {
         return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/requests/{" + eventId + "}", List.class);
+                + "/" + eventId + "/queue", List.class);
     }
 
     public ResponseEntity<List<Event>> getMatchedEventsForUser(Long userId) {
