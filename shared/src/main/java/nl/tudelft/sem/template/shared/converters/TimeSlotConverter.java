@@ -3,9 +3,9 @@ package nl.tudelft.sem.template.shared.converters;
 import java.util.Arrays;
 import java.util.List;
 import javax.persistence.AttributeConverter;
+import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.enums.Day;
-import org.springframework.data.util.Pair;
 
 public class TimeSlotConverter implements AttributeConverter<TimeSlot, String> {
 
@@ -41,6 +41,6 @@ public class TimeSlotConverter implements AttributeConverter<TimeSlot, String> {
         List<String> timeslotFields = Arrays.asList(dbData.split(SPLIT));
         return new TimeSlot(Integer.parseInt(timeslotFields.get(0)),
                 Day.valueOf(timeslotFields.get(1)),
-                Pair.of(Integer.parseInt(timeslotFields.get(2)), Integer.parseInt(timeslotFields.get(3))));
+                new Node(Integer.parseInt(timeslotFields.get(2)), Integer.parseInt(timeslotFields.get(3))));
     }
 }
