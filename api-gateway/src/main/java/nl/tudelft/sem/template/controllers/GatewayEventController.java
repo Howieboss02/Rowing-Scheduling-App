@@ -56,14 +56,17 @@ public class GatewayEventController {
         }
     }
 
-    @GetMapping("/match-events/{userId}")
+    @GetMapping("/match/{userId}")
     public ResponseEntity<List<Event>> matchEvents(@PathVariable("userId") Long userId) {
+        System.out.println("matchEvents");
         try {
-            return ResponseEntity.ok(gatewayService.getMatchedEventsForUser(userId));
+            return gatewayService.getMatchedEventsForUser(userId);
         } catch (ResponseStatusException e) {
+            System.out.println("matchEvents exception");
             throw e;
         }
         catch (Exception e) {
+            System.out.println("matchEvents exception 2"+ e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }

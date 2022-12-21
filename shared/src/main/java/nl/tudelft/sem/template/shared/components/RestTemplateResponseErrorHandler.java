@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.components;
+package nl.tudelft.sem.template.shared.components;
 
 import static org.springframework.http.HttpStatus.Series.CLIENT_ERROR;
 import static org.springframework.http.HttpStatus.Series.SERVER_ERROR;

@@ -133,12 +133,12 @@ public class GatewayService {
 
     public List<Event> getAllEvents() {
         return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/events", List.class);
+                + "/all", List.class);
     }
 
     public List<Event> getAllEventsForUser(Long userId) {
         return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/events/{" + userId + "}", List.class);
+                + "/ownedBy/" + userId, List.class);
     }
 
     public List<Request> getAllRequestsForEvent(Long eventId) {
@@ -146,14 +146,14 @@ public class GatewayService {
                 + "/requests/{" + eventId + "}", List.class);
     }
 
-    public List<Event> getMatchedEventsForUser(Long userId) {
+    public ResponseEntity<List<Event>> getMatchedEventsForUser(Long userId) {
         return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/events/matched/{" + userId + "}", List.class);
+                + "/match/" + userId, ResponseEntity.class);
     }
 
     public Event addNewEvent(EventModel eventModel) {
         return restTemplate.postForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/events", eventModel, Event.class);
+                + "/register", eventModel, Event.class);
     }
 
     public ResponseEntity<Object> deleteEvent(Long eventId) {

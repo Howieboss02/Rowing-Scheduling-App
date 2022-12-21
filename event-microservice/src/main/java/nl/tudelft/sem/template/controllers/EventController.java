@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
@@ -61,17 +62,30 @@ public class EventController {
 
     /** matches suitable events with a user.
      *
-     * @param user the user to match the events to
+     * @param userId the user id to match the events to
      * @return the events that match the user
      * @throws IllegalArgumentException if the user profile is not full
      */
-    @GetMapping("/matchEvents")
-    public List<Event> matchEvents(@RequestBody User user) throws IllegalArgumentException {
+    @GetMapping("/match/{userId}")
+    public ResponseEntity<List<Event>> matchEvents(@PathVariable("userId") Long userId) throws IllegalArgumentException {
+        User user;
+        System.out.println("userId: " + userId);
+        try {
+            user = eventService.getUserById(userId);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatus()).build();
+        }
+
         if (user.getCertificate() == null || user.getPositions() == null || user.getPositions().size() == 0
                 || user.getOrganization() == null) {
             throw new IllegalArgumentException("Profile is not (fully) completed");
         }
-        return eventService.getMatchedEvents(user);
+        (eventService.getMatchedEvents(user)).forEach(System.out::println);
+        List<Event> response = eventService.getMatchedEvents(user);
+        if(response == null || response.size() == 0) {
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        }
+        return ResponseEntity.ok(response);
     }
 
     /**
