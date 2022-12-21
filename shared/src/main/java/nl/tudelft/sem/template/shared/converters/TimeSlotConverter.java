@@ -12,7 +12,7 @@ public class TimeSlotConverter implements AttributeConverter<TimeSlot, String> {
     private static final String SPLIT = ",";
 
     /**
-     * Converts a Schedule to a string.
+     * Converts a TimeSlot to a string.
      *
      * @param timeslot the entity attribute value to be converted
      * @return a string representing the given schedule
