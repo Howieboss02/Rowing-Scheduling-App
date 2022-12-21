@@ -15,7 +15,8 @@ public class ScheduleConverter implements AttributeConverter<Schedule, String> {
 
     private static final String LIST_SPLIT_CHAR = "-";
     private static final String SLOT_SPLIT_CHAR = ";";
-    private static final String FIELD_SPLIT_CHAR = ",";
+
+    private static TimeSlotConverter tsConverter = new TimeSlotConverter();
 
     /**
      * Converts a Schedule to a string.
@@ -74,10 +75,7 @@ public class ScheduleConverter implements AttributeConverter<Schedule, String> {
     private void timeSlotListToString(StringBuilder scheduleString,
                                           List<TimeSlot> slots) {
         for (TimeSlot slot : slots) {
-            scheduleString.append(slot.getWeek())
-                    .append(FIELD_SPLIT_CHAR).append(slot.getDay())
-                    .append(FIELD_SPLIT_CHAR).append(slot.getTime().getFirst())
-                    .append(FIELD_SPLIT_CHAR).append(slot.getTime().getSecond())
+            scheduleString.append(tsConverter.convertToDatabaseColumn(slot))
                     .append(SLOT_SPLIT_CHAR);
         }
     }
@@ -98,10 +96,7 @@ public class ScheduleConverter implements AttributeConverter<Schedule, String> {
         String[] scheduleString = s.split(SLOT_SPLIT_CHAR);
 
         for (String slotString : scheduleString) {
-            List<String> slotFields = Arrays.asList(slotString.split(FIELD_SPLIT_CHAR));
-            slotList.add(new TimeSlot(Integer.parseInt(slotFields.get(0)),
-                    Day.valueOf(slotFields.get(1)),
-                    Pair.of(Integer.parseInt(slotFields.get(2)), Integer.parseInt(slotFields.get(3)))));
+            slotList.add(tsConverter.convertToEntityAttribute(slotString));
         }
         return slotList;
     }
