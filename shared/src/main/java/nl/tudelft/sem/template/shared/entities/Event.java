@@ -35,9 +35,9 @@ public class Event {
     @ElementCollection(targetClass = PositionName.class)
     private List<PositionName> positions = new ArrayList<>();
 
-    @Column(name = "time")
+    @Column(name = "timeslot")
     @Convert(converter = TimeSlotConverter.class)
-    private TimeSlot time = new TimeSlot();
+    private TimeSlot timeslot = new TimeSlot();
 
     @Column(name = "certificate", nullable = false)
     private Certificate certificate;
@@ -45,6 +45,8 @@ public class Event {
     private EventType type;
 
     private boolean isCompetitive;
+
+    private String gender;
 
     @Column(name = "organisation")
     private String organisation;
@@ -65,22 +67,24 @@ public class Event {
      * @param owningUser the id of the user that created the event
      * @param label the name of the event
      * @param positions the positions that need to be filled
-     * @param time the time and date of the event
+     * @param timeslot the time and date of the event
      * @param certificate the certificate that is required for the event
      * @param type the type of the event
      * @param isCompetitive the competitiveness of the event
+     * @param gender the gender, in case of a competition
      * @param organisation the organisation that created the event
      * @throws IllegalArgumentException if any of the parameters are null
      */
-    public Event(Long owningUser, String label, List<PositionName> positions, TimeSlot time, Certificate certificate,
-                 EventType type, boolean isCompetitive, String organisation) throws IllegalArgumentException {
+    public Event(Long owningUser, String label, List<PositionName> positions, TimeSlot timeslot, Certificate certificate,
+                 EventType type, boolean isCompetitive, String gender, String organisation) throws IllegalArgumentException {
         this.owningUser = owningUser;
         this.label = label;
         this.positions = positions;
-        this.time = time;
+        this.timeslot = timeslot;
         this.certificate = certificate;
         this.type = type;
         this.isCompetitive = isCompetitive;
+        this.gender = gender;
         this.organisation = organisation;
         this.queue = new ArrayList<>();
     }
@@ -107,8 +111,9 @@ public class Event {
      * @return a string containing relevant data for a user
      */
     public String messageConverter() {
-        return getLabel() + " - " + getType() + " from " + time.getTime().getFirst() + " until "
-                + time.getTime().getSecond() + " in week " + time.getWeek() + ", on " + time.getDay().toString() + ".\n";
+        return getLabel() + " - " + getType() + " from " + timeslot.getTime().getFirst() + " until "
+                + timeslot.getTime().getSecond() + " in week " + timeslot.getWeek() + ", on "
+                + timeslot.getDay().toString() + ".\n";
     }
 }
 

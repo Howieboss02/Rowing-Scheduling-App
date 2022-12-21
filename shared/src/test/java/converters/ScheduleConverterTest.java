@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.List;
 import nl.tudelft.sem.template.shared.converters.ScheduleConverter;
+import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Schedule;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.enums.Day;
@@ -28,7 +29,7 @@ class ScheduleConverterTest {
     @Test
     void convertToDatabaseColumnOnlyRecurring() {
         List<TimeSlot> slots = new ArrayList<>();
-        slots.add(new TimeSlot(1, Day.MONDAY, Pair.of(1, 1)));
+        slots.add(new TimeSlot(1, Day.MONDAY, new Node(1, 1)));
 
         Schedule schedule = new Schedule(slots, new ArrayList<>(), new ArrayList<>());
         assertEquals("1,MONDAY,1,1;--", converter.convertToDatabaseColumn(schedule));
@@ -37,7 +38,7 @@ class ScheduleConverterTest {
     @Test
     void convertToDatabaseColumnNoAdded() {
         List<TimeSlot> slots = new ArrayList<>();
-        slots.add(new TimeSlot(1, Day.MONDAY, Pair.of(1, 1)));
+        slots.add(new TimeSlot(1, Day.MONDAY, new Node(1, 1)));
 
         Schedule schedule = new Schedule(slots, slots, new ArrayList<>());
         assertEquals("1,MONDAY,1,1;-1,MONDAY,1,1;-", converter.convertToDatabaseColumn(schedule));
@@ -46,7 +47,7 @@ class ScheduleConverterTest {
     @Test
     void convertToDatabaseColumnNoRemoved() {
         List<TimeSlot> slots = new ArrayList<>();
-        slots.add(new TimeSlot(1, Day.MONDAY, Pair.of(1, 1)));
+        slots.add(new TimeSlot(1, Day.MONDAY, new Node(1, 1)));
 
         Schedule schedule = new Schedule(slots, new ArrayList<>(), slots);
         assertEquals("1,MONDAY,1,1;--1,MONDAY,1,1;", converter.convertToDatabaseColumn(schedule));
@@ -55,10 +56,10 @@ class ScheduleConverterTest {
     @Test
     void convertToDatabaseColumnAll() {
         List<TimeSlot> slots = new ArrayList<>();
-        slots.add(new TimeSlot(1, Day.MONDAY, Pair.of(1, 1)));
+        slots.add(new TimeSlot(1, Day.MONDAY, new Node(1, 1)));
         List<TimeSlot> slots2 = new ArrayList<>();
-        slots.add(new TimeSlot(1, Day.TUESDAY, Pair.of(1, 5)));
-        slots.add(new TimeSlot(2, Day.WEDNESDAY, Pair.of(5, 1)));
+        slots.add(new TimeSlot(1, Day.TUESDAY, new Node(1, 5)));
+        slots.add(new TimeSlot(2, Day.WEDNESDAY, new Node(5, 1)));
 
         Schedule schedule = new Schedule(slots2, slots, slots);
         assertEquals("-1,MONDAY,1,1;1,TUESDAY,1,5;2,WEDNESDAY,5,1;-1,MONDAY,1,1;1,TUESDAY,1,5;2,WEDNESDAY,5,1;",
@@ -78,7 +79,7 @@ class ScheduleConverterTest {
     @Test
     void convertToEntityAttributeOnlyRecurring() {
         List<TimeSlot> slots = new ArrayList<>();
-        slots.add(new TimeSlot(1, Day.MONDAY, Pair.of(1, 1)));
+        slots.add(new TimeSlot(1, Day.MONDAY, new Node(1, 1)));
 
         Schedule schedule = new Schedule(slots, new ArrayList<>(), new ArrayList<>());
         assertEquals(schedule, converter.convertToEntityAttribute("1,MONDAY,1,1;--"));
@@ -87,7 +88,7 @@ class ScheduleConverterTest {
     @Test
     void convertToEntityAttributeNoAdded() {
         List<TimeSlot> slots = new ArrayList<>();
-        slots.add(new TimeSlot(1, Day.MONDAY, Pair.of(1, 1)));
+        slots.add(new TimeSlot(1, Day.MONDAY, new Node(1, 1)));
 
         Schedule schedule = new Schedule(slots, slots, new ArrayList<>());
         assertEquals(schedule, converter.convertToEntityAttribute("1,MONDAY,1,1;-1,MONDAY,1,1;-"));
@@ -96,7 +97,7 @@ class ScheduleConverterTest {
     @Test
     void convertToEntityAttributeNoRemoved() {
         List<TimeSlot> slots = new ArrayList<>();
-        slots.add(new TimeSlot(1, Day.MONDAY, Pair.of(1, 1)));
+        slots.add(new TimeSlot(1, Day.MONDAY, new Node(1, 1)));
 
         Schedule schedule = new Schedule(slots, new ArrayList<>(), slots);
         assertEquals(schedule, converter.convertToEntityAttribute("1,MONDAY,1,1;--1,MONDAY,1,1;"));
@@ -105,10 +106,10 @@ class ScheduleConverterTest {
     @Test
     void convertToEntityAttributeAll() {
         List<TimeSlot> slots = new ArrayList<>();
-        slots.add(new TimeSlot(1, Day.MONDAY, Pair.of(1, 1)));
+        slots.add(new TimeSlot(1, Day.MONDAY, new Node(1, 1)));
         List<TimeSlot> slots2 = new ArrayList<>();
-        slots.add(new TimeSlot(1, Day.TUESDAY, Pair.of(1, 5)));
-        slots.add(new TimeSlot(2, Day.WEDNESDAY, Pair.of(5, 1)));
+        slots.add(new TimeSlot(1, Day.TUESDAY, new Node(1, 5)));
+        slots.add(new TimeSlot(2, Day.WEDNESDAY, new Node(5, 1)));
 
         Schedule schedule = new Schedule(slots2, slots, slots);
         assertEquals(schedule, converter.convertToEntityAttribute(

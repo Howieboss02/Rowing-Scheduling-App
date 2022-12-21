@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.Getter;
 import nl.tudelft.sem.template.shared.converters.PositionsToFillListConverter;
 import nl.tudelft.sem.template.shared.converters.ScheduleConverter;
+import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.Schedule;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
@@ -108,7 +109,7 @@ public class User {
     * @param day  the day of the slot
     * @param time the time interval in seconds of the slot
     */
-    public void addRecurringSlot(Day day, Pair<Integer, Integer> time) {
+    public void addRecurringSlot(Day day, Node time) {
         schedule.addRecurringSlot(new TimeSlot(-1, day, time));
     }
 
@@ -118,7 +119,7 @@ public class User {
     * @param day  the day of the slot
     * @param time the time interval in seconds of the slot
     */
-    public void removeRecurringSlot(Day day, Pair<Integer, Integer> time) {
+    public void removeRecurringSlot(Day day, Node time) {
         schedule.removeRecurringSlot(new TimeSlot(-1, day, time));
     }
 

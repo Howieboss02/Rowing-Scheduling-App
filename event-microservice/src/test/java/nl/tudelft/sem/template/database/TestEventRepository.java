@@ -171,7 +171,7 @@ public class TestEventRepository implements EventRepository {
 
     @Override
     public List<Event> findMatchingCompetitions(Certificate certificate, String organization,
-                                                Long id, EventType competition) {
+                                                Long id, EventType competition, String gender) {
         return null;
     }
 

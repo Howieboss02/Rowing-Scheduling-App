@@ -3,6 +3,7 @@ package converters;
 import static org.junit.jupiter.api.Assertions.*;
 
 import nl.tudelft.sem.template.shared.converters.TimeSlotConverter;
+import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.enums.Day;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ class TimeSlotConverterTest {
 
     @Test
     public void convertToDatabaseColumn() {
-        assertEquals("1,MONDAY,1,1", converter.convertToDatabaseColumn(new TimeSlot(1, Day.MONDAY, Pair.of(1, 1))));
+        assertEquals("1,MONDAY,1,1", converter.convertToDatabaseColumn(new TimeSlot(1, Day.MONDAY, new Node(1, 1))));
     }
 
     @Test
@@ -29,6 +30,6 @@ class TimeSlotConverterTest {
 
     @Test
     public void convertToEntityAttribute() {
-        assertEquals(new TimeSlot(1, Day.MONDAY, Pair.of(1, 1)), converter.convertToEntityAttribute("1,MONDAY,1,1"));
+        assertEquals(new TimeSlot(1, Day.MONDAY, new Node(1, 1)), converter.convertToEntityAttribute("1,MONDAY,1,1"));
     }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.database.EventRepository;
 import nl.tudelft.sem.template.database.TestEventRepository;
+import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.Event;
@@ -48,8 +49,8 @@ class EventServiceTest {
      * @return a new event
      */
     private static Event getEvent(String s, Long l, Certificate c, EventType t) {
-        TimeSlot ts = new TimeSlot(1, Day.FRIDAY, Pair.of(2, 3));
-        return new Event(l, s, createPositions(), ts, c, t, true, s);
+        TimeSlot ts = new TimeSlot(1, Day.FRIDAY, new Node(2, 3));
+        return new Event(l, s, createPositions(), ts, c, t, true, s, s);
     }
 
     @BeforeEach
@@ -123,15 +124,16 @@ class EventServiceTest {
     void testUpdateById() {
         Event event = getEvent("A", 1L, Certificate.B2, EventType.COMPETITION);
 
-        TimeSlot ts = new TimeSlot(1, Day.FRIDAY, Pair.of(2, 3));
+        TimeSlot ts = new TimeSlot(1, Day.FRIDAY, new Node(2, 3));
 
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
         assertEquals(Optional.of(event), mockedService.updateById(1L, 1L, "B", createPositions(), ts,
-                Certificate.B5, EventType.COMPETITION, true, "B"));
+                Certificate.B5, EventType.COMPETITION, true, "M", "B", false));
 
         Event updated = getEvent("B", 1L, Certificate.B5, EventType.COMPETITION);
+        updated.setGender("M");
         assertEquals(updated, event);
 
     }
@@ -143,12 +145,14 @@ class EventServiceTest {
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-        assertEquals(Optional.of(event), mockedService.updateById(1L, 1L, null, null, null, null, null, false, null));
+        assertEquals(Optional.of(event),
+                mockedService.updateById(1L, 1L, null, null, null, null, null, false, null, null, false));
     }
 
     @Test
     void updateByIdNoEvent() {
-        assertEquals(Optional.empty(), mockedService.updateById(null, null, null, null, null, null, null,  false, null));
+        assertEquals(Optional.empty(),
+                mockedService.updateById(null, null, null, null, null, null, null,  false, null, null, false));
     }
 
     @Test
