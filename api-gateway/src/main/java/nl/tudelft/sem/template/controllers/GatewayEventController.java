@@ -113,7 +113,7 @@ public class GatewayEventController {
         }
     }
 
-    @PutMapping("{eventId}/enqueue/{userId}")
+    @PostMapping("{eventId}/enqueue/{userId}")
     public ResponseEntity<String> enqueue(@PathVariable("eventId") Long eventId,
                                           @PathVariable("userId") Long userId,
                                           @RequestParam PositionName position) {
@@ -130,11 +130,11 @@ public class GatewayEventController {
     }
 
 
-    @PutMapping("{id}/accept/{requestId}")
+    @PostMapping("{id}/accept")
     public ResponseEntity<String> accept(@PathVariable("id") Long id,
-                                         @PathVariable("requestId") Long requestId) {
+                                         @RequestParam Request request) {
         try {
-            return ResponseEntity.ok(gatewayService.acceptToEvent(id, requestId));
+            return ResponseEntity.ok(gatewayService.acceptToEvent(id, request));
         } catch (ResponseStatusException e) {
             throw e;
         }
@@ -144,11 +144,11 @@ public class GatewayEventController {
     }
 
 
-    @PutMapping("{id}/reject/{requestId}")
+    @PostMapping("{id}/reject")
     public ResponseEntity<String> reject(@PathVariable("id") Long id,
-                                         @PathVariable("requestId") Long requestId) {
+                                         @RequestParam Request request) {
         try {
-            return ResponseEntity.ok(gatewayService.rejectFromEvent(id, requestId));
+            return ResponseEntity.ok(gatewayService.rejectFromEvent(id, request));
         } catch (ResponseStatusException e) {
             throw e;
         }

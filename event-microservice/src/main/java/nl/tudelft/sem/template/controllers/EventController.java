@@ -158,9 +158,9 @@ public class EventController {
      * @param userId the id of the user
      * @return "NOT_FOUND" if the ids don't match something or "ENQUEUED" if task gets completed
      */
-    @PutMapping("/enqueue/{eventId}")
+    @PostMapping("{eventId}/enqueue/{userId}")
     public ResponseEntity<String> enqueue(@PathVariable("eventId") Long eventId,
-                                          @RequestParam("userId") Long userId,
+                                          @PathVariable("userId") Long userId,
                                           @RequestParam PositionName position) {
         Optional<Event> event = eventService.getById(eventId);
         if (event.isEmpty()) {
@@ -168,10 +168,10 @@ public class EventController {
         }
 
         //Getting the User info from the database
-        this.client = WebClient.create();
+        client = WebClient.create();
         Mono<User> response = client.get().uri("http://localhost:8084/api/user/" + userId)
             .retrieve().bodyToMono(User.class).log();
-        if (!response.hasElement().block()) {
+        if (Boolean.FALSE.equals(response.hasElement().block())) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         User user = response.block();
@@ -187,7 +187,7 @@ public class EventController {
      * @param request the request should be accepted
      * @return "NOT_FOUND" if the event doesn't exist, badRequest if there is no matching request, otherwise "ACCEPTED"
      */
-    @PutMapping("/accept/{id}")
+    @PostMapping("{id}/accept")
     public ResponseEntity<String> accept(@PathVariable("id") Long id,
                                           @RequestBody Request request) {
         Optional<Event> event = eventService.getById(id);
@@ -217,7 +217,7 @@ public class EventController {
      * @param request the request should be rejected
      * @return "NOT_FOUND" if the event doesn't exist, badRequest if there is no matching request, otherwise "REJECTED"
      */
-    @PutMapping("/reject/{id}")
+    @PostMapping("{id}/reject")
     public ResponseEntity<String> reject(@PathVariable("id") Long id,
                                          @RequestBody Request request) {
         Optional<Event> event = eventService.getById(id);

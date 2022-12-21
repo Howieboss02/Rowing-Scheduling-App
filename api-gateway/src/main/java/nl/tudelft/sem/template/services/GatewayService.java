@@ -173,17 +173,17 @@ public class GatewayService {
 
     public String enqueueToEvent(Long eventId, Long userId, PositionName position) {
         return restTemplate.postForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/events/{" + eventId + "}/enqueue/{" + userId + "}", position, String.class);
+                + "/" + eventId + "/enqueue/" + userId + "?position=" + position, null, String.class);
     }
 
-    public String acceptToEvent(Long eventId, Long requestId) {
+    public String acceptToEvent(Long eventId, Request request) {
         return restTemplate.postForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/events/{" + eventId + "}/accept/{" + requestId + "}", null, String.class);
+                + "/" + eventId + "/accept", request, String.class);
     }
 
-    public String rejectFromEvent(Long eventId, Long requestId) {
+    public String rejectFromEvent(Long eventId, Request request) {
         return restTemplate.postForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/events/{" + eventId + "}/reject/{" + requestId + "}", null, String.class);
+                + "/" + eventId + "/reject", request, String.class);
     }
 
 
