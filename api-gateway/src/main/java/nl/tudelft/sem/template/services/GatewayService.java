@@ -1,13 +1,20 @@
 package nl.tudelft.sem.template.services;
 
 import java.util.List;
+
+import nl.tudelft.sem.template.shared.domain.Position;
+import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
+import nl.tudelft.sem.template.shared.entities.Event;
+import nl.tudelft.sem.template.shared.entities.EventModel;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.MicroservicePorts;
+import nl.tudelft.sem.template.shared.enums.PositionName;
 import nl.tudelft.sem.template.shared.models.AuthenticationRequestModel;
 import nl.tudelft.sem.template.shared.models.AuthenticationResponseModel;
 import nl.tudelft.sem.template.shared.models.RegistrationRequestModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -17,6 +24,7 @@ public class GatewayService {
 
     private static final String apiPrefix = "http://localhost:";
     private static final String userPath = "/api/user";
+    private static final String eventPath = "/api/event";
 
     @Autowired
     private transient RestTemplate restTemplate;
@@ -37,7 +45,7 @@ public class GatewayService {
      * @return the response entity
      */
     public User registerUser(RegistrationRequestModel request) {
-        return restTemplate.postForObject(this.apiPrefix + MicroservicePorts.AUTHENTICATION.port
+        return restTemplate.postForObject(apiPrefix + MicroservicePorts.AUTHENTICATION.port
                 + "/register", request, User.class);
     }
 
@@ -48,7 +56,7 @@ public class GatewayService {
      * @return the response entity
      */
     public AuthenticationResponseModel login(AuthenticationRequestModel request) {
-        return restTemplate.postForObject(this.apiPrefix + MicroservicePorts.AUTHENTICATION.port
+        return restTemplate.postForObject(apiPrefix + MicroservicePorts.AUTHENTICATION.port
                 + "/authenticate", request, AuthenticationResponseModel.class);
     }
 
@@ -58,7 +66,7 @@ public class GatewayService {
      * Gets all users.
      */
     public List<User> getAllUsers() {
-        return restTemplate.getForObject(this.apiPrefix + MicroservicePorts.USER.port + userPath
+        return restTemplate.getForObject(apiPrefix + MicroservicePorts.USER.port + userPath
                 + "/all", List.class);
     }
 
@@ -66,7 +74,7 @@ public class GatewayService {
      * Get all notifications for a user.
      */
     public List<String> getAllNotifications(Long userId) {
-        return restTemplate.getForObject(this.apiPrefix + MicroservicePorts.USER.port + userPath
+        return restTemplate.getForObject(apiPrefix + MicroservicePorts.USER.port + userPath
                 + "/getNotifications/{" + userId + "}", List.class);
     }
 
@@ -74,7 +82,7 @@ public class GatewayService {
      * Delete a user.
      */
     public void deleteUser(Long userId) {
-        restTemplate.delete(this.apiPrefix + MicroservicePorts.USER.port + userPath
+        restTemplate.delete(apiPrefix + MicroservicePorts.USER.port + userPath
                 + "/delete/{" + userId + "}");
     }
 
@@ -82,7 +90,7 @@ public class GatewayService {
      * Update a user.
      */
     public User updateUser(Long userId, User user) {
-        return restTemplate.patchForObject(this.apiPrefix + MicroservicePorts.USER.port + userPath
+        return restTemplate.patchForObject(apiPrefix + MicroservicePorts.USER.port + userPath
                 + "/update/{" + userId + "}", user, User.class);
     }
 
@@ -90,7 +98,7 @@ public class GatewayService {
      * Add a recurring time slot.
      */
     public TimeSlot addRecurring(Long userId, TimeSlot timeSlot) {
-        return restTemplate.postForObject(this.apiPrefix + MicroservicePorts.USER.port + userPath
+        return restTemplate.postForObject(apiPrefix + MicroservicePorts.USER.port + userPath
                 + "/schedule/add/{" + userId + "}", timeSlot, TimeSlot.class);
     }
 
@@ -98,7 +106,7 @@ public class GatewayService {
      * Remove a recurring time slot.
      */
     public TimeSlot removeRecurring(Long userId, TimeSlot timeSlot) {
-        return restTemplate.postForObject(this.apiPrefix + MicroservicePorts.USER.port + userPath
+        return restTemplate.postForObject(apiPrefix + MicroservicePorts.USER.port + userPath
                 + "/schedule/remove/{" + userId + "}", timeSlot, TimeSlot.class);
     }
 
@@ -106,7 +114,7 @@ public class GatewayService {
      * Add a one-time time slot.
      */
     public TimeSlot addOneTimeTimeSlot(Long userId, TimeSlot timeSlot) {
-        return restTemplate.postForObject(this.apiPrefix + MicroservicePorts.USER.port + userPath
+        return restTemplate.postForObject(apiPrefix + MicroservicePorts.USER.port + userPath
                 + "/schedule/include/{" + userId + "}", timeSlot, TimeSlot.class);
     }
 
@@ -114,7 +122,66 @@ public class GatewayService {
      * Remove a one-time time slot.
      */
     public TimeSlot removeOneTimeTimeSlot(Long userId, TimeSlot timeSlot) {
-        return restTemplate.postForObject(this.apiPrefix + MicroservicePorts.USER.port + userPath
+        return restTemplate.postForObject(apiPrefix + MicroservicePorts.USER.port + userPath
                 + "/schedule/exclude/{" + userId + "}", timeSlot, TimeSlot.class);
     }
+
+    public User getUser(Long userId) {
+        return restTemplate.getForObject(apiPrefix + MicroservicePorts.USER.port + userPath
+                + "/get/{" + userId + "}", User.class);
+    }
+
+    public List<Event> getAllEvents() {
+        return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                + "/events", List.class);
+    }
+
+    public List<Event> getAllEventsForUser(Long userId) {
+        return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                + "/events/{" + userId + "}", List.class);
+    }
+
+    public List<Request> getAllRequestsForEvent(Long eventId) {
+        return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                + "/requests/{" + eventId + "}", List.class);
+    }
+
+    public List<Event> getMatchedEventsForUser(Long userId) {
+        return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                + "/events/matched/{" + userId + "}", List.class);
+    }
+
+    public Event addNewEvent(EventModel eventModel) {
+        return restTemplate.postForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                + "/events", eventModel, Event.class);
+    }
+
+    public ResponseEntity<Object> deleteEvent(Long eventId) {
+        restTemplate.delete(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                + "/events/{" + eventId + "}", Event.class);
+        return ResponseEntity.ok().build();
+    }
+
+    public EventModel updateEvent(EventModel eventModel, Long id) {
+        restTemplate.patchForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                + "/events/{" + id + "}", eventModel, Event.class);
+        return eventModel;
+    }
+
+    public String enqueueToEvent(Long eventId, Long userId, PositionName position) {
+        return restTemplate.postForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                + "/events/{" + eventId + "}/enqueue/{" + userId + "}", position, String.class);
+    }
+
+    public String acceptToEvent(Long eventId, Long requestId) {
+        return restTemplate.postForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                + "/events/{" + eventId + "}/accept/{" + requestId + "}", null, String.class);
+    }
+
+    public String rejectFromEvent(Long eventId, Long requestId) {
+        return restTemplate.postForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                + "/events/{" + eventId + "}/reject/{" + requestId + "}", null, String.class);
+    }
+
+
 }

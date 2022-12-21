@@ -17,6 +17,7 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 @RestController
+@RequestMapping(path = "/api/event")
 public class EventController {
     private final transient EventService eventService;
     private static WebClient client;
