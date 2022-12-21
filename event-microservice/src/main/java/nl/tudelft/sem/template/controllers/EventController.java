@@ -8,11 +8,13 @@ import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.EventModel;
 import nl.tudelft.sem.template.shared.entities.User;
+import nl.tudelft.sem.template.shared.enums.Outcome;
 import nl.tudelft.sem.template.shared.enums.PositionName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
@@ -20,7 +22,7 @@ import reactor.core.publisher.Mono;
 @RestController
 public class EventController {
     private final transient EventService eventService;
-    private static WebClient client;
+    private static WebClient client = WebClient.create();
     private final transient EventRepository repo;
 
     @Autowired
@@ -171,7 +173,6 @@ public class EventController {
         }
 
         //Getting the User info from the database
-        this.client = WebClient.create();
         Mono<User> response = client.get().uri("http://localhost:8084/api/user/" + userId)
             .retrieve().bodyToMono(User.class).log();
         if (!response.hasElement().block()) {
@@ -179,7 +180,7 @@ public class EventController {
         }
         User user = response.block();
         Event e = event.get();
-        e.enqueue(user.getName(), position);
+        e.enqueue(user.getNetId(), position);
         repo.save(e);
         return ResponseEntity.ok("ENQUEUED");
     }
@@ -211,8 +212,8 @@ public class EventController {
         }
 
         //send notification
-
-        return ResponseEntity.ok("ACCEPTED");
+        String mess = client.post().uri("http://localhost:8085/api/notification/" + event.get().getId() + "/" + id + "/?outcome=ACCEPTED").retrieve().bodyToMono(String.class).block();
+        return ResponseEntity.ok("ACCEPTED\n" + mess);
     }
 
     /**
@@ -235,6 +236,7 @@ public class EventController {
         }
 
         //send notification
+        String mess = client.post().uri("http://localhost:8085/api/notification/" + event.get().getId() + "/" + id + "/?outcome=REJECTED").retrieve().bodyToMono(String.class).block();
         return ResponseEntity.ok("REJECTED");
     }
 }
