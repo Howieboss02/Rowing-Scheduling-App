@@ -79,10 +79,10 @@ class ScheduleConverterTest {
     @Test
     void convertToEntityAttributeOnlyRecurring() {
         List<TimeSlot> slots = new ArrayList<>();
-        slots.add(new TimeSlot(1, Day.MONDAY, new Node(60, 61)));
+        slots.add(new TimeSlot(-1, Day.MONDAY, new Node(60, 61)));
 
         Schedule schedule = new Schedule(slots, new ArrayList<>(), new ArrayList<>());
-        assertEquals(schedule, converter.convertToEntityAttribute("1,MONDAY,01:00-01:01//"));
+        assertEquals(schedule, converter.convertToEntityAttribute("-1,MONDAY,01:00-01:01//"));
     }
 
     @Test
@@ -91,16 +91,16 @@ class ScheduleConverterTest {
         slots.add(new TimeSlot(1, Day.MONDAY, new Node(60, 61)));
 
         Schedule schedule = new Schedule(slots, new ArrayList<>(), new ArrayList<>());
-        assertEquals(schedule, converter.convertToEntityAttribute("1,MONDAY,01:00-01:01;1,MONDAY,01:00-01:01//"));
+        assertEquals(schedule, converter.convertToEntityAttribute("1,MONDAY,01:00-01:01//"));
     }
 
     @Test
     void convertToEntityAttributeNoRemoved() {
         List<TimeSlot> slots = new ArrayList<>();
-        slots.add(new TimeSlot(1, Day.MONDAY, new Node(60, 1)));
+        slots.add(new TimeSlot(1, Day.MONDAY, new Node(60, 61)));
 
         Schedule schedule = new Schedule(slots, new ArrayList<>(), slots);
-        assertEquals(schedule, converter.convertToEntityAttribute("1,MONDAY,1,1;--1,MONDAY,1,1;"));
+        assertEquals(schedule, converter.convertToEntityAttribute("1,MONDAY,01:00-01:01//1,MONDAY,01:00-01:01"));
     }
 
     @Test
@@ -109,10 +109,9 @@ class ScheduleConverterTest {
         slots.add(new TimeSlot(1, Day.MONDAY, new Node(1, 1)));
         List<TimeSlot> slots2 = new ArrayList<>();
         slots.add(new TimeSlot(1, Day.TUESDAY, new Node(1, 5)));
-        slots.add(new TimeSlot(2, Day.WEDNESDAY, new Node(5, 1)));
 
         Schedule schedule = new Schedule(slots2, slots, slots);
         assertEquals(schedule, converter.convertToEntityAttribute(
-                "-1,MONDAY,1,1;1,TUESDAY,1,5;2,WEDNESDAY,5,1;-1,MONDAY,1,1;1,TUESDAY,1,5;2,WEDNESDAY,5,1;"));
+                "/1,MONDAY,00:01-00:01;1,TUESDAY,00:01-00:05/1,MONDAY,00:01-00:01;1,TUESDAY,00:01-00:05"));
     }
 }
