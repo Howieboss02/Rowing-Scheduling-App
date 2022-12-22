@@ -207,7 +207,7 @@ public class UserService {
         Optional<User> user = getById(id);
 
         if (user.isPresent()) {
-            user.get().setEmail(name);
+            user.get().setName(name);
             userRepo.save(user.get());
         }
         return user;

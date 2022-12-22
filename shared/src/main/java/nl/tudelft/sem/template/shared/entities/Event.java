@@ -17,7 +17,7 @@ import nl.tudelft.sem.template.shared.enums.PositionName;
 @Entity
 @Table(name = "event")
 @AllArgsConstructor
-@NoArgsConstructor
+@EqualsAndHashCode
 public class Event {
 
     @Id
@@ -53,7 +53,14 @@ public class Event {
 
     @Convert(converter = RequestConverter.class)
     private List<Request> queue;
-    
+
+    /**
+     * Empty constructor for Event.
+     */
+    public Event() {
+        queue = new ArrayList<>();
+    }
+
     /**
      * Constructor for the Event class containing all information.
      *

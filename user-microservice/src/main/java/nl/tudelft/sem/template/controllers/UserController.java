@@ -60,7 +60,7 @@ public class UserController {
      * @return information about the user
      */
     @GetMapping("/name")
-    public ResponseEntity<User> getUserBynetId(@RequestBody String name) {
+    public ResponseEntity<User> getUserByNetId(@RequestBody String name) {
         Optional<User> user = userService.getByNetId(name);
         if (user.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

@@ -3,8 +3,8 @@ package nl.tudelft.sem.template.database;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.sql.Time;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import nl.tudelft.sem.template.controllers.UserController;
 import nl.tudelft.sem.template.services.UserService;
@@ -146,15 +146,137 @@ public class UserControllerTest {
         assertTrue(sut.getUser(1L).getBody().getSchedule().getAddedSlots().contains(time));
     }
 
-    /*
     @Test
     public void testRemoveTimeSlot() {
-        TimeSlot time = new TimeSlot(1, Day.FRIDAY, Pair.of(10, 12));
+        final TimeSlot removedTime = new TimeSlot(1, Day.FRIDAY, new Node(11, 13));
+        final TimeSlot correctTime = new TimeSlot(1, Day.FRIDAY, new Node(11, 12));
+
+        User u = getUser("A", Certificate.B1);
+
+        sut.registerNewUser(u);
+        sut.addRecurringTimeSlot(1L, Day.FRIDAY, new Node(10, 12));
+        assertEquals(sut.removeTimeSlot(1L, removedTime).getStatusCode(), HttpStatus.OK);
+        assertTrue(sut.getUser(1L).getBody().getSchedule().getRemovedSlots().contains(correctTime));
+    }
+
+    @Test
+    public void testAddRecurringTimeSlot() {
+        TimeSlot time = new TimeSlot(-1, Day.FRIDAY, new Node(10, 12));
+
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
-        sut.addTimeSlot(1L, time);
-        assertTrue(sut.removeTimeSlot(1L, time).getStatusCode().equals(HttpStatus.OK));
-        assertTrue(sut.getUser(1L).getBody().getSchedule().getRemovedSlots().contains(time));
+        sut.addRecurringTimeSlot(1L, Day.FRIDAY, new Node(10, 12));
+        assertTrue(sut.getUser(1L).getBody().getSchedule().getRecurringSlots().contains(time));
     }
-     */
+
+    @Test
+    public void testGetNotifications() {
+        List<String> notifications = new ArrayList<>(Arrays.asList("a", "b"));
+
+        User u = getUser("A", Certificate.B1);
+        u.setNotifications(notifications);
+        sut.registerNewUser(u);
+        assertEquals(notifications, sut.getNotifications(1L).getBody());
+    }
+
+    @Test
+    public void testGetNotificationsFail() {
+        assertEquals(sut.getNotifications(1L).getStatusCode(), HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void testSetName() {
+        User u = getUser("A", Certificate.B1);
+        sut.registerNewUser(u);
+        assertEquals(sut.setName(1L, "Bob").getStatusCode(), HttpStatus.OK);
+        assertEquals("Bob", sut.getUser(1L).getBody().getName());
+    }
+
+    @Test
+    public void testSetNameFail() {
+        assertEquals(sut.setName(2L, "Bob").getStatusCode(), HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void testSetOrganization() {
+        User u = getUser("A", Certificate.B1);
+        sut.registerNewUser(u);
+        assertEquals(sut.setOrganization(1L, "TU Delft").getStatusCode(), HttpStatus.OK);
+        assertEquals("TU Delft", sut.getUser(1L).getBody().getOrganization());
+    }
+
+    @Test
+    public void testSetOrganizationFail() {
+        assertEquals(sut.setOrganization(2L, "TU Delft").getStatusCode(), HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void testSetGender() {
+        User u = getUser("A", Certificate.B1);
+        sut.registerNewUser(u);
+        assertEquals(sut.setGender(1L, "Male").getStatusCode(), HttpStatus.OK);
+        assertEquals("Male", sut.getUser(1L).getBody().getGender());
+    }
+
+    @Test
+    public void testSetGenderFail() {
+        assertEquals(sut.setGender(2L, "Male").getStatusCode(), HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void testSetCertificate() {
+        User u = getUser("A", Certificate.B1);
+        sut.registerNewUser(u);
+        assertEquals(sut.setCertificate(1L, Certificate.B2).getStatusCode(), HttpStatus.OK);
+        assertEquals(Certificate.B2, sut.getUser(1L).getBody().getCertificate());
+    }
+
+    @Test
+    public void testSetCertificateFail() {
+        assertEquals(sut.setCertificate(2L, Certificate.B1).getStatusCode(), HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void testSetPositions() {
+        List<Position> positions = getPositions();
+        positions.add(new Position(PositionName.Coach, true));
+
+        User u = getUser("A", Certificate.B1);
+        sut.registerNewUser(u);
+        assertEquals(sut.setPositions(1L, positions).getStatusCode(), HttpStatus.OK);
+        assertEquals(positions, sut.getUser(1L).getBody().getPositions());
+    }
+
+    @Test
+    public void testSetPositionsFail() {
+        assertEquals(sut.setPositions(2L, getPositions()).getStatusCode(), HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void testAddNotifications() {
+        List<String> notifications = new ArrayList<>(Arrays.asList("A"));
+
+        User u = getUser("A", Certificate.B1);
+        sut.registerNewUser(u);
+        assertEquals(sut.addNotification(1L, "A").getStatusCode(), HttpStatus.OK);
+        assertEquals(notifications, sut.getUser(1L).getBody().getNotifications());
+    }
+
+    @Test
+    public void testAddNotificationsFail() {
+        assertEquals(sut.addNotification(2L, "A").getStatusCode(), HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
+    public void testGetUserByNetId() {
+        User u = getUser("A", Certificate.B1);
+        sut.registerNewUser(u);
+        assertEquals(sut.getUserByNetId("A").getStatusCode(), HttpStatus.OK);
+        assertEquals(u, sut.getUserByNetId("A").getBody());
+    }
+
+    @Test
+    public void testGetUserByNetIdNotFound() {
+        assertEquals(sut.getUserByNetId("A").getStatusCode(), HttpStatus.NOT_FOUND);
+    }
 }
