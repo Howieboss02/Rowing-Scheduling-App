@@ -154,7 +154,7 @@ public class EventService {
     }
 
     /**
-     * Adds a request to the queue of an event.
+     * Adds a request to the queue of an event iff the user should be able to join the event.
      *
      * @param id the id of the event
      * @param user the user who wants to enqueue
@@ -163,7 +163,7 @@ public class EventService {
     public boolean enqueueById(Long id, User user, PositionName position) {
         Optional<Event> event = getById(id);
 
-        if (event.isEmpty()) {
+        if (event.isEmpty() || user.getPositions() == null) {
             return false;
         }
         Event actualEvent = event.get();
@@ -178,7 +178,7 @@ public class EventService {
         }
 
         // Check if gender and organization match in case of competition
-        if (actualEvent.isCompetitive()
+        if (actualEvent.getType() == EventType.COMPETITION
                 && (!actualEvent.getOrganisation().equals(user.getOrganization())
                 || !actualEvent.getGender().equals(user.getGender()))) {
             return false;
