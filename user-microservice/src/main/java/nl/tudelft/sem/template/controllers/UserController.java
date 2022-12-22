@@ -227,10 +227,8 @@ public class UserController {
                                                          @RequestBody TimeSlot timeSlot
     ) {
         if (userService.addRecurringTimeSlot(userId, timeSlot).isEmpty()) {
-            System.out.println("Failed to add recurring timeslot");
             return ResponseEntity.badRequest().build();
         }
-        System.out.println("Added recurring timeslot");
         return ResponseEntity.ok(timeSlot);
     }
 
