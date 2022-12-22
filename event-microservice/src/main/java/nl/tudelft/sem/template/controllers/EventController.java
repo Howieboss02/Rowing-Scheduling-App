@@ -96,7 +96,7 @@ public class EventController {
      * @throws Exception if something goes wrong
      */
     @PostMapping("/register")
-    public ResponseEntity<Event> registerNewEvent(@RequestBody EventModel eventModel) throws Exception {
+    public ResponseEntity<Event> registerNewEvent(@RequestBody EventModel eventModel) {
         try {
             Event event = new Event(eventModel.getOwningUser(),
                     eventModel.getLabel(),
@@ -171,7 +171,11 @@ public class EventController {
         }
 
         //Getting the User info from the database
-        client = WebClient.create();
+        // We recreate the client if it does not exist
+        // This makes it easier to test
+        if (client == null) {
+            client = WebClient.create();
+        }
         Mono<User> response = client.get().uri("http://localhost:8084/api/user/" + userId)
             .retrieve().bodyToMono(User.class).log();
         if (Boolean.FALSE.equals(response.hasElement().block())) {

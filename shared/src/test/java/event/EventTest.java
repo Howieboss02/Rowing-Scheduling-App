@@ -1,9 +1,16 @@
 package event;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import nl.tudelft.sem.template.shared.domain.Node;
+import nl.tudelft.sem.template.shared.domain.Request;
+import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.Event;
+import nl.tudelft.sem.template.shared.enums.Certificate;
+import nl.tudelft.sem.template.shared.enums.Day;
+import nl.tudelft.sem.template.shared.enums.EventType;
 import nl.tudelft.sem.template.shared.enums.PositionName;
 import org.junit.jupiter.api.Test;
 
@@ -30,4 +37,46 @@ public class EventTest {
         assertEquals(4, e.getPositions().size());
     }
 
+    @Test
+    public void testConstructor() {
+        Event e = new Event(1L, "A", new ArrayList<>(),
+                new TimeSlot(-1, Day.FRIDAY, new Node(1, 2)), Certificate.B5, EventType.COMPETITION, true, "A", "A");
+        assertEquals(1L, e.getOwningUser());
+        assertEquals("A", e.getLabel());
+        assertEquals(new ArrayList<>(), e.getPositions());
+        assertEquals(new TimeSlot(-1, Day.FRIDAY, new Node(1, 2)), e.getTimeslot());
+        assertEquals(Certificate.B5, e.getCertificate());
+        assertEquals(EventType.COMPETITION, e.getType());
+        assertTrue(e.isCompetitive());
+        assertEquals("A", e.getOrganisation());
+        assertEquals(new ArrayList<>(), e.getQueue());
+
+    }
+
+    @Test
+    public void testEnqueue() {
+        Event e = new Event();
+        Request r = new Request("Alice", PositionName.Cox);
+        e.enqueue("Alice", PositionName.Cox);
+
+        assertEquals(List.of(r), e.getQueue());
+    }
+
+    @Test
+    public void testDequeue() {
+        Event e = new Event();
+        Request r = new Request("Alice", PositionName.Cox);
+        e.enqueue("Alice", PositionName.Cox);
+        e.dequeue(r);
+
+        assertEquals(new ArrayList<>(), e.getQueue());
+    }
+
+    @Test
+    public void messageConverterTest() {
+        Event e = new Event(1L, "competition", new ArrayList<>(),
+                new TimeSlot(-1, Day.FRIDAY, new Node(1, 2)), Certificate.B5, EventType.COMPETITION, true, "A", "A");
+
+        assertEquals("competition - COMPETITION from 1 until 2 in week -1, on FRIDAY.\n", e.messageConverter());
+    }
 }
