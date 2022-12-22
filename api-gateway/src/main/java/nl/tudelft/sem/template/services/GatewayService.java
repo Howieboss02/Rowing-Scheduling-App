@@ -158,6 +158,9 @@ public class GatewayService {
                 + "/register", eventModel, Event.class);
     }
 
+    /**
+     * Delete an event.
+     */
     public ResponseEntity<Object> deleteEvent(Long eventId) {
         restTemplate.delete(apiPrefix + MicroservicePorts.EVENT.port + eventPath
                 + "/" + eventId);
@@ -178,6 +181,9 @@ public class GatewayService {
                 + "/" + eventId + "/enqueue/" + userId + "?position=" + position, null, String.class);
     }
 
+    /**
+     * Accept to an event.
+     */
     public String acceptToEvent(Long eventId, Request request) {
         return restTemplate.postForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
                 + "/" + eventId + "/accept", request, String.class);

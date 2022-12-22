@@ -6,8 +6,10 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import nl.tudelft.sem.template.shared.components.RestTemplateResponseErrorHandler;
+import java.util.Arrays;
+import java.util.List;
 import nl.tudelft.sem.template.services.GatewayService;
+import nl.tudelft.sem.template.shared.components.RestTemplateResponseErrorHandler;
 import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.Event;
@@ -31,8 +33,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
-import java.util.Arrays;
-import java.util.List;
 
 @RestClientTest
 public class GatewayServiceTest {
@@ -150,7 +150,8 @@ public class GatewayServiceTest {
     @Test
     public void testGetAllEventsForUser() throws JsonProcessingException {
         List<Request> expected = Arrays.asList(request, request);
-        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/ownedBy/1")).andExpect(method(HttpMethod.GET))
+        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/ownedBy/1"))
+                .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(JsonUtil.serialize(expected), MediaType.APPLICATION_JSON));
 
         List<Event> actual = service.getAllEventsForUser(1L);
@@ -162,7 +163,8 @@ public class GatewayServiceTest {
     @Test
     public void testGetAllRequestsForUser() throws JsonProcessingException {
         List<Request> expected = Arrays.asList(request, request);
-        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/1/queue")).andExpect(method(HttpMethod.GET))
+        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/1/queue"))
+                .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(JsonUtil.serialize(expected), MediaType.APPLICATION_JSON));
 
         List<Request> actual = service.getAllRequestsForEvent(1L);
@@ -174,7 +176,8 @@ public class GatewayServiceTest {
     @Test
     public void testGetMatchedEventsForUser() throws JsonProcessingException {
         List<Request> expected = Arrays.asList(request, request);
-        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/match/1")).andExpect(method(HttpMethod.GET))
+        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/match/1"))
+                .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess());
 
         service.getMatchedEventsForUser(1L);
@@ -184,7 +187,8 @@ public class GatewayServiceTest {
 
     @Test
     public void testAddNewEvent() throws JsonProcessingException {
-        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/register")).andExpect(method(HttpMethod.POST))
+        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/register"))
+                .andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess(JsonUtil.serialize(event1), MediaType.APPLICATION_JSON));
 
         Event actual = service.addNewEvent(eventModel);
@@ -195,10 +199,11 @@ public class GatewayServiceTest {
 
     @Test
     public void testUpdateEvent() throws JsonProcessingException {
-        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/1")).andExpect(method(HttpMethod.PUT))
+        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/1"))
+                .andExpect(method(HttpMethod.PUT))
                 .andRespond(withSuccess(JsonUtil.serialize(event1), MediaType.APPLICATION_JSON));
 
-        Event actual = service.updateEvent( eventModel, 1L);
+        Event actual = service.updateEvent(eventModel, 1L);
 
         assertThat(actual).isEqualTo(event1);
         server.verify();
@@ -206,7 +211,8 @@ public class GatewayServiceTest {
 
     @Test
     public void testDeleteEvent() throws JsonProcessingException {
-        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/1")).andExpect(method(HttpMethod.DELETE))
+        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/1"))
+                .andExpect(method(HttpMethod.DELETE))
                 .andRespond(withSuccess());
 
         ResponseEntity<Object> actual = service.deleteEvent(1L);
@@ -217,7 +223,8 @@ public class GatewayServiceTest {
 
     @Test
     public void testAddRequestToEvent() throws JsonProcessingException {
-        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/1/enqueue/2?position=Cox")).andExpect(method(HttpMethod.POST))
+        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                        + "/1/enqueue/2?position=Cox")).andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess(JsonUtil.serialize("ENQUEUED"), MediaType.APPLICATION_JSON));
 
         String actual = service.enqueueToEvent(1L, 2L, PositionName.Cox);
@@ -228,7 +235,8 @@ public class GatewayServiceTest {
 
     @Test
     public void testAccept() throws JsonProcessingException {
-        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/1/accept")).andExpect(method(HttpMethod.POST))
+        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/1/accept"))
+                .andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess(JsonUtil.serialize("ACCEPTED"), MediaType.APPLICATION_JSON));
 
         String actual = service.acceptToEvent(1L, request);
@@ -239,7 +247,8 @@ public class GatewayServiceTest {
 
     @Test
     public void testReject() throws JsonProcessingException {
-        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/1/reject")).andExpect(method(HttpMethod.POST))
+        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                        + "/1/reject")).andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess(JsonUtil.serialize("REJECTED"), MediaType.APPLICATION_JSON));
 
         String actual = service.rejectFromEvent(1L, request);

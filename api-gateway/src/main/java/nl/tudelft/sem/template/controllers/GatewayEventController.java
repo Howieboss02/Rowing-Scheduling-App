@@ -19,43 +19,51 @@ public class GatewayEventController {
     @Autowired
     private transient GatewayService gatewayService;
 
+    /**
+     * Gets all events.
+     */
     @GetMapping("/all")
     public ResponseEntity<List<Event>> getEvents() {
         try {
             return ResponseEntity.ok(gatewayService.getAllEvents());
         } catch (ResponseStatusException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
-
+    /**
+     * Gets all events.
+     */
     @GetMapping("/ownedBy/{userId}")
     public ResponseEntity<List<Event>> getEventsByUser(@PathVariable("userId") Long userId) {
         try {
             return ResponseEntity.ok(gatewayService.getAllEventsForUser(userId));
         } catch (ResponseStatusException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
+    /**
+     * get all request for a specific event.
+     */
     @GetMapping("/{eventId}/queue")
     public ResponseEntity<List<Request>> getRequests(@PathVariable("eventId") Long eventId) {
         try {
             return ResponseEntity.ok(gatewayService.getAllRequestsForEvent(eventId));
         } catch (ResponseStatusException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
+    /**
+     * Match events to a user.
+     */
     @GetMapping("/match/{userId}")
     public ResponseEntity<List<Event>> matchEvents(@PathVariable("userId") Long userId) {
         System.out.println("matchEvents");
@@ -64,25 +72,29 @@ public class GatewayEventController {
         } catch (ResponseStatusException e) {
             System.out.println("matchEvents exception");
             throw e;
-        }
-        catch (Exception e) {
-            System.out.println("matchEvents exception 2"+ e.getMessage());
+        } catch (Exception e) {
+            System.out.println("matchEvents exception 2" + e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
 
+    /**
+     * Ragister a new event.
+     */
     @PostMapping("/register")
     public ResponseEntity<Event> registerNewEvent(@RequestBody EventModel eventModel) throws Exception {
         try {
             return ResponseEntity.ok(gatewayService.addNewEvent(eventModel));
         } catch (ResponseStatusException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }
 
+    /**
+     * Delete an event.
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity deleteEvent(@PathVariable("id") Long id) {
         try {
@@ -91,13 +103,15 @@ public class GatewayEventController {
         } catch (ResponseStatusException e) {
             System.out.println("deleteEvent exception " + e.getMessage());
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("deleteEvent exception " + e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
 
+    /**
+     * Update an event.
+     */
     @PutMapping("/{id}")
     public ResponseEntity<?> updateEvent(@PathVariable("id") Long id,
                                          @RequestBody EventModel eventModel) {
@@ -106,13 +120,15 @@ public class GatewayEventController {
         } catch (ResponseStatusException e) {
             System.out.println("updateEvent exception " + e.getMessage());
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("updateEvent exception " + e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
 
+    /**
+     * Enquque to an event.
+     */
     @PostMapping("{eventId}/enqueue/{userId}")
     public ResponseEntity<String> enqueue(@PathVariable("eventId") Long eventId,
                                           @PathVariable("userId") Long userId,
@@ -122,14 +138,15 @@ public class GatewayEventController {
         } catch (ResponseStatusException e) {
             System.out.println("enqueue exception " + e.getMessage());
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("enqueue exception " + e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
 
-
+    /**
+     * Accept an event.
+     */
     @PostMapping("{id}/accept")
     public ResponseEntity<String> accept(@PathVariable("id") Long id,
                                          @RequestBody Request request) {
@@ -138,14 +155,15 @@ public class GatewayEventController {
         } catch (ResponseStatusException e) {
             System.out.println("accept exception " + e.getMessage());
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             System.out.println("accept exception " + e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
 
-
+    /**
+     * Reject an event.
+     */
     @PostMapping("{id}/reject")
     public ResponseEntity<String> reject(@PathVariable("id") Long id,
                                          @RequestBody Request request) {
@@ -153,8 +171,7 @@ public class GatewayEventController {
             return ResponseEntity.ok(gatewayService.rejectFromEvent(id, request));
         } catch (ResponseStatusException e) {
             throw e;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.badRequest().build();
         }
     }

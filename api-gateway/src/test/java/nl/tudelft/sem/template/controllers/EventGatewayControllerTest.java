@@ -1,8 +1,17 @@
 package nl.tudelft.sem.template.controllers;
 
+import static org.hamcrest.Matchers.containsString;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
+import java.util.List;
 import nl.tudelft.sem.template.services.GatewayService;
 import nl.tudelft.sem.template.shared.authentication.JwtAuthenticationEntryPoint;
 import nl.tudelft.sem.template.shared.authentication.JwtRequestFilter;
@@ -23,15 +32,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.List;
-import static org.hamcrest.Matchers.containsString;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(GatewayEventController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -131,7 +131,8 @@ public class EventGatewayControllerTest {
 
     @Test
     public void testGetEventsByUserWithException() throws Exception {
-        when(gatewayService.getAllEventsForUser(1L)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+        when(gatewayService.getAllEventsForUser(1L))
+                .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         mockMvc.perform(get("/api/event/ownedBy/1"))
                 .andExpect(status().isNotFound());
@@ -147,7 +148,8 @@ public class EventGatewayControllerTest {
 
     @Test
     public void testGetRequests() throws Exception {
-        List<Request> requests = Arrays.asList(new Request("request1", PositionName.Coach), new Request("request2", PositionName.Coach));
+        List<Request> requests = Arrays.asList(new Request("request1", PositionName.Coach),
+                new Request("request2", PositionName.Coach));
         when(gatewayService.getAllRequestsForEvent(1L)).thenReturn(requests);
 
         mockMvc.perform(get("/api/event/1/queue"))
@@ -158,7 +160,8 @@ public class EventGatewayControllerTest {
 
     @Test
     public void testGetRequestsWithException() throws Exception {
-        when(gatewayService.getAllRequestsForEvent(1L)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+        when(gatewayService.getAllRequestsForEvent(1L))
+                .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         mockMvc.perform(get("/api/event/1/queue"))
                 .andExpect(status().isNotFound());
@@ -309,7 +312,8 @@ public class EventGatewayControllerTest {
 
     @Test
     public void testEnqueueWithException() throws Exception {
-        doThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST)).when(gatewayService).enqueueToEvent(1L, 1L, PositionName.Coach);
+        doThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST)).when(gatewayService)
+                .enqueueToEvent(1L, 1L, PositionName.Coach);
 
         mockMvc.perform(post("/api/event/1/enqueue/1?position=Coach")
                         .contentType(APPLICATION_JSON_UTF8))

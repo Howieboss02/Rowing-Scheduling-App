@@ -23,7 +23,7 @@ class ScheduleConverterTest {
 
     @Test
     public void convertToDatabaseColumnEmptySchedule() {
-        assertEquals("--", converter.convertToDatabaseColumn(new Schedule()));
+        assertEquals("//", converter.convertToDatabaseColumn(new Schedule()));
     }
 
     @Test
