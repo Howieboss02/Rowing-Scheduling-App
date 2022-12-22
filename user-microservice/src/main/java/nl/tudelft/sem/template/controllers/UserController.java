@@ -3,7 +3,7 @@ package nl.tudelft.sem.template.controllers;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.services.UserService;
-import nl.tudelft.sem.template.shared.domain.Message;
+import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
@@ -60,7 +60,7 @@ public class UserController {
      * @return information about the user
      */
     @GetMapping("/name")
-    public ResponseEntity<User> getUserBynetId(@RequestBody String name) {
+    public ResponseEntity<User> getUserByNetId(@RequestBody String name) {
         Optional<User> user = userService.getByNetId(name);
         if (user.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -217,7 +217,7 @@ public class UserController {
     @PutMapping(path = "/schedule/add/{userId}")
     public ResponseEntity<?> addRecurringTimeSlot(@PathVariable(uid) Long userId,
                                                   @RequestParam(required = false) Day day,
-                                                  @RequestParam(required = false) Pair<Integer, Integer> time
+                                                  @RequestParam(required = false) Node time
     ) {
         if (userService.addRecurringTimeSlot(userId, day, time).isEmpty()) {
             return ResponseEntity.badRequest().build();
@@ -231,7 +231,7 @@ public class UserController {
     @PutMapping(path = "/schedule/remove/{userId}")
     public ResponseEntity<?> removeRecurringTimeSlot(@PathVariable(uid) Long userId,
                                                      @RequestParam(required = false) Day day,
-                                                     @RequestParam(required = false) Pair<Integer, Integer> time
+                                                     @RequestParam(required = false) Node time
     ) {
         if (userService.removeRecurringTimeSlot(userId, day, time).isEmpty()) {
             return ResponseEntity.badRequest().build();

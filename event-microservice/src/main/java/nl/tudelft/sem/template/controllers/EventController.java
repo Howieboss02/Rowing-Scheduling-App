@@ -87,7 +87,7 @@ public class EventController {
     @GetMapping("/matchEvents")
     public List<Event> matchEvents(@RequestBody User user) throws IllegalArgumentException {
         if (user.getCertificate() == null || user.getPositions() == null || user.getPositions().size() == 0
-                || user.getCertificate() == null || user.getOrganization() == null) {
+                || user.getOrganization() == null) {
             throw new IllegalArgumentException("Profile is not (fully) completed");
         }
         return eventService.getMatchedEvents(user);
@@ -101,16 +101,16 @@ public class EventController {
      * @throws Exception if something goes wrong
      */
     @PostMapping("/register")
-    public ResponseEntity<Event> registerNewEvent(@RequestBody EventModel eventModel) throws Exception {
+    public ResponseEntity<Event> registerNewEvent(@RequestBody EventModel eventModel) {
         try {
             Event event = new Event(eventModel.getOwningUser(),
                     eventModel.getLabel(),
                     eventModel.getPositions(),
-                    eventModel.getStartTime(),
-                    eventModel.getEndTime(),
+                    eventModel.getTimeslot(),
                     eventModel.getCertificate(),
                     eventModel.getType(),
                     eventModel.isCompetitive(),
+                    eventModel.getGender(),
                     eventModel.getOrganisation());
             Event receivedEvent = eventService.insert(event);
             return ResponseEntity.ok(receivedEvent);
@@ -144,10 +144,12 @@ public class EventController {
      */
     @PutMapping("edit/{id}")
     public ResponseEntity<?> updateEvent(@PathVariable("id") Long id,
-                                         @RequestBody EventModel eventModel) {
+                                         @RequestBody EventModel eventModel,
+                                         @RequestParam boolean updateIsCompetitive) {
         Optional<Event> returned = eventService.updateById(eventModel.getOwningUser(), id, eventModel.getLabel(),
-            eventModel.getPositions(), eventModel.getStartTime(), eventModel.getEndTime(),
-            eventModel.getCertificate(), eventModel.getType(), eventModel.isCompetitive(), eventModel.getOrganisation());
+            eventModel.getPositions(), eventModel.getTimeslot(),
+            eventModel.getCertificate(), eventModel.getType(), eventModel.isCompetitive(),
+                eventModel.getGender(), eventModel.getOrganisation(), updateIsCompetitive);
         if (returned.isPresent()) {
             return ResponseEntity.ok(returned.get());
         } else {
@@ -173,8 +175,14 @@ public class EventController {
         }
 
         //Getting the User info from the database
+        // We recreate the client if it does not exist
+        // This makes it easier to test
+        if (client == null) {
+            client = WebClient.create();
+        }
         Mono<User> response = client.get().uri("http://localhost:8084/api/user/" + userId)
             .retrieve().bodyToMono(User.class).log();
+        
         if (!response.hasElement().block()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }

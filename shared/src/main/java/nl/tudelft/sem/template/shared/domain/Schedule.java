@@ -24,7 +24,7 @@ public class Schedule {
     private List<TimeSlot> addedSlots;
 
     /**
-     * Empty constructor for the Schedule class.
+     * Constructor for the Schedule class.
      */
     public Schedule() {
         recurringSlots = new ArrayList<>();

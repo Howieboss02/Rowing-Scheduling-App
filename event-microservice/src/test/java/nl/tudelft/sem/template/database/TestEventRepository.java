@@ -3,6 +3,8 @@ package nl.tudelft.sem.template.database;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
@@ -102,7 +104,7 @@ public class TestEventRepository implements EventRepository {
     @Override
     public <S extends Event> S save(S entity) {
         call("save");
-        entity.setId((long) events.size());
+        events.remove(entity);
         events.add(entity);
         return entity;
     }
@@ -114,12 +116,17 @@ public class TestEventRepository implements EventRepository {
 
     @Override
     public Optional<Event> findById(Long id) {
-        return Optional.empty();
+        Predicate<Event> filter = event -> event.getId().equals(id);
+        List<Event> e = events.stream().filter(filter).collect(Collectors.toList());
+        if (e.size() == 0) {
+            return Optional.empty();
+        }
+        return Optional.of(e.get(0));
     }
 
     @Override
     public boolean existsById(Long id) {
-        return false;
+        return !findById(id).equals(Optional.empty());
     }
 
     @Override
@@ -164,12 +171,13 @@ public class TestEventRepository implements EventRepository {
 
     @Override
     public List<Event> findMatchingCompetitions(Certificate certificate, String organization,
-                                                Long id, EventType competition) {
+                                                Long id, EventType competition, String gender) {
         return null;
     }
 
     @Override
     public List<Event> findByOwningUser(Long userId) {
-        return null;
+        Predicate<Event> filter = event -> event.getOwningUser().equals(userId);
+        return events.stream().filter(filter).collect(Collectors.toList());
     }
 }
