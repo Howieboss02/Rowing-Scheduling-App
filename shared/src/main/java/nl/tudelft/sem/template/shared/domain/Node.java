@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.shared.domain;
 import javax.persistence.Convert;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Data
 @Convert()
