@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import nl.tudelft.sem.template.controllers.UserController;
 import nl.tudelft.sem.template.services.UserService;
 import nl.tudelft.sem.template.shared.domain.Node;
@@ -157,9 +158,9 @@ public class UserControllerTest {
         User u = getUser("A", Certificate.B1);
 
         sut.registerNewUser(u);
-        sut.addRecurringTimeSlot(1L, Day.FRIDAY, new Node(10, 12));
+        sut.addRecurringTimeSlot(1L, correctTime);
         assertEquals(sut.removeTimeSlot(1L, removedTime).getStatusCode(), HttpStatus.OK);
-        assertTrue(sut.getUser(1L).getBody().getSchedule().getRemovedSlots().contains(correctTime));
+        assertTrue(Objects.requireNonNull(sut.getUser(1L).getBody()).getSchedule().getRemovedSlots().contains(correctTime));
     }
 
     @Test
@@ -168,8 +169,8 @@ public class UserControllerTest {
 
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
-        sut.addRecurringTimeSlot(1L, Day.FRIDAY, new Node(10, 12));
-        assertTrue(sut.getUser(1L).getBody().getSchedule().getRecurringSlots().contains(time));
+        sut.addRecurringTimeSlot(1L, time);
+        assertTrue(Objects.requireNonNull(sut.getUser(1L).getBody()).getSchedule().getRecurringSlots().contains(time));
     }
 
     @Test
