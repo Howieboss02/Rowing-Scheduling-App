@@ -202,13 +202,13 @@ public class UserController {
      */
     @PutMapping(path = "/notification/{userId}")
     public ResponseEntity<?> addNotification(@PathVariable(uid) Long userId,
-                                             @RequestBody(required = false) Message notification
+                                             @RequestBody(required = false) String notification
     ) {
         Optional<User> user = userService.getById(userId);
         if (user.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok(userService.addNotification(userId, notification.getText()));
+        return ResponseEntity.ok(userService.addNotification(userId, notification));
     }
 
     /**

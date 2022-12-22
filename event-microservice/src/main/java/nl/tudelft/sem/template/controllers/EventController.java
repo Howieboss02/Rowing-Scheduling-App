@@ -23,12 +23,11 @@ import reactor.core.publisher.Mono;
 public class EventController {
     private final transient EventService eventService;
     private static WebClient client = WebClient.create();
-    private final transient EventRepository repo;
 
     @Autowired
-    public EventController(EventService eventService, EventRepository repo) {
+    public EventController(EventService eventService) {
         this.eventService = eventService;
-        this.repo = repo;
+
     }
 
     /**
@@ -187,9 +186,7 @@ public class EventController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         User user = response.block();
-        Event e = event.get();
-        e.enqueue(user.getNetId(), position);
-        repo.save(e);
+        eventService.enqueueById(eventId, user, position);
         return ResponseEntity.ok("ENQUEUED");
     }
 
