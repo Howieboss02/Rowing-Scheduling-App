@@ -114,9 +114,10 @@ public class Event {
      */
     public String messageConverter() {
         StringTimeToMinutesConverter sc = new StringTimeToMinutesConverter();
-        return getLabel() + " - " + getType() + " from " + sc.convertToEntityAttribute(timeslot.getTime().getFirst()) + " until "
-                + sc.convertToEntityAttribute(timeslot.getTime().getSecond()) + " in week " + timeslot.getWeek() + ", on "
-                + timeslot.getDay().toString() + ".\n";
+        return getLabel() + " - " + getType() + " from "
+                + sc.convertToEntityAttribute(timeslot.getTime().getFirst()) + " until "
+                + sc.convertToEntityAttribute(timeslot.getTime().getSecond()) + " in week "
+                + timeslot.getWeek() + ", on " + timeslot.getDay().toString() + ".\n";
     }
 }
 
