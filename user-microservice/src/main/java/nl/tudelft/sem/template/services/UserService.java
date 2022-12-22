@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.services;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.database.UserRepository;
+import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
@@ -69,7 +70,7 @@ public class UserService {
      * @return the information of the added user
      */
     public User insert(User user) {
-        if (user == null || user.getName().isEmpty()) {
+        if (user == null || user.getNetId().isEmpty()) {
             return null;
         }
         //We are currently not checking if the user already exists
@@ -128,7 +129,7 @@ public class UserService {
      * @param day the day of the week
      * @return the updated user
      */
-    public Optional<User> addRecurringTimeSlot(Long id, Day day, Pair<Integer, Integer> time) {
+    public Optional<User> addRecurringTimeSlot(Long id, Day day, Node time) {
         Optional<User> user = getById(id);
 
         if (user.isPresent()) {
@@ -141,7 +142,7 @@ public class UserService {
     /**
      * Remove a recurring time slot from a user.
      */
-    public Optional<User> removeRecurringTimeSlot(Long id, Day day, Pair<Integer, Integer> time) {
+    public Optional<User> removeRecurringTimeSlot(Long id, Day day, Node time) {
         Optional<User> user = getById(id);
 
         if (user.isPresent()) {
@@ -207,7 +208,7 @@ public class UserService {
         Optional<User> user = getById(id);
 
         if (user.isPresent()) {
-            user.get().setEmail(name);
+            user.get().setName(name);
             userRepo.save(user.get());
         }
         return user;
