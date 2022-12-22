@@ -1,12 +1,11 @@
 package nl.tudelft.sem.template.shared.domain;
 
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @EqualsAndHashCode
+@NoArgsConstructor
 public class Node {
     int first;
     int second;

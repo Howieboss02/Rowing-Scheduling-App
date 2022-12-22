@@ -7,9 +7,6 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import nl.tudelft.sem.template.shared.domain.Schedule;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
-import nl.tudelft.sem.template.shared.enums.Day;
-import org.springframework.data.util.Pair;
-
 @Converter
 public class ScheduleConverter implements AttributeConverter<Schedule, String> {
 

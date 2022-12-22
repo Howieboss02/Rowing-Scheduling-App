@@ -47,7 +47,7 @@ public class NotificationController {
 
     notification.setStrategy(new PlatformStrategy());
     String message = notification.sendNotification(user, event, outcome);
-    userService.addNotification(userId, message);
+    userService.insert(user);
     notification.setStrategy(new EmailStrategy());
     message += "\n" + notification.sendNotification(user, event, outcome);
     return ResponseEntity.ok(message);
