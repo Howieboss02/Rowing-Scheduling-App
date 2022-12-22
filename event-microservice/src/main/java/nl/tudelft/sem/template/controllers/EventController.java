@@ -154,19 +154,15 @@ public class EventController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        //Getting the User info from the database
-        // We recreate the client if it does not exist
-        // This makes it easier to test
-        if (client == null) {
-            client = WebClient.create();
-        }
+        // Getting the User info from the database
+        client = WebClient.create();
         Mono<User> response = client.get().uri("http://localhost:8084/api/user/" + userId)
             .retrieve().bodyToMono(User.class).log();
-        
-        if (!response.hasElement().block()) {
+        if (Boolean.FALSE.equals(response.hasElement().block())) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         User user = response.block();
+
         eventService.enqueueById(eventId, user, position);
         return ResponseEntity.ok("ENQUEUED");
     }

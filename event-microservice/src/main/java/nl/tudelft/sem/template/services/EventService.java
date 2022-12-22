@@ -158,14 +158,29 @@ public class EventService {
      * @param user the user who wants to enqueue
      * @param position the position the user wants to fill
      */
-    public void enqueueById(Long id, User user, PositionName position) {
+    public boolean enqueueById(Long id, User user, PositionName position) {
         Optional<Event> event = getById(id);
 
-        if (event.isPresent()) {
-            event.get().enqueue(user.getNetId(), position);
-
-            eventRepo.save(event.get());
+        if (event.isEmpty()) {
+            return false;
         }
+        Event actualEvent = event.get();
+
+        // Check if gender and organization match in case of competition
+        if (actualEvent.isCompetitive()
+                && (!actualEvent.getOrganisation().equals(user.getOrganization())
+                || !actualEvent.getGender().equals(user.getGender()))) {
+            return false;
+        }
+
+        // Check if the certificate level is high enough
+        if (user.getCertificate().compareTo(actualEvent.getCertificate()) < 0) {
+            return false;
+        }
+
+        boolean success = actualEvent.enqueue(user.getNetId(), position);
+        eventRepo.save(event.get());
+        return success;
     }
 
     /**

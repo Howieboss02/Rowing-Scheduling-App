@@ -97,8 +97,20 @@ public class Event {
         return positions.remove(position);
     }
 
-    public void enqueue(String name, PositionName position) {
+    /**
+     * Enqueues a user to a position if that position is desired.
+     *
+     * @param name the name of the user that enqueues
+     * @param position position to enqueue for
+     * @return true iff the enqueue was successfull
+     */
+    public boolean enqueue(String name, PositionName position) {
+        if (!positions.contains(position)) {
+            return false;
+        }
+
         queue.add(new Request(name, position));
+        return true;
     }
 
     public boolean dequeue(Request request) {
