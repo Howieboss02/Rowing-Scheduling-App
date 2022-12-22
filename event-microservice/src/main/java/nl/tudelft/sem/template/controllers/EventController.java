@@ -212,7 +212,8 @@ public class EventController {
         }
 
         //send notification
-        String mess = client.post().uri("http://localhost:8085/api/notification/" + event.get().getId() + "/" + id + "/?outcome=ACCEPTED").retrieve().bodyToMono(String.class).block();
+        String mess = client.post().uri("http://localhost:8085/api/notification/" + event.get().getId() + "/" + id
+            + "/?outcome=ACCEPTED").retrieve().bodyToMono(String.class).block();
         return ResponseEntity.ok("ACCEPTED\n" + mess);
     }
 
@@ -236,7 +237,8 @@ public class EventController {
         }
 
         //send notification
-        String mess = client.post().uri("http://localhost:8085/api/notification/" + event.get().getId() + "/" + id + "/?outcome=REJECTED").retrieve().bodyToMono(String.class).block();
+        String mess = client.post().uri("http://localhost:8085/api/notification/" + event.get().getId() + "/" + id
+            + "/?outcome=REJECTED").retrieve().bodyToMono(String.class).block();
         return ResponseEntity.ok("REJECTED\n" + mess);
     }
 }
