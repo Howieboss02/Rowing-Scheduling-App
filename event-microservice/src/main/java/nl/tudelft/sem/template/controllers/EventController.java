@@ -217,9 +217,13 @@ public class EventController {
         }
 
         //send notification
-        String mess = client.post().uri("http://localhost:8085/api/notification/" + event.get().getId() + "/" + id
-            + "/?outcome=ACCEPTED").retrieve().bodyToMono(String.class).block();
-        return ResponseEntity.ok("ACCEPTED\n" + mess);
+        try {
+            String mess = client.post().uri("http://localhost:8085/api/notification/" + event.get().getId() + "/" + id
+                + "/?outcome=ACCEPTED").retrieve().bodyToMono(String.class).block();
+            return ResponseEntity.ok("ACCEPTED\n" + mess);
+        } catch (Exception e) {
+            return ResponseEntity.ok("ACCEPTED");
+        }
     }
 
     /**
@@ -240,10 +244,14 @@ public class EventController {
         if (!processed) {
             return ResponseEntity.badRequest().build(); // request doesn't exist
         }
-
         //send notification
-        String mess = client.post().uri("http://localhost:8085/api/notification/" + event.get().getId() + "/" + id
-            + "/?outcome=REJECTED").retrieve().bodyToMono(String.class).block();
-        return ResponseEntity.ok("REJECTED\n" + mess);
+        try {
+            String mess = client.post().uri("http://localhost:8085/api/notification/" + event.get().getId() + "/" + id
+                + "/?outcome=REJECTED").retrieve().bodyToMono(String.class).block();
+            return ResponseEntity.ok("REJECTED\n" + mess);
+        } catch (Exception e) {
+            return ResponseEntity.ok("REJECTED");
+        }
+
     }
 }
