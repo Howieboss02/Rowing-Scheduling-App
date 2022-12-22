@@ -7,7 +7,9 @@ import nl.tudelft.sem.template.services.UserService;
 import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
+import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.User;
+import nl.tudelft.sem.template.shared.entities.UserModel;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.Day;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -119,15 +121,18 @@ public class UserController {
      * Update everything about a user at once by giving all possible parameters.
      */
     @PutMapping(path = "/update/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable(uid) Long userId, @RequestParam() User user) {
-        try {
-            return ResponseEntity.ok(userService.updateById(userId,
-                    user.getName(),
-                    user.getOrganization(),
-                    user.getGender(),
-                    user.getCertificate(),
-                    user.getPositions()).get());
-        } catch (Exception e) {
+    public ResponseEntity<?> updateUser(@PathVariable(uid) Long userId,
+                                        @RequestParam UserModel userModel) {
+        Optional<User> returned = userService.updateById(
+                userId,
+                userModel.getName(),
+                userModel.getOrganization(),
+                userModel.getGender(),
+                userModel.getCertificate(),
+                userModel.getPositions());
+        if (returned.isPresent()) {
+            return ResponseEntity.ok(returned.get());
+        } else {
             return ResponseEntity.badRequest().build();
         }
     }

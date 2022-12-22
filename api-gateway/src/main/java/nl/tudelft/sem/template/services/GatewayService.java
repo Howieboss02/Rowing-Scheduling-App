@@ -6,6 +6,7 @@ import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.EventModel;
 import nl.tudelft.sem.template.shared.entities.User;
+import nl.tudelft.sem.template.shared.entities.UserModel;
 import nl.tudelft.sem.template.shared.enums.MicroservicePorts;
 import nl.tudelft.sem.template.shared.enums.PositionName;
 import nl.tudelft.sem.template.shared.models.AuthenticationRequestModel;
@@ -90,8 +91,9 @@ public class GatewayService {
     /**
      * Update a user.
      */
-    public User updateUser(Long userId, User user) {
-        HttpEntity<User> requestEntity = new HttpEntity<>(user);
+    public User updateUser(Long userId, UserModel userModel) {
+        HttpEntity<UserModel> requestEntity = new HttpEntity<>(userModel);
+        System.out.println("got here");
         return restTemplate.exchange(apiPrefix + MicroservicePorts.USER.port + userPath
                 + "/update/" + userId, HttpMethod.PUT, requestEntity, User.class).getBody();
     }

@@ -12,7 +12,10 @@ import java.util.List;
 import nl.tudelft.sem.template.services.GatewayService;
 import nl.tudelft.sem.template.shared.authentication.JwtAuthenticationEntryPoint;
 import nl.tudelft.sem.template.shared.authentication.JwtRequestFilter;
+import nl.tudelft.sem.template.shared.domain.Node;
+import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
+import nl.tudelft.sem.template.shared.enums.Day;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -111,4 +114,13 @@ public class UserGatewayTest {
         mockMvc.perform(delete("/api/user/deleteUser/invalidId"))
                 .andExpect(status().isBadRequest());
     }
+
+    //    @Test
+    //    void addRecurringTimeSlotTest() throws Exception {
+    //        TimeSlot timeSlot = new TimeSlot(-1, Day.MONDAY, new Node(60, 61));
+    //        when(gatewayService.addRecurring(2137L, timeSlot)).thenReturn(timeSlot);
+    //        mockMvc.perform(post("/api/user/schedule/addRecurring/2137").contentType(APPLICATION_JSON_UTF8))
+    //                .andExpect(content().equals(timeSlot))
+    //                .andExpect(status().isOk());
+    //    }
 }

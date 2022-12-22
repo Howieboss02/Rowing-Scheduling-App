@@ -7,6 +7,7 @@ import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
+import nl.tudelft.sem.template.shared.entities.UserModel;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.Day;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,16 +72,10 @@ public class GatewayUserController {
      * Update a user.
      */
     @PutMapping(path = "/updateUser/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable(uid) Long userId,
-                                           @RequestParam(required = false) String name,
-                                           @RequestParam(required = false) String organization,
-                                           @RequestParam(required = false) String gender,
-                                           @RequestParam(required = false) Certificate certificate,
-                                           @RequestParam(required = false) List<Position> positions
-    ) {
+    public ResponseEntity<?> updateUser(@PathVariable(uid) Long userId,
+                                        @RequestParam UserModel userModel) {
         try {
-            User user = new User(name, organization, gender, certificate, positions);
-            return ResponseEntity.ok(gatewayService.updateUser(userId, user));
+            return ResponseEntity.ok(gatewayService.updateUser(userId, userModel));
         } catch (ResponseStatusException e) {
             throw e;
         } catch (Exception e) {
@@ -96,9 +91,10 @@ public class GatewayUserController {
                                                  @RequestBody TimeSlot timeSlot) {
         try {
             return ResponseEntity.ok(gatewayService.addRecurring(userId, timeSlot));
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (Exception e) {
-            System.out.println("Unable to add the recurring time slot");
-            return ResponseEntity.badRequest().build();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -110,9 +106,10 @@ public class GatewayUserController {
                                                     @RequestBody TimeSlot timeSlot) {
         try {
             return ResponseEntity.ok(gatewayService.removeRecurring(userId, timeSlot));
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (Exception e) {
-            System.out.println("Unable to remove the recurring time slot");
-            return ResponseEntity.badRequest().build();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -123,9 +120,10 @@ public class GatewayUserController {
     public ResponseEntity<TimeSlot> includeTimeSlot(@PathVariable(uid) Long userId, @RequestBody TimeSlot timeSlot) {
         try {
             return ResponseEntity.ok(gatewayService.addOneTimeTimeSlot(userId, timeSlot));
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (Exception e) {
-            System.out.println("Unable to include the time slot");
-            return ResponseEntity.badRequest().build();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 
@@ -136,9 +134,10 @@ public class GatewayUserController {
     public ResponseEntity<TimeSlot> excludeTimeslot(@PathVariable(uid) Long userId, @RequestBody TimeSlot timeslot) {
         try {
             return ResponseEntity.ok(gatewayService.removeOneTimeTimeSlot(userId, timeslot));
+        } catch (ResponseStatusException e) {
+            throw e;
         } catch (Exception e) {
-            System.out.println("Unable to exclude the time slot");
-            return ResponseEntity.badRequest().build();
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
 }

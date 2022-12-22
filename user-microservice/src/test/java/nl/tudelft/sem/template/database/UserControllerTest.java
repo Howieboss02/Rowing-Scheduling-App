@@ -12,6 +12,7 @@ import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
+import nl.tudelft.sem.template.shared.entities.UserModel;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.Day;
 import nl.tudelft.sem.template.shared.enums.PositionName;
@@ -82,8 +83,8 @@ public class UserControllerTest {
     public void testUpdate() {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
-        sut.updateUser(1L, new User("bbb", "Bob", "", "", "", Certificate.B2, new ArrayList<>()));
-        assertEquals(sut.getUsers().get(1).getName(), "Bob");
+        sut.updateUser(1L, new UserModel("bbb", "Bobs", "MALE",  Certificate.B2, new ArrayList<>()));
+        assertEquals(sut.getUsers().get(1).getName(), "bbb");
         assertEquals(sut.getUsers().get(0).getCertificate(), Certificate.B2);
     }
 
@@ -102,7 +103,7 @@ public class UserControllerTest {
     public void testUpdateNonExistent() {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
-        assertEquals(sut.updateUser(2L, new User("bbb", "Bob", "", "", "",
+        assertEquals(sut.updateUser(2L, new UserModel("bbb", "Bob", "MALE",
                 Certificate.B1, new ArrayList<>())), ResponseEntity.badRequest().build());
         assertEquals(sut.getUsers().get(0).getName(), "A");
     }

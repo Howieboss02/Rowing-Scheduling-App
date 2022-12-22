@@ -81,7 +81,7 @@ public class EventController {
         }
         (eventService.getMatchedEvents(user)).forEach(System.out::println);
         List<Event> response = eventService.getMatchedEvents(user);
-        if(response == null || response.size() == 0) {
+        if (response == null || response.size() == 0) {
             return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         }
         return ResponseEntity.ok(response);

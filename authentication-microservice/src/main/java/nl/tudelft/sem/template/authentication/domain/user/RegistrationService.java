@@ -19,7 +19,7 @@ public class RegistrationService {
     private static final String userPath = "/api/user";
 
     @Autowired
-    private RestTemplate restTemplate;
+    private transient RestTemplate restTemplate;
 
     /**
      * Instantiates a new UserService.
@@ -61,7 +61,7 @@ public class RegistrationService {
     }
 
     public User registerUserDetails(User userToRegister) {
-        return restTemplate.postForObject(this.apiPrefix + MicroservicePorts.USER.port +userPath
+        return restTemplate.postForObject(this.apiPrefix + MicroservicePorts.USER.port + userPath
                 + "/register", userToRegister, User.class);
     }
 

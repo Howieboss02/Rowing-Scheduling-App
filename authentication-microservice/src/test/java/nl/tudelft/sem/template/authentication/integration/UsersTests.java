@@ -14,11 +14,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import nl.tudelft.sem.template.authentication.authentication.JwtTokenGenerator;
 import nl.tudelft.sem.template.authentication.domain.user.*;
-import nl.tudelft.sem.template.shared.utils.JsonUtil;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.models.AuthenticationRequestModel;
 import nl.tudelft.sem.template.shared.models.AuthenticationResponseModel;
 import nl.tudelft.sem.template.shared.models.RegistrationRequestModel;
+import nl.tudelft.sem.template.shared.utils.JsonUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,7 +81,8 @@ public class UsersTests {
         server = MockRestServiceServer.createServer(restTemplate);
         this.server.expect(ExpectedCount.once(), requestTo("http://localhost:8084/api/user/register"))
                 .andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess(JsonUtil.serialize(new User(testUser.getNetIdValue(), "testName", testEmail.getEmailValue())), MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess(JsonUtil.serialize(new User(testUser.getNetIdValue(), "testName",
+                        testEmail.getEmailValue())), MediaType.APPLICATION_JSON));
 
         RegistrationRequestModel model = new RegistrationRequestModel();
         model.setNetId(testUser.toString());

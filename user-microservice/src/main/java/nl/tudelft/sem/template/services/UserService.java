@@ -106,7 +106,7 @@ public class UserService {
      */
     public Optional<User> updateById(Long id, String name, String organization, String gender,
                                      Certificate certificate, List<Position> positions) {
-
+        System.out.println("got here 3");
         Optional<User> toUpdate = getById(id);
 
         if (toUpdate.isPresent()) {
