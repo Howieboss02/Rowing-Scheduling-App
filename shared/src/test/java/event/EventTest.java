@@ -56,6 +56,8 @@ public class EventTest {
     @Test
     public void testEnqueue() {
         Event e = new Event();
+        e.addPosition(PositionName.Cox);
+
         Request r = new Request("Alice", PositionName.Cox);
         e.enqueue("Alice", PositionName.Cox);
 
