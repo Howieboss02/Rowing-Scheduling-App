@@ -1,8 +1,8 @@
 package nl.tudelft.sem.template.shared.domain;
 
-import lombok.EqualsAndHashCode;
-import lombok.Data;
 import javax.persistence.Convert;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
 @Convert()

@@ -24,7 +24,7 @@ public class EventService {
     private static final String userPath = "/api/user/";
 
     @Autowired
-    RestTemplate restTemplate;
+    private transient RestTemplate restTemplate;
     
     @Autowired
     public EventService(EventRepository eventRepo) {

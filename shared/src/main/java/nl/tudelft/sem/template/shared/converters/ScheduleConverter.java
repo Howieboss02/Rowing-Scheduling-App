@@ -74,7 +74,7 @@ public class ScheduleConverter implements AttributeConverter<Schedule, String> {
      */
     private void timeSlotListToString(StringBuilder scheduleString,
                                           List<TimeSlot> slots) {
-        for(int i = 0; i < slots.size(); i++) {
+        for (int i = 0; i < slots.size(); i++) {
             scheduleString.append(tsConverter.convertToDatabaseColumn(slots.get(i)));
             if (i != slots.size() - 1) {
                 scheduleString.append(SLOT_SPLIT_CHAR);

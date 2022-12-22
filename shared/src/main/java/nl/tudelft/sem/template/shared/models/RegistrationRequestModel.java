@@ -1,13 +1,10 @@
 package nl.tudelft.sem.template.shared.models;
 
+import java.util.List;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.Certificate;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Model representing a registration request.

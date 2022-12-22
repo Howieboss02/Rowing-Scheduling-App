@@ -1,7 +1,6 @@
 package nl.tudelft.sem.template.shared.converters;
 
 import javax.persistence.AttributeConverter;
-import org.springframework.data.util.Pair;
 import nl.tudelft.sem.template.shared.domain.Node;
 
 // Converter from a Pair of Integers being minutes to a String
@@ -29,7 +28,7 @@ public class TextTimeToMinutesConverter implements AttributeConverter<Node, Stri
             return null;
         }
         String[] times = time.split(SPLIT_CHAR);
-        return new Node (Integer.parseInt(times[0].split(":")[0]) * 60
+        return new Node(Integer.parseInt(times[0].split(":")[0]) * 60
                 + Integer.parseInt(times[0].split(":")[1]),
                 Integer.parseInt(times[1].split(":")[0]) * 60
                         + Integer.parseInt(times[1].split(":")[1]));

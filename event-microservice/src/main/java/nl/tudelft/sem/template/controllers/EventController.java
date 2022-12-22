@@ -68,23 +68,24 @@ public class EventController {
      */
     @GetMapping("/match/{userId}")
     public ResponseEntity<List<Event>> matchEvents(@PathVariable("userId") Long userId) throws IllegalArgumentException {
-        User user;
         try {
-            user = eventService.getUserById(userId);
+            User user = eventService.getUserById(userId);
+
+            if (user.getCertificate() == null || user.getPositions() == null || user.getPositions().size() == 0
+                    || user.getOrganization() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+            (eventService.getMatchedEvents(user)).forEach(System.out::println);
+            List<Event> response = eventService.getMatchedEvents(user);
+            if (response == null || response.size() == 0) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            }
+            return ResponseEntity.ok(response);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatus()).build();
         }
 
-        if (user.getCertificate() == null || user.getPositions() == null || user.getPositions().size() == 0
-                || user.getOrganization() == null) {
-            throw new IllegalArgumentException("Profile is not (fully) completed");
-        }
-        (eventService.getMatchedEvents(user)).forEach(System.out::println);
-        List<Event> response = eventService.getMatchedEvents(user);
-        if (response == null || response.size() == 0) {
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
-        }
-        return ResponseEntity.ok(response);
+
     }
 
     /**
