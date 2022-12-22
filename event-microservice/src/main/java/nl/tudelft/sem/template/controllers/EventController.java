@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
@@ -21,11 +20,12 @@ import reactor.core.publisher.Mono;
 @RequestMapping(path = "/api/event")
 public class EventController {
     private final transient EventService eventService;
-    private static WebClient client;
+    private static WebClient client = WebClient.create();
 
     @Autowired
     public EventController(EventService eventService) {
         this.eventService = eventService;
+
     }
 
     /**
@@ -58,6 +58,21 @@ public class EventController {
     @GetMapping("/{id}/queue")
     public List<Request> getRequests(@PathVariable("id") Long id) {
         return eventService.getRequests(id);
+    }
+
+    /**
+     * Get event by id.
+     *
+     * @param id the id of the event
+     * @return a specific event
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<Event> getById(@PathVariable("id") Long id) {
+        Optional<Event> event = eventService.getById(id);
+        if (event.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(event.get());
     }
 
     /** matches suitable events with a user.
@@ -213,8 +228,13 @@ public class EventController {
         }
 
         //send notification
-        
-        return ResponseEntity.ok("ACCEPTED");
+        try {
+            String mess = client.post().uri("http://localhost:8085/api/notification/" + id + "/" + request.getName()
+                + "/?outcome=ACCEPTED").retrieve().bodyToMono(String.class).block();
+            return ResponseEntity.ok("ACCEPTED\n" + mess);
+        } catch (Exception e) {
+            return ResponseEntity.ok("ACCEPTED");
+        }
     }
 
     /**
@@ -235,8 +255,14 @@ public class EventController {
         if (!processed) {
             return ResponseEntity.badRequest().build(); // request doesn't exist
         }
-
         //send notification
-        return ResponseEntity.ok("REJECTED");
+        try {
+            String mess = client.post().uri("http://localhost:8085/api/notification/" + event.get().getId() + "/" + id
+                + "/?outcome=REJECTED").retrieve().bodyToMono(String.class).block();
+            return ResponseEntity.ok("REJECTED\n" + mess);
+        } catch (Exception e) {
+            return ResponseEntity.ok("REJECTED");
+        }
+
     }
 }

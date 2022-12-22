@@ -59,12 +59,12 @@ public class UserController {
     /**
      * API GET request to retrieve user ny the unique netId.
      *
-     * @param name the netId of the user
+     * @param netId the netId of the user
      * @return information about the user
      */
-    @GetMapping("/name")
-    public ResponseEntity<User> getUserByNetId(@RequestBody String name) {
-        Optional<User> user = userService.getByNetId(name);
+    @GetMapping("/netId")
+    public ResponseEntity<User> getUserByNetId(@RequestParam String netId) {
+        Optional<User> user = userService.getByNetId(netId);
         if (user.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
@@ -210,10 +210,11 @@ public class UserController {
     public ResponseEntity<?> addNotification(@PathVariable(uid) Long userId,
                                              @RequestParam(required = false) String notification
     ) {
-        if (userService.addNotification(userId, notification).isEmpty()) {
+        Optional<User> user = userService.getById(userId);
+        if (user.isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(userService.addNotification(userId, notification));
     }
 
     /**
