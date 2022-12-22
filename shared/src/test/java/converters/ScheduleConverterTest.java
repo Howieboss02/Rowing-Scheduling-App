@@ -62,8 +62,8 @@ class ScheduleConverterTest {
         slots2.add(new TimeSlot(2, Day.WEDNESDAY, new Node(120, 121)));
 
         Schedule schedule = new Schedule(slots, slots2, slots);
-        assertEquals("1,MONDAY,01:00-01:01/1,TUESDAY,01:00-01:01;2,WEDNESDAY,02:00-02:01/1,MONDAY,01:00-01:01"
-                , converter.convertToDatabaseColumn(schedule));
+        assertEquals("1,MONDAY,01:00-01:01/1,TUESDAY,01:00-01:01;2,WEDNESDAY,02:00-02:01/1,MONDAY,01:00-01:01",
+                converter.convertToDatabaseColumn(schedule));
     }
 
     @Test

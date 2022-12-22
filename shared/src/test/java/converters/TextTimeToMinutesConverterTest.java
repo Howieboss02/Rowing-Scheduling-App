@@ -1,11 +1,11 @@
 package converters;
 
-import nl.tudelft.sem.template.shared.domain.Node;
-import nl.tudelft.sem.template.shared.converters.TextTimeToMinutesConverter;
-import org.junit.jupiter.api.Test;
-import org.springframework.data.util.Pair;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import nl.tudelft.sem.template.shared.converters.TextTimeToMinutesConverter;
+import nl.tudelft.sem.template.shared.domain.Node;
+import org.junit.jupiter.api.Test;
+
 
 public class TextTimeToMinutesConverterTest {
     // tests for TextTimeToMinutesConverter
