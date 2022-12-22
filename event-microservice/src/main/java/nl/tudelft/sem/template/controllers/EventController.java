@@ -69,7 +69,6 @@ public class EventController {
     @GetMapping("/match/{userId}")
     public ResponseEntity<List<Event>> matchEvents(@PathVariable("userId") Long userId) throws IllegalArgumentException {
         User user;
-        System.out.println("userId: " + userId);
         try {
             user = eventService.getUserById(userId);
         } catch (ResponseStatusException e) {
