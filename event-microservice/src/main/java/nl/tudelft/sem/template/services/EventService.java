@@ -167,6 +167,11 @@ public class EventService {
         }
         Event actualEvent = event.get();
 
+        // Check if user that wants to enqueue is not creator
+        if (user.getId().equals(actualEvent.getOwningUser())) {
+            return false;
+        }
+
         // Check if event is competitive but user is not
         List<Position> userPositions = user.getPositions().stream()
                 .filter(u -> u.getName() == position)

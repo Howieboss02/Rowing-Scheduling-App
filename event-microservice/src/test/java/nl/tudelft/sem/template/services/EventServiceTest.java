@@ -57,6 +57,7 @@ class EventServiceTest {
      */
     private static User getUser() {
         User user = new User();
+        user.setId(1L);
         user.setNetId("Bob");
         user.setPositions(createPositions());
         user.setCertificate(Certificate.B2);
@@ -272,6 +273,18 @@ class EventServiceTest {
         user.setCertificate(Certificate.B1);
 
         Event event = getEvent("A", 4L, Certificate.B2, EventType.TRAINING);
+
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
+
+        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox));
+    }
+
+    @Test
+    void testEnqueueByIdCreator() {
+        User user = getUser();
+
+        Event event = getEvent("A", 1L, Certificate.B2, EventType.TRAINING);
 
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
