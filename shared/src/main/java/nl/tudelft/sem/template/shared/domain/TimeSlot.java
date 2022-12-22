@@ -2,9 +2,11 @@ package nl.tudelft.sem.template.shared.domain;
 
 import java.util.ArrayList;
 import java.util.List;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.shared.enums.Day;
-import org.springframework.data.util.Pair;
+
 
 @AllArgsConstructor
 @NoArgsConstructor
