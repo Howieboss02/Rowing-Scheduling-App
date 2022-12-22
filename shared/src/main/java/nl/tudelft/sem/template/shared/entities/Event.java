@@ -15,7 +15,6 @@ import nl.tudelft.sem.template.shared.enums.PositionName;
 @Getter
 @Setter
 @Entity
-@EqualsAndHashCode
 @ToString
 @Table(name = "event")
 @AllArgsConstructor
