@@ -1,12 +1,12 @@
 package nl.tudelft.sem.template.shared.converters;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import nl.tudelft.sem.template.shared.domain.Schedule;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
+
 @Converter
 public class ScheduleConverter implements AttributeConverter<Schedule, String> {
 
