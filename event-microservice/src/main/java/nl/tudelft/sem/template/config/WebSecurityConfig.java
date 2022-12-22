@@ -2,17 +2,13 @@ package nl.tudelft.sem.template.config;
 
 import nl.tudelft.sem.template.shared.authentication.JwtAuthenticationEntryPoint;
 import nl.tudelft.sem.template.shared.authentication.JwtRequestFilter;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authorization.AuthorizationDecision;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.util.matcher.IpAddressMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 
-import javax.servlet.http.HttpServletRequest;
 
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
