@@ -210,17 +210,17 @@ public class EventControllerTest {
         User u = new User("A", "A", "A", "A", "A", Certificate.B5, List.of(new Position()));
         Event event = getEvent("B", 2L, Certificate.B5, EventType.COMPETITION, t);
         when(mockedService.getMatchedEvents(u)).thenReturn(List.of(event));
-        assertEquals(List.of(event), mockedSut.matchEvents(u));
+        when(mockedService.getUserById(1L)).thenReturn(u);
+        assertEquals(List.of(event), mockedSut.matchEvents(1L).getBody());
+        assertEquals(HttpStatus.OK, mockedSut.matchEvents(1L).getStatusCode());
 
     }
 
     @Test
     public void matchEventsTestNoCertificate() {
         User u = new User("A", "A", "A", "A", "A", null, List.of(new Position()));
-        Exception e = assertThrows(IllegalArgumentException.class, () -> {
-            mockedSut.matchEvents(u);
-        });
-        assertEquals("Profile is not (fully) completed", e.getMessage());
+        when(mockedService.getUserById(1L)).thenReturn(u);
+        assertEquals(HttpStatus.BAD_REQUEST, mockedSut.matchEvents(1L).getStatusCode());
     }
 
     @Test
@@ -260,7 +260,7 @@ public class EventControllerTest {
         Request r = new Request("A", PositionName.Cox);
         when(mockedService.getById(1L)).thenReturn(Optional.of(event));
         when(mockedService.dequeueById(1L, r)).thenReturn(false);
-        assertEquals(mockedSut.accept(1L, r).getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertEquals(HttpStatus.NOT_FOUND, mockedSut.accept(1L, r).getStatusCode());
     }
 
     @Test

@@ -1,4 +1,4 @@
-package nl.tudelft.sem.template.authentication.integration.utils;
+package nl.tudelft.sem.template.shared.utils;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

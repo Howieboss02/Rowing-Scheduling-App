@@ -22,13 +22,12 @@ public class TimeSlotConverter implements AttributeConverter<TimeSlot, String> {
         if (timeslot == null) {
             return "";
         }
-
+        TextTimeToMinutesConverter tc = new TextTimeToMinutesConverter();
         StringBuilder timeSlotString = new StringBuilder();
 
         timeSlotString.append(timeslot.getWeek()).append(SPLIT)
                 .append(timeslot.getDay()).append(SPLIT)
-                .append(timeslot.getTime().getFirst()).append(SPLIT)
-                .append(timeslot.getTime().getSecond());
+                .append(tc.convertToDatabaseColumn(timeslot.getTime()));
 
         return timeSlotString.toString();
     }
@@ -38,9 +37,11 @@ public class TimeSlotConverter implements AttributeConverter<TimeSlot, String> {
         if (dbData.equals("")) {
             return null;
         }
+
+        TextTimeToMinutesConverter tc = new TextTimeToMinutesConverter();
         List<String> timeslotFields = Arrays.asList(dbData.split(SPLIT));
         return new TimeSlot(Integer.parseInt(timeslotFields.get(0)),
                 Day.valueOf(timeslotFields.get(1)),
-                new Node(Integer.parseInt(timeslotFields.get(2)), Integer.parseInt(timeslotFields.get(3))));
+                tc.convertToEntityAttribute(timeslotFields.get(2)));
     }
 }

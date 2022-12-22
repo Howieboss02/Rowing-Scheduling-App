@@ -6,20 +6,26 @@ import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import nl.tudelft.sem.template.authentication.authentication.JwtTokenGenerator;
 import nl.tudelft.sem.template.authentication.domain.user.*;
-import nl.tudelft.sem.template.authentication.integration.utils.JsonUtil;
-import nl.tudelft.sem.template.authentication.models.AuthenticationRequestModel;
-import nl.tudelft.sem.template.authentication.models.AuthenticationResponseModel;
-import nl.tudelft.sem.template.authentication.models.RegistrationRequestModel;
+import nl.tudelft.sem.template.shared.entities.User;
+import nl.tudelft.sem.template.shared.models.AuthenticationRequestModel;
+import nl.tudelft.sem.template.shared.models.AuthenticationResponseModel;
+import nl.tudelft.sem.template.shared.models.RegistrationRequestModel;
+import nl.tudelft.sem.template.shared.utils.JsonUtil;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.client.AutoConfigureMockRestServiceServer;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -27,9 +33,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.client.ExpectedCount;
+import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.web.client.RestTemplate;
 
 @SpringBootTest
 @ExtendWith(SpringExtension.class)
@@ -37,6 +46,7 @@ import org.springframework.test.web.servlet.ResultActions;
 @ActiveProfiles({"test", "mockPasswordEncoder", "mockTokenGenerator", "mockAuthenticationManager"})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 @AutoConfigureMockMvc
+@AutoConfigureMockRestServiceServer
 public class UsersTests {
     @Autowired
     private MockMvc mockMvc;
@@ -53,6 +63,12 @@ public class UsersTests {
     @Autowired
     private transient UserRepository userRepository;
 
+    @Autowired
+    private MockRestServiceServer server;
+
+    @Autowired
+    private RestTemplate restTemplate;
+
     @Test
     public void register_withValidData_worksCorrectly() throws Exception {
         // Arrange
@@ -61,6 +77,12 @@ public class UsersTests {
         final HashedPassword testHashedPassword = new HashedPassword("hashedTestPassword");
         final Email testEmail = new Email("test@test.com");
         when(mockPasswordEncoder.hash(testPassword)).thenReturn(testHashedPassword);
+
+        server = MockRestServiceServer.createServer(restTemplate);
+        this.server.expect(ExpectedCount.once(), requestTo("http://localhost:8084/api/user/register"))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess(JsonUtil.serialize(new User(testUser.getNetIdValue(), "testName",
+                        testEmail.getEmailValue())), MediaType.APPLICATION_JSON));
 
         RegistrationRequestModel model = new RegistrationRequestModel();
         model.setNetId(testUser.toString());
