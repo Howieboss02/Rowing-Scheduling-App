@@ -10,6 +10,7 @@
         <module name="template.example-microservice.main" />
         <module name="template.authentication-microservice.main" />
         <module name="template.event-microservice.main" />
+        <module name="template.api-gateway.main" />
         <module name="template.shared.main" />
         <module name="template.user-microservice.main" />
       </profile>

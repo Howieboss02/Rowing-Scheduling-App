@@ -11,13 +11,20 @@ import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.EventType;
+import nl.tudelft.sem.template.shared.enums.MicroservicePorts;
 import nl.tudelft.sem.template.shared.enums.PositionName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
 @Service
 public class EventService {
     private final transient EventRepository eventRepo;
+    private static final String apiPrefix = "http://localhost:";
+    private static final String userPath = "/api/user/";
+
+    @Autowired
+    private transient RestTemplate restTemplate;
     
     @Autowired
     public EventService(EventRepository eventRepo) {
@@ -242,5 +249,9 @@ public class EventService {
             }
         }
         return matchedEvents;
+    }
+
+    public User getUserById(Long id) {
+        return restTemplate.getForObject(apiPrefix + MicroservicePorts.USER.port + userPath + id, User.class);
     }
 }

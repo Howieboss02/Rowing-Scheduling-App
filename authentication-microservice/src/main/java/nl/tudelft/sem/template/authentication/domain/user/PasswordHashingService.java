@@ -3,7 +3,7 @@ package nl.tudelft.sem.template.authentication.domain.user;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 /**
- * A DDD service for hashing passwords.
+ * A DDD nl.tudelft.sem.template.service for hashing passwords.
  */
 public class PasswordHashingService {
 
