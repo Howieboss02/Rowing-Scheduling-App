@@ -172,7 +172,8 @@ public class EventService {
                 .filter(u -> u.getName() == position)
                 .collect(Collectors.toList());
         Position toFind = new Position(position, true);
-        if (actualEvent.isCompetitive() && !userPositions.contains(toFind)) {
+        if (actualEvent.getType() == EventType.COMPETITION &&
+                actualEvent.isCompetitive() && !userPositions.contains(toFind)) {
             return false;
         }
 
