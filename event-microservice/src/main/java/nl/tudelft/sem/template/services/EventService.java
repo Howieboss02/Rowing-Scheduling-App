@@ -3,6 +3,8 @@ package nl.tudelft.sem.template.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import nl.tudelft.sem.template.database.EventRepository;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.Request;
@@ -165,6 +167,15 @@ public class EventService {
             return false;
         }
         Event actualEvent = event.get();
+
+        // Check if event is competitive but user is not
+        List<Position> userPositions = user.getPositions().stream()
+                .filter(u -> u.getName() == position)
+                .collect(Collectors.toList());
+        Position toFind = new Position(position, true);
+        if (actualEvent.isCompetitive() && !userPositions.contains(toFind)) {
+            return false;
+        }
 
         // Check if gender and organization match in case of competition
         if (actualEvent.isCompetitive()

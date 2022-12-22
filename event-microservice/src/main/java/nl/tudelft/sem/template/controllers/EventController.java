@@ -163,8 +163,11 @@ public class EventController {
         }
         User user = response.block();
 
-        eventService.enqueueById(eventId, user, position);
-        return ResponseEntity.ok("ENQUEUED");
+        boolean success = eventService.enqueueById(eventId, user, position);
+        if (success) {
+            return ResponseEntity.ok("ENQUEUED");
+        }
+        return ResponseEntity.ok("NOT ENQUEUED");
     }
 
 
