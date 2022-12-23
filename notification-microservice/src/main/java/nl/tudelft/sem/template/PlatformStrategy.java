@@ -2,14 +2,32 @@ package nl.tudelft.sem.template;
 
 import static nl.tudelft.sem.template.shared.enums.Outcome.*;
 
-import lombok.NoArgsConstructor;
+import lombok.Data;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.Outcome;
 import org.springframework.web.client.RestTemplate;
 
-@NoArgsConstructor
+@Data
 public class PlatformStrategy implements Strategy {
+
+    private RestTemplate restTemplate;
+
+    /**
+     * Empty constructor for PlatformStrategy.
+     */
+    public PlatformStrategy() {
+        restTemplate = new RestTemplate();
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param restTemplate the rest template to use
+     */
+    public PlatformStrategy(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     /**
     * Sends a notification using the platform strategy.
@@ -23,13 +41,10 @@ public class PlatformStrategy implements Strategy {
         String message;
         if (outcome == ACCEPTED) {
             message = user.getName() + ", you have been accepted to " + event.messageConverter();
-        } else if (outcome == REJECTED) {
-            message = user.getName() + ", you have been rejected from " + event.messageConverter();
         } else {
-            message = "";
+            message = user.getName() + ", you have been rejected from " + event.messageConverter();
         }
 
-        RestTemplate restTemplate = new RestTemplate();
         restTemplate.put("http://localhost:8084/api/user/notification/"
                 + user.getId() + "/?notification=" + message, null);
 
