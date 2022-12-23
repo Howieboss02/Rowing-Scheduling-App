@@ -23,6 +23,10 @@ public class NotificationController {
         this.notification = notification;
     }
 
+    public void setClient(WebClient client) {
+        this.client = client;
+    }
+
     /**
     * Sends a notification.
     *
@@ -35,7 +39,10 @@ public class NotificationController {
     public ResponseEntity<String> sendNotification(@PathVariable ("eventId") Long id,
                                                    @PathVariable("netId") String netId,
                                                    @RequestParam("outcome") Outcome outcome) {
-        this.client = WebClient.create();
+        if(this.client == null) {
+            this.client = WebClient.create();
+        }
+        //this.client = WebClient.create();
         Mono<User> response = client.get().uri("http://localhost:8084/api/user/netId/?netId=" + netId)
                 .retrieve().bodyToMono(User.class).log();
         if (Boolean.FALSE.equals(response.hasElement().block())) {
