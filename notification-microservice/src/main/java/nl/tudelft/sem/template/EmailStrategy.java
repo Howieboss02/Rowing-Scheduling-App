@@ -2,13 +2,33 @@ package nl.tudelft.sem.template;
 
 import static nl.tudelft.sem.template.shared.enums.Outcome.*;
 
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.Outcome;
+import org.springframework.web.client.RestTemplate;
 
-@NoArgsConstructor
+@Data
 public class EmailStrategy implements Strategy {
+
+    private RestTemplate restTemplate;
+
+    /**
+     * Empty constructor for PlatformStrategy.
+     */
+    public EmailStrategy() {
+        restTemplate = new RestTemplate();
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param restTemplate the rest template to use
+     */
+    public EmailStrategy(RestTemplate restTemplate) {
+        this.restTemplate = restTemplate;
+    }
 
     /**
      * Sends a notification using the email strategy.
@@ -22,10 +42,8 @@ public class EmailStrategy implements Strategy {
         String message;
         if (outcome == ACCEPTED) {
             message = user.getName() + ", you have been accepted to " + event.messageConverter();
-        } else if (outcome == REJECTED) {
-            message = user.getName() + ", you have been rejected from " + event.messageConverter();
         } else {
-            message = "";
+            message = user.getName() + ", you have been rejected from " + event.messageConverter();
         }
         return "Email has been sent to " + user.getEmail() + " with the message: \n" + message;
     }
