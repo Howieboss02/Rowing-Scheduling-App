@@ -10,10 +10,7 @@ import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.User;
-import nl.tudelft.sem.template.shared.enums.Certificate;
-import nl.tudelft.sem.template.shared.enums.EventType;
-import nl.tudelft.sem.template.shared.enums.MicroservicePorts;
-import nl.tudelft.sem.template.shared.enums.PositionName;
+import nl.tudelft.sem.template.shared.enums.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -165,14 +162,26 @@ public class EventService {
      * @param id the id of the event
      * @param user the user who wants to enqueue
      * @param position the position the user wants to fill
+     * @param time the time the request was made
+     * @return whether the user was enqueued or not
      */
-    public boolean enqueueById(Long id, User user, PositionName position) {
+    public boolean enqueueById(Long id, User user, PositionName position, long time) {
         Optional<Event> event = getById(id);
-
         if (event.isEmpty() || user.getPositions() == null) {
             return false;
         }
         Event actualEvent = event.get();
+
+        Day day = actualEvent.getTimeslot().getDay();
+        int dayNumber = (day.ordinal() + 1) % 7;
+
+        long weekTime = dayNumber * 1440L + actualEvent.getTimeslot().getTime().getFirst();
+
+        // Check if the user has time to get to the event
+        if ((actualEvent.getType() == EventType.COMPETITION && (time + 1440L) % 10080L > weekTime)
+            || (actualEvent.getType() == EventType.TRAINING && (time + 30L) % 10080L > weekTime)) {
+            return false;
+        }
 
         // Check if user that wants to enqueue is not creator
         if (user.getId().equals(actualEvent.getOwningUser())) {
@@ -263,7 +272,8 @@ public class EventService {
 
         for (Event e : e1) {
             for (Position p : positions) {
-                if (e.getPositions().contains(p.getName()) && e.getTimeslot().matchSchedule(user.getSchedule())) {
+                if (e.getPositions().contains(p.getName()) && (!e.isCompetitive() || p.isCompetitive())
+                        && e.getTimeslot().matchSchedule(user.getSchedule())) {
                     matchedEvents.add(e);
                     break;
                 }

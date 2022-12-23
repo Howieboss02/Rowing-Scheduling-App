@@ -117,12 +117,13 @@ public class UserController {
         }
     }
 
+    //TODO REQUEST PARAM !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     /**
      * Update everything about a user at once by giving all possible parameters.
      */
     @PutMapping(path = "/update/{userId}")
     public ResponseEntity<?> updateUser(@PathVariable(uid) Long userId,
-                                        @RequestParam UserModel userModel) {
+                                        @RequestBody UserModel userModel) {
         Optional<User> returned = userService.updateById(
                 userId,
                 userModel.getName(),
@@ -224,8 +225,7 @@ public class UserController {
      */
     @PostMapping(path = "/schedule/add/{userId}")
     public ResponseEntity<TimeSlot> addRecurringTimeSlot(@PathVariable(uid) Long userId,
-                                                         @RequestBody TimeSlot timeSlot
-    ) {
+                                                         @RequestBody TimeSlot timeSlot) {
         if (userService.addRecurringTimeSlot(userId, timeSlot).isEmpty()) {
             return ResponseEntity.badRequest().build();
         }

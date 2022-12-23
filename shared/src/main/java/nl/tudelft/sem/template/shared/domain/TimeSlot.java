@@ -2,14 +2,17 @@ package nl.tudelft.sem.template.shared.domain;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.persistence.Convert;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import nl.tudelft.sem.template.shared.converters.TimeSlotConverter;
 import nl.tudelft.sem.template.shared.enums.Day;
 
 
 @AllArgsConstructor
 @NoArgsConstructor
+@Convert(converter = TimeSlotConverter.class)
 @Data
 public class TimeSlot {
     private Integer week;

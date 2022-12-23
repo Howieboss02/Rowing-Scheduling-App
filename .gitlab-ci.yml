@@ -3,4 +3,5 @@ include:
   - user-microservice/.gitlab-ci.yml
   - shared/.gitlab-ci.yml
   - event-microservice/.gitlab-ci.yml
+  - notification-microservice/.gitlab-ci.yml
   - api-gateway/.gitlab-ci.yml
