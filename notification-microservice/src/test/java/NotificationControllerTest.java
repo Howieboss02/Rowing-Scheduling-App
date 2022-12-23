@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.Arrays;
 import nl.tudelft.sem.template.Notification;
 import nl.tudelft.sem.template.NotificationController;
 import nl.tudelft.sem.template.shared.domain.Node;
@@ -23,10 +24,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import java.util.Arrays;
+
 
 @ExtendWith(MockitoExtension.class)
 public class NotificationControllerTest {
+    private final Long eventId = 1L;
+    private final String netId = "testNetId";
+    private final Outcome outcome = ACCEPTED;
 
     @Mock
     private Notification notification;
@@ -43,16 +47,13 @@ public class NotificationControllerTest {
 
     @Test
     public void testSendNotification() throws JsonProcessingException {
-        Long eventId = 1L;
-        String netId = "testNetId";
-        Outcome outcome = ACCEPTED;
         User user = new User("testNetId", "name", "email");
         user.setNetId(netId);
         Event event = new Event(
                 1L,
                 "Event 1",
                 Arrays.asList(PositionName.Startboard),
-                new TimeSlot(1, Day.MONDAY, new Node(8,14)),
+                new TimeSlot(1, Day.MONDAY, new Node(8, 14)),
                 Certificate.B1,
                 EventType.TRAINING,
                 false,
@@ -74,16 +75,13 @@ public class NotificationControllerTest {
 
     @Test
     public void testSendNotification404Event() throws JsonProcessingException {
-        Long eventId = 1L;
-        String netId = "testNetId";
-        Outcome outcome = ACCEPTED;
         User user = new User("testNetId", "name", "email");
         user.setNetId(netId);
         Event event = new Event(
                 1L,
                 "Event 1",
                 Arrays.asList(PositionName.Startboard),
-                new TimeSlot(1, Day.MONDAY, new Node(8,14)),
+                new TimeSlot(1, Day.MONDAY, new Node(8, 14)),
                 Certificate.B1,
                 EventType.TRAINING,
                 false,
@@ -104,16 +102,13 @@ public class NotificationControllerTest {
 
     @Test
     public void testSendNotification404User() throws JsonProcessingException {
-        Long eventId = 1L;
-        String netId = "testNetId";
-        Outcome outcome = ACCEPTED;
         User user = new User("testNetId", "name", "email");
         user.setNetId(netId);
         Event event = new Event(
                 1L,
                 "Event 1",
                 Arrays.asList(PositionName.Startboard),
-                new TimeSlot(1, Day.MONDAY, new Node(8,14)),
+                new TimeSlot(1, Day.MONDAY, new Node(8, 14)),
                 Certificate.B1,
                 EventType.TRAINING,
                 false,
@@ -134,17 +129,6 @@ public class NotificationControllerTest {
 
     @Test
     public void testWithoutSettingUpWebClientThrowsException() {
-        Long eventId = 1L;
-        String netId = "testNetId";
-        Outcome outcome = ACCEPTED;
-
-        /*try {
-            notificationController.sendNotification(eventId, netId, outcome);
-        } catch (Exception e) {
-            System.out.println(e);
-            assertThat(e).isInstanceOf(NullPointerException.class);
-        }*/
-
         assertThrows(NullPointerException.class, () -> notificationController.sendNotification(eventId, netId, outcome));
     }
 

@@ -39,7 +39,7 @@ public class NotificationController {
     public ResponseEntity<String> sendNotification(@PathVariable ("eventId") Long id,
                                                    @PathVariable("netId") String netId,
                                                    @RequestParam("outcome") Outcome outcome) {
-        if(this.client == null) {
+        if (this.client == null) {
             this.client = WebClient.create();
         }
         //this.client = WebClient.create();
