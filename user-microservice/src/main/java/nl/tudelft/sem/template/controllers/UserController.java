@@ -117,12 +117,13 @@ public class UserController {
         }
     }
 
+    //TODO REQUEST PARAM !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     /**
      * Update everything about a user at once by giving all possible parameters.
      */
     @PutMapping(path = "/update/{userId}")
     public ResponseEntity<?> updateUser(@PathVariable(uid) Long userId,
-                                        @RequestParam UserModel userModel) {
+                                        @RequestBody UserModel userModel) {
         Optional<User> returned = userService.updateById(
                 userId,
                 userModel.getName(),
@@ -223,8 +224,7 @@ public class UserController {
      */
     @PostMapping(path = "/schedule/add/{userId}")
     public ResponseEntity<TimeSlot> addRecurringTimeSlot(@PathVariable(uid) Long userId,
-                                                         @RequestParam TimeSlot timeSlot
-    ) {
+                                                         @RequestBody TimeSlot timeSlot) {
         if (userService.addRecurringTimeSlot(userId, timeSlot).isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
@@ -234,9 +234,9 @@ public class UserController {
     /**
      * Remove a recurring timeslot (day of the week + time) from the user's schedule.
      */
-    @PutMapping(path = "/schedule/remove/{userId}")
+    @PostMapping(path = "/schedule/remove/{userId}")
     public ResponseEntity<TimeSlot> removeRecurringTimeSlot(@PathVariable(uid) Long userId,
-                                                            @RequestParam TimeSlot timeSlot
+                                                            @RequestBody TimeSlot timeSlot
     ) {
         if (userService.removeRecurringTimeSlot(userId, timeSlot).isEmpty()) {
             return ResponseEntity.badRequest().build();
@@ -247,9 +247,9 @@ public class UserController {
     /**
      * Include a one-time-only timeslot in the user schedule.
      */
-    @PutMapping(path = "/schedule/include/{userId}")
+    @PostMapping(path = "/schedule/include/{userId}")
     public ResponseEntity<TimeSlot> addTimeSlot(@PathVariable(uid) Long userId,
-                                                @RequestParam TimeSlot timeslot
+                                                @RequestBody TimeSlot timeslot
     ) {
         if (userService.addTimeSlot(userId, timeslot).isEmpty()) {
             return ResponseEntity.badRequest().build();
@@ -260,9 +260,9 @@ public class UserController {
     /**
      * Exclude one instance of a timeslot from the user's schedule.
      */
-    @PutMapping(path = "/schedule/exclude/{userId}")
+    @PostMapping(path = "/schedule/exclude/{userId}")
     public ResponseEntity<TimeSlot> removeTimeSlot(@PathVariable(uid) Long userId,
-                                                   @RequestParam TimeSlot timeslot
+                                                   @RequestBody TimeSlot timeslot
     ) {
         if (userService.removeTimeSlot(userId, timeslot).isEmpty()) {
             return ResponseEntity.badRequest().build();

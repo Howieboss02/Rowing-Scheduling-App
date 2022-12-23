@@ -73,7 +73,7 @@ public class GatewayUserController {
      */
     @PutMapping(path = "/updateUser/{userId}")
     public ResponseEntity<?> updateUser(@PathVariable(uid) Long userId,
-                                        @RequestParam UserModel userModel) {
+                                        @RequestBody UserModel userModel) {
         try {
             return ResponseEntity.ok(gatewayService.updateUser(userId, userModel));
         } catch (ResponseStatusException e) {
@@ -114,10 +114,11 @@ public class GatewayUserController {
     }
 
     /**
-     * Add a one time time slot.
+     * Add a one time slot.
      */
     @PostMapping(path = "/schedule/include/{userId}")
-    public ResponseEntity<TimeSlot> includeTimeSlot(@PathVariable(uid) Long userId, @RequestBody TimeSlot timeSlot) {
+    public ResponseEntity<TimeSlot> includeTimeSlot(@PathVariable(uid) Long userId,
+                                                    @RequestBody TimeSlot timeSlot) {
         try {
             return ResponseEntity.ok(gatewayService.addOneTimeTimeSlot(userId, timeSlot));
         } catch (ResponseStatusException e) {
