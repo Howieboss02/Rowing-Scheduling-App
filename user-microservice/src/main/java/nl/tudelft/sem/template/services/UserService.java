@@ -125,6 +125,7 @@ public class UserService {
             if (positions != null) {
                 toUpdate.get().setPositions(positions);
             }
+            System.out.println(toUpdate);
             userRepo.save(toUpdate.get());
         }
         return toUpdate;

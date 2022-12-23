@@ -1,0 +1,25 @@
+#AGENDA MEETING 2
+Date: 20.12.2022
+
+Chairman: Alex Preda
+
+Note taker: Kayleigh Jones
+
+##QUESTIONS:
+* What type of testing should we implement until the 23rd? (mock and/or integration);
+
+##PROGRESS:
+* Implemented the enqueueing 
+* Implemented the event listing
+* Gateway is being implemented
+* Implemented Accepting/Rejecting users
+
+##NOTES:
+* Testing: Mocking, integration, unit, boundary testing should be done by Friday
+* Cloud gateway : it's ok how we do it now
+* Gateway may be tested in postman but that doesn't give coverage
+* code coverage should be 50+%
+* We should add more comments on merge requests. Every MR should have some comments
+* Design patterns : strategy (notification) and facade (gateway). Add pictures of where and how in the assignment
+* We are allowed to add issues that we will not implement
+* Send design pattern draft
