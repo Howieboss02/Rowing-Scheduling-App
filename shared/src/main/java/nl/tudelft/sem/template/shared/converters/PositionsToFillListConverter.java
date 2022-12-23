@@ -21,12 +21,13 @@ public class PositionsToFillListConverter implements AttributeConverter<List<Pos
         StringBuilder positionsString = new StringBuilder();
         for (Position position : positions) {
             positionsString.append(position.getName())
-                    .append(FIELD_SPLIT_CHAR)
-                    .append(position.isCompetitive()
-                    ).append(OBJECT_SPLIT_CHAR);
+                .append(FIELD_SPLIT_CHAR)
+                .append(position.isCompetitive()
+                ).append(OBJECT_SPLIT_CHAR);
         }
         return positionsString.toString();
     }
+
 
     @Override
     public List<Position> convertToEntityAttribute(String positions) {

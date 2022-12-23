@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 /**
- * User details service responsible for retrieving the user from the DB.
+ * User details nl.tudelft.sem.template.service responsible for retrieving the user from the DB.
  */
 @Service
 public class JwtUserDetailsService implements UserDetailsService {

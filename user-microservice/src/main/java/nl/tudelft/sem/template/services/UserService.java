@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.services;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.database.UserRepository;
+import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
@@ -44,15 +45,35 @@ public class UserService {
     }
 
     /**
+     * Identify user by unique netId.
+     *
+     * @param name the netId of the user
+     * @return information about the user
+     */
+    public Optional<User> getByNetId(String name) {
+        if (name.isEmpty()) {
+            return Optional.empty();
+        }
+        List<User> all = userRepo.findAll();
+        for (User user : all) {
+            if (user.getNetId().equals(name)) {
+                return Optional.of(user);
+            }
+        }
+        return Optional.empty();
+    }
+
+    /**
      * Add user to the database.
      *
      * @param user full information about a user
      * @return the information of the added user
      */
     public User insert(User user) {
-        if (user == null || user.getName().isEmpty()) {
+        if (user == null || user.getNetId().isEmpty()) {
             return null;
         }
+        System.out.println("Inserting user: " + user.getId());
         //We are currently not checking if the user already exists
         return userRepo.save(user);
     }
@@ -78,25 +99,32 @@ public class UserService {
      * @param id           the id of the user we want to update
      * @param name         the netId of the user
      * @param organization the organization the user is part of
-     * @param email        the email the profile is registered with
      * @param gender       the gender of the rower
      * @param certificate  the biggest certificate a user holds
      * @param positions    the list of position they can fill
      * @return the new profile
      */
-    public Optional<User> updateById(Long id, String name, String organization, String email, String gender,
+    public Optional<User> updateById(Long id, String name, String organization, String gender,
                                      Certificate certificate, List<Position> positions) {
-
+        System.out.println("got here 3");
         Optional<User> toUpdate = getById(id);
 
         if (toUpdate.isPresent()) {
-            toUpdate.get().setName(name);
-            toUpdate.get().setOrganization(organization);
-            toUpdate.get().setEmail(email);
-            toUpdate.get().setGender(gender);
-            toUpdate.get().setCertificate(certificate);
-            toUpdate.get().setPositions(positions);
-
+            if (name != null) {
+                toUpdate.get().setName(name);
+            }
+            if (organization != null) {
+                toUpdate.get().setOrganization(organization);
+            }
+            if (gender != null) {
+                toUpdate.get().setGender(gender);
+            }
+            if (certificate != null) {
+                toUpdate.get().setCertificate(certificate);
+            }
+            if (positions != null) {
+                toUpdate.get().setPositions(positions);
+            }
             userRepo.save(toUpdate.get());
         }
         return toUpdate;
@@ -106,14 +134,14 @@ public class UserService {
      * Update the availability of a user.
      *
      * @param id the id of the user
-     * @param day the day of the week
+     * @param timeSlot to be added
      * @return the updated user
      */
-    public Optional<User> addRecurringTimeSlot(Long id, Day day, Pair<Integer, Integer> time) {
+    public Optional<User> addRecurringTimeSlot(Long id, TimeSlot timeSlot) {
         Optional<User> user = getById(id);
 
         if (user.isPresent()) {
-            user.get().addRecurringSlot(day, time);
+            user.get().addRecurringSlot(timeSlot);
             userRepo.save(user.get());
         }
         return user;
@@ -121,12 +149,15 @@ public class UserService {
 
     /**
      * Remove a recurring time slot from a user.
+     *
+     * @param id the id of the user
+     * @param timeSlot to be removed
      */
-    public Optional<User> removeRecurringTimeSlot(Long id, Day day, Pair<Integer, Integer> time) {
+    public Optional<User> removeRecurringTimeSlot(Long id, TimeSlot timeSlot) {
         Optional<User> user = getById(id);
 
         if (user.isPresent()) {
-            user.get().removeRecurringSlot(day, time);
+            user.get().removeRecurringSlot(timeSlot);
             userRepo.save(user.get());
         }
         return user;
@@ -169,14 +200,15 @@ public class UserService {
     /**
      * Add a notification to a user.
      */
-    public Optional<User> addNotification(Long id, String notification) {
+    public User addNotification(Long id, String notification) {
         Optional<User> user = getById(id);
-
         if (user.isPresent()) {
-            user.get().addNotification(notification);
-            userRepo.save(user.get());
+            User u = user.get();
+            u.addNotification(notification);
+            userRepo.save(u);
+            return u;
         }
-        return user;
+        return null;
     }
 
     /**
@@ -187,7 +219,7 @@ public class UserService {
         Optional<User> user = getById(id);
 
         if (user.isPresent()) {
-            user.get().setEmail(name);
+            user.get().setName(name);
             userRepo.save(user.get());
         }
         return user;

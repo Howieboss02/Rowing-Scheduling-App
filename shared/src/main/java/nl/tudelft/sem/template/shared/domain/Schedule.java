@@ -1,13 +1,11 @@
 package nl.tudelft.sem.template.shared.domain;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import nl.tudelft.sem.template.shared.converters.ScheduleConverter;
 
 @AllArgsConstructor
 @Data
@@ -26,7 +24,7 @@ public class Schedule {
     private List<TimeSlot> addedSlots;
 
     /**
-     * Empty constructor for the Schedule class.
+     * Constructor for the Schedule class.
      */
     public Schedule() {
         recurringSlots = new ArrayList<>();

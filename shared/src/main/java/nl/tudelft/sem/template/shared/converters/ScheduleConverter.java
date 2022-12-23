@@ -1,21 +1,19 @@
 package nl.tudelft.sem.template.shared.converters;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 import nl.tudelft.sem.template.shared.domain.Schedule;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
-import nl.tudelft.sem.template.shared.enums.Day;
-import org.springframework.data.util.Pair;
 
 @Converter
 public class ScheduleConverter implements AttributeConverter<Schedule, String> {
 
-    private static final String LIST_SPLIT_CHAR = "-";
+    private static final String LIST_SPLIT_CHAR = "/";
     private static final String SLOT_SPLIT_CHAR = ";";
-    private static final String FIELD_SPLIT_CHAR = ",";
+
+    private static TimeSlotConverter tsConverter = new TimeSlotConverter();
 
     /**
      * Converts a Schedule to a string.
@@ -73,12 +71,11 @@ public class ScheduleConverter implements AttributeConverter<Schedule, String> {
      */
     private void timeSlotListToString(StringBuilder scheduleString,
                                           List<TimeSlot> slots) {
-        for (TimeSlot slot : slots) {
-            scheduleString.append(slot.getWeek())
-                    .append(FIELD_SPLIT_CHAR).append(slot.getDay())
-                    .append(FIELD_SPLIT_CHAR).append(slot.getTime().getFirst())
-                    .append(FIELD_SPLIT_CHAR).append(slot.getTime().getSecond())
-                    .append(SLOT_SPLIT_CHAR);
+        for (int i = 0; i < slots.size(); i++) {
+            scheduleString.append(tsConverter.convertToDatabaseColumn(slots.get(i)));
+            if (i != slots.size() - 1) {
+                scheduleString.append(SLOT_SPLIT_CHAR);
+            }
         }
     }
 
@@ -98,10 +95,7 @@ public class ScheduleConverter implements AttributeConverter<Schedule, String> {
         String[] scheduleString = s.split(SLOT_SPLIT_CHAR);
 
         for (String slotString : scheduleString) {
-            List<String> slotFields = Arrays.asList(slotString.split(FIELD_SPLIT_CHAR));
-            slotList.add(new TimeSlot(Integer.parseInt(slotFields.get(0)),
-                    Day.valueOf(slotFields.get(1)),
-                    Pair.of(Integer.parseInt(slotFields.get(2)), Integer.parseInt(slotFields.get(3)))));
+            slotList.add(tsConverter.convertToEntityAttribute(slotString));
         }
         return slotList;
     }

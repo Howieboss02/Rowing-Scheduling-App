@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.Getter;
 import nl.tudelft.sem.template.shared.converters.PositionsToFillListConverter;
 import nl.tudelft.sem.template.shared.converters.ScheduleConverter;
+import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.Schedule;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
@@ -27,7 +28,6 @@ import org.springframework.data.util.Pair;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -60,7 +60,6 @@ public class User {
     /**
     * Constructor for the User class containing all information.
     *
-    * @param id           the id inside the DB
     * @param netId        the netId of a user used to log in
     * @param name         the name and surname of the user
     * @param organization the organization it joined
@@ -69,9 +68,8 @@ public class User {
     * @param certificate  the biggest certificate it holds
     * @param positions    the list of positions it can handle
      */
-    public User(Long id, String netId, String name, String organization, String email, String gender,
+    public User(String netId, String name, String organization, String email, String gender,
               Certificate certificate, List<Position> positions) {
-        this.id = id;
         this.netId = netId;
         this.name = name;
         this.organization = organization;
@@ -79,19 +77,31 @@ public class User {
         this.certificate = certificate;
         this.gender = gender;
         this.positions = positions;
+        this.schedule = new Schedule();
     }
 
     /**
     * Constructor for the class used when creating account.
     *
-    * @param id the id of the user
+    * @param netId the netId of the user
     * @param name the user's name
     * @param email the user's email
     */
-    public User(Long id, String name, String email) {
-        this.id = id;
+    public User(String netId, String name, String email) {
+        this.netId = netId;
         this.name = name;
         this.email = email;
+    }
+
+    /**
+     * Constructor for the class used when editing account using API call.
+     */
+    public User(String name, String organization, String gender, Certificate certificate, List<Position> positions) {
+        this.name = name;
+        this.organization = organization;
+        this.gender = gender;
+        this.certificate = certificate;
+        this.positions = positions;
     }
 
     /**
@@ -105,22 +115,16 @@ public class User {
 
     /**
     * Add a recurring slot.
-    *
-    * @param day  the day of the slot
-    * @param time the time interval in seconds of the slot
     */
-    public void addRecurringSlot(Day day, Pair<Integer, Integer> time) {
-        schedule.addRecurringSlot(new TimeSlot(-1, day, time));
+    public void addRecurringSlot(TimeSlot timeSlot) {
+        schedule.addRecurringSlot(timeSlot);
     }
 
     /**
     * Remove a recurring slot.
-    *
-    * @param day  the day of the slot
-    * @param time the time interval in seconds of the slot
     */
-    public void removeRecurringSlot(Day day, Pair<Integer, Integer> time) {
-        schedule.removeRecurringSlot(new TimeSlot(-1, day, time));
+    public void removeRecurringSlot(TimeSlot timeSlot) {
+        schedule.removeRecurringSlot(timeSlot);
     }
 
     /**
