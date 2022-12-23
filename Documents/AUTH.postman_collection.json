@@ -1,0 +1,70 @@
+{
+	"info": {
+		"_postman_id": "e91f1862-0e1b-4658-8863-752fc6fa4ee6",
+		"name": "AUTH",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24641811"
+	},
+	"item": [
+		{
+			"name": "Register",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"netId\": \"test\",\n    \"name\": \"Bob Bobfjbie\",\n    \"organization\": \"Sufjmmer camp\",\n    \"email\": \"Bobffjj@8b.ob\",\n    \"gender\": \"Male\", \n    \"certificate\": \"B3\",\n    \"positions\": [\n        {\"name\": \"Cox\", \"isCompetitive\": \"true\"},\n        {\"name\": \"Coach\", \"isCompetitive\": \"true\"},\n        {\"name\": \"ScullingRower\", \"isCompetitive\": \"false\"}\n    ],\n    \"password\": \"test\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9000/api/auth/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"auth",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Login",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"netId\": \"test2\",\r\n    \"password\": \"test2\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9000/api/auth/login",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"auth",
+						"login"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
