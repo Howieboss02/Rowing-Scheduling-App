@@ -217,7 +217,8 @@ class EventServiceTest {
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-        assertTrue(mockedService.enqueueById(1L, user, PositionName.Cox, 200));
+        assertTrue(mockedService.enqueueById(1L, user, PositionName.Cox,
+                200 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
         verify(mockedRepo, times(1)).save(event);
         assertEquals(List.of(r), event.getQueue());
 
@@ -225,14 +226,14 @@ class EventServiceTest {
 
     @Test
     void testEnqueueEarlyTraining() {
-        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
-        event.setType(EventType.TRAINING);
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.TRAINING);
 
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
         User user = getUser();
-        mockedService.enqueueById(1L, user, PositionName.Cox, 1430);
+        mockedService.enqueueById(1L, user, PositionName.Cox,
+                1430L + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7));
 
         verify(mockedRepo, times(0)).save(event);
         assertEquals(new ArrayList<>(), event.getQueue());
@@ -247,7 +248,8 @@ class EventServiceTest {
 
         User user = new User();
         user.setNetId("Bob");
-        mockedService.enqueueById(1L, user, PositionName.Cox, 100);
+        mockedService.enqueueById(1L, user, PositionName.Cox,
+                100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7));
 
         verify(mockedRepo, times(0)).save(event);
         assertEquals(new ArrayList<>(), event.getQueue());
@@ -261,7 +263,8 @@ class EventServiceTest {
 
         mockedService.enqueueById(1L, user, PositionName.Cox, 1430);
 
-        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox, 1450));
+        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox,
+                1450 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
         assertEquals(new ArrayList<>(), mockedService.getAllEvents());
     }
 
@@ -274,7 +277,8 @@ class EventServiceTest {
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
         User user = getUser();
-        assertFalse(mockedService.enqueueById(1L, user, PositionName.Coach, 100));
+        assertFalse(mockedService.enqueueById(1L, user, PositionName.Coach,
+                100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
     }
 
     @Test
@@ -286,7 +290,8 @@ class EventServiceTest {
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox, 100));
+        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox,
+                100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
     }
 
     @Test
@@ -299,7 +304,8 @@ class EventServiceTest {
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox, 100));
+        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox,
+                100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
     }
 
     @Test
@@ -312,7 +318,8 @@ class EventServiceTest {
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox, 100));
+        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox,
+                100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
     }
 
     @Test
@@ -324,7 +331,8 @@ class EventServiceTest {
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox, 100));
+        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox,
+                100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
     }
 
     @Test

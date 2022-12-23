@@ -200,8 +200,9 @@ public class EventController {
         }
         User user = response.block();
         Timestamp time = (Timestamp) response.timestamp().block().get(0);
+        long weekTime = time.getDay() * 1440L + 60 * time.getHours() + time.getMinutes();
 
-        if (eventService.enqueueById(eventId, user, position, 60 * time.getHours() + time.getMinutes())) {
+        if (eventService.enqueueById(eventId, user, position, weekTime)) {
             return ResponseEntity.ok("ENQUEUED");
         }
         return ResponseEntity.ok("NOT ENQUEUED");
