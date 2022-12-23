@@ -270,6 +270,14 @@ public class EventGatewayControllerTest {
     }
 
     @Test
+    public void testDeleteEventWithOtherException() throws Exception {
+        when(gatewayService.deleteEvent(1L)).thenThrow(new IllegalArgumentException());
+
+        mockMvc.perform(delete("/api/event/1"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void testUpdateEvent() throws Exception {
 
         when(gatewayService.updateEvent(eventModel, 1L)).thenReturn(event1);
@@ -289,6 +297,20 @@ public class EventGatewayControllerTest {
     @Test
     public void testUpdateEventWithException() throws Exception {
         when(gatewayService.updateEvent(eventModel, 1L)).thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST));
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson = ow.writeValueAsString(eventModel);
+
+        mockMvc.perform(put("/api/event/1").contentType(APPLICATION_JSON_UTF8)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testUpdateEventWithOtherException() throws Exception {
+        when(gatewayService.updateEvent(eventModel, 1L)).thenThrow(new IllegalArgumentException());
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
@@ -321,6 +343,15 @@ public class EventGatewayControllerTest {
     }
 
     @Test
+    public void testEnqueueWithOtherException() throws Exception {
+        when(gatewayService.enqueueToEvent(1L, 1L, PositionName.Coach)).thenThrow(new IllegalArgumentException());
+
+        mockMvc.perform(post("/api/event/1/enqueue/1?position=Coach")
+                        .contentType(APPLICATION_JSON_UTF8))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     public void testAccept() throws Exception {
         when(gatewayService.acceptToEvent(1L, request)).thenReturn("ACCEPTED");
 
@@ -338,6 +369,21 @@ public class EventGatewayControllerTest {
     @Test
     public void testAcceptWithException() throws Exception {
         doThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST)).when(gatewayService).acceptToEvent(1L, request);
+
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+        String requestJson = ow.writeValueAsString(request);
+
+        mockMvc.perform(post("/api/event/1/accept")
+                        .contentType(APPLICATION_JSON_UTF8)
+                        .content(requestJson))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void testAcceptWithOtherException() throws Exception {
+        when(gatewayService.acceptToEvent(1L, request)).thenThrow(new IllegalArgumentException());
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
