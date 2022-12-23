@@ -110,21 +110,20 @@ public class UserService {
         Optional<User> toUpdate = getById(id);
 
         if (toUpdate.isPresent()) {
-            User user = toUpdate.get();
             if (name != null) {
-                user.setName(name);
+                toUpdate.get().setName(name);
             }
             if (organization != null) {
-                user.setOrganization(organization);
+                toUpdate.get().setOrganization(organization);
             }
             if (gender != null) {
-                user.setGender(gender);
+                toUpdate.get().setGender(gender);
             }
             if (certificate != null) {
-                user.setCertificate(certificate);
+                toUpdate.get().setCertificate(certificate);
             }
             if (positions != null) {
-                user.setPositions(positions);
+                toUpdate.get().setPositions(positions);
             }
             System.out.println(toUpdate);
             userRepo.save(toUpdate.get());

@@ -6,6 +6,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +19,7 @@ import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.Day;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -42,6 +46,18 @@ public class UserGatewayTest {
 
     @MockBean
     private JwtRequestFilter jwtRequestFilter;
+
+    private static TimeSlot timeSlotRecurring = new TimeSlot(-1, Day.MONDAY, new Node(60, 61));
+    private static TimeSlot timeSlotSingle = new TimeSlot(10, Day.MONDAY, new Node(60, 61));
+
+    private static ObjectWriter ow;
+
+    @BeforeEach
+    void setup() {
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+        ow = mapper.writer().withDefaultPrettyPrinter();
+    }
 
     @Test
     void getAllUsersCorrectlyTest() throws Exception {
@@ -115,12 +131,102 @@ public class UserGatewayTest {
                 .andExpect(status().isBadRequest());
     }
 
-    //    @Test
-    //    void addRecurringTimeSlotTest() throws Exception {
-    //        TimeSlot timeSlot = new TimeSlot(-1, Day.MONDAY, new Node(60, 61));
-    //        when(gatewayService.addRecurring(2137L, timeSlot)).thenReturn(timeSlot);
-    //        mockMvc.perform(post("/api/user/schedule/addRecurring/2137").contentType(APPLICATION_JSON_UTF8))
-    //                .andExpect(content().equals(timeSlot))
-    //                .andExpect(status().isOk());
-    //    }
+    @Test
+    void addRecurringTimeSlotTest() throws Exception {
+
+        String requestJson = ow.writeValueAsString(timeSlotRecurring);
+
+        when(gatewayService.addRecurring(2137L, timeSlotRecurring)).thenReturn(timeSlotRecurring);
+        mockMvc.perform(post("/api/user/schedule/addRecurring/2137")
+                        .contentType(APPLICATION_JSON_UTF8).content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("60")))
+                .andExpect(content().string(containsString("61")))
+                .andExpect(content().string(containsString("MONDAY")))
+                .andExpect(content().string(containsString("-1")));
+    }
+
+    @Test
+    void addRecurringTimeSlotInvalidIdTest() throws Exception {
+
+        String requestJson = ow.writeValueAsString(timeSlotRecurring);
+
+        when(gatewayService.addRecurring(2137L, timeSlotRecurring)).thenReturn(timeSlotRecurring);
+        mockMvc.perform(post("/api/user/schedule/addRecurring/invalidId")
+                        .contentType(APPLICATION_JSON_UTF8).content(requestJson))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void addOneTimeTimeSlotTest() throws Exception {
+        String requestJson = ow.writeValueAsString(timeSlotSingle);
+
+
+        when(gatewayService.addOneTimeTimeSlot(2137L, timeSlotSingle)).thenReturn(timeSlotSingle);
+        mockMvc.perform(post("/api/user/schedule/include/2137")
+                        .contentType(APPLICATION_JSON_UTF8).content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("60")))
+                .andExpect(content().string(containsString("61")))
+                .andExpect(content().string(containsString("MONDAY")))
+                .andExpect(content().string(containsString("10")));
+    }
+
+    @Test
+    void addOneTimeTimeSlotInvalidIdTest() throws Exception {
+        String requestJson = ow.writeValueAsString(timeSlotRecurring);
+
+        when(gatewayService.addOneTimeTimeSlot(2137L, timeSlotSingle)).thenReturn(timeSlotSingle);
+        mockMvc.perform(post("/api/user/schedule/include/invalidId")
+                        .contentType(APPLICATION_JSON_UTF8).content(requestJson))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void removeRecuringTimeSlotTest() throws Exception {
+        String requestJson = ow.writeValueAsString(timeSlotRecurring);
+
+        when(gatewayService.removeRecurring(2137L, timeSlotRecurring)).thenReturn(timeSlotRecurring);
+        mockMvc.perform(post("/api/user/schedule/removeRecurring/2137")
+                        .contentType(APPLICATION_JSON_UTF8).content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("60")))
+                .andExpect(content().string(containsString("61")))
+                .andExpect(content().string(containsString("MONDAY")))
+                .andExpect(content().string(containsString("-1")));
+    }
+
+    @Test
+    void removeRecuringTimeSlotInvalidIdTest() throws Exception {
+        String requestJson = ow.writeValueAsString(timeSlotRecurring);
+
+        when(gatewayService.removeRecurring(2137L, timeSlotRecurring)).thenReturn(timeSlotRecurring);
+        mockMvc.perform(post("/api/user/schedule/removeRecurring/invalidId")
+                        .contentType(APPLICATION_JSON_UTF8).content(requestJson))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void removeOneTimeTimeSlotTest() throws Exception {
+        String requestJson = ow.writeValueAsString(timeSlotSingle);
+
+        when(gatewayService.removeOneTimeTimeSlot(2137L, timeSlotSingle)).thenReturn(timeSlotSingle);
+        mockMvc.perform(post("/api/user/schedule/exclude/2137")
+                        .contentType(APPLICATION_JSON_UTF8).content(requestJson))
+                .andExpect(status().isOk())
+                .andExpect(content().string(containsString("60")))
+                .andExpect(content().string(containsString("61")))
+                .andExpect(content().string(containsString("MONDAY")))
+                .andExpect(content().string(containsString("10")));
+    }
+
+    @Test
+    void removeOneTimeTimeSlotInvalidIdTest() throws Exception {
+        String requestJson = ow.writeValueAsString(timeSlotSingle);
+
+        when(gatewayService.removeOneTimeTimeSlot(2137L, timeSlotSingle)).thenReturn(timeSlotSingle);
+        mockMvc.perform(post("/api/user/schedule/exclude/invalidId")
+                        .contentType(APPLICATION_JSON_UTF8).content(requestJson))
+                .andExpect(status().isBadRequest());
+    }
 }
