@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.*;
 import lombok.*;
 import nl.tudelft.sem.template.shared.converters.RequestConverter;
+import nl.tudelft.sem.template.shared.converters.StringTimeToMinutesConverter;
 import nl.tudelft.sem.template.shared.converters.TimeSlotConverter;
 import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
@@ -15,6 +16,7 @@ import nl.tudelft.sem.template.shared.enums.PositionName;
 @Getter
 @Setter
 @Entity
+@ToString
 @Table(name = "event")
 @AllArgsConstructor
 @EqualsAndHashCode
@@ -123,9 +125,11 @@ public class Event {
      * @return a string containing relevant data for a user
      */
     public String messageConverter() {
-        return getLabel() + " - " + getType() + " from " + timeslot.getTime().getFirst() + " until "
-                + timeslot.getTime().getSecond() + " in week " + timeslot.getWeek() + ", on "
-                + timeslot.getDay().toString() + ".\n";
+        StringTimeToMinutesConverter sc = new StringTimeToMinutesConverter();
+        return getLabel() + " - " + getType() + " from "
+                + sc.convertToEntityAttribute(timeslot.getTime().getFirst()) + " until "
+                + sc.convertToEntityAttribute(timeslot.getTime().getSecond()) + " in week "
+                + timeslot.getWeek() + ", on " + timeslot.getDay().toString() + ".\n";
     }
 }
 

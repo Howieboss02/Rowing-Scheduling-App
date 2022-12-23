@@ -17,13 +17,15 @@ import org.springframework.web.server.ResponseStatusException;
 import reactor.core.publisher.Mono;
 
 @RestController
+@RequestMapping(path = "/api/event")
 public class EventController {
     private final transient EventService eventService;
-    private static WebClient client;
+    private static WebClient client = WebClient.create();
 
     @Autowired
     public EventController(EventService eventService) {
         this.eventService = eventService;
+
     }
 
     /**
@@ -53,24 +55,52 @@ public class EventController {
      * @param id the id of the event
      * @return List of requests for that event
      */
-    @GetMapping("/queue/{id}")
+    @GetMapping("/{id}/queue")
     public List<Request> getRequests(@PathVariable("id") Long id) {
         return eventService.getRequests(id);
     }
 
+    /**
+     * Get event by id.
+     *
+     * @param id the id of the event
+     * @return a specific event
+     */
+    @GetMapping("/{id}")
+    public ResponseEntity<Event> getById(@PathVariable("id") Long id) {
+        Optional<Event> event = eventService.getById(id);
+        if (event.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return ResponseEntity.ok(event.get());
+    }
+
     /** matches suitable events with a user.
      *
-     * @param user the user to match the events to
+     * @param userId the user id to match the events to
      * @return the events that match the user
      * @throws IllegalArgumentException if the user profile is not full
      */
-    @GetMapping("/matchEvents")
-    public List<Event> matchEvents(@RequestBody User user) throws IllegalArgumentException {
-        if (user.getCertificate() == null || user.getPositions() == null || user.getPositions().size() == 0
-                || user.getOrganization() == null) {
-            throw new IllegalArgumentException("Profile is not (fully) completed");
+    @GetMapping("/match/{userId}")
+    public ResponseEntity<List<Event>> matchEvents(@PathVariable("userId") Long userId) throws IllegalArgumentException {
+        try {
+            User user = eventService.getUserById(userId);
+
+            if (user.getCertificate() == null || user.getPositions() == null || user.getPositions().size() == 0
+                    || user.getOrganization() == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            }
+            (eventService.getMatchedEvents(user)).forEach(System.out::println);
+            List<Event> response = eventService.getMatchedEvents(user);
+            if (response == null || response.size() == 0) {
+                return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+            }
+            return ResponseEntity.ok(response);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatus()).build();
         }
-        return eventService.getMatchedEvents(user);
+
+
     }
 
     /**
@@ -105,12 +135,13 @@ public class EventController {
      * @param id the event's id
      * @return an ok message if it goes right
      */
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteEvent(@PathVariable("id") Long id) {
+        System.out.println("id: " + id);
         try {
             eventService.deleteById(id);
         } catch (Exception e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage(), e);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
         }
         return ResponseEntity.ok().build();
     }
@@ -122,7 +153,7 @@ public class EventController {
      * @param eventModel a dummy-like event object
      * @return the newly updated event
      */
-    @PutMapping("edit/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateEvent(@PathVariable("id") Long id,
                                          @RequestBody EventModel eventModel,
                                          @RequestParam boolean updateIsCompetitive) {
@@ -139,15 +170,15 @@ public class EventController {
 
 
     /**
-     * PUT API for enqueueing a user to an event.
+     * POST API for enqueueing a user to an event.
      *
      * @param eventId the id of the event
      * @param userId the id of the user
      * @return "NOT_FOUND" if the ids don't match something or "ENQUEUED" if task gets completed
      */
-    @PutMapping("/enqueue/{eventId}")
+    @PostMapping("{eventId}/enqueue/{userId}")
     public ResponseEntity<String> enqueue(@PathVariable("eventId") Long eventId,
-                                          @RequestParam("userId") Long userId,
+                                          @PathVariable("userId") Long userId,
                                           @RequestParam PositionName position) {
         Optional<Event> event = eventService.getById(eventId);
         if (event.isEmpty()) {
@@ -176,13 +207,13 @@ public class EventController {
 
 
     /**
-     * PUT API for accepting a user into the event.
+     * POST API for accepting a user into the event.
      *
      * @param id the id of the event
      * @param request the request should be accepted
      * @return "NOT_FOUND" if the event doesn't exist, badRequest if there is no matching request, otherwise "ACCEPTED"
      */
-    @PutMapping("/accept/{id}")
+    @PostMapping("/{id}/accept")
     public ResponseEntity<String> accept(@PathVariable("id") Long id,
                                           @RequestBody Request request) {
         Optional<Event> event = eventService.getById(id);
@@ -191,7 +222,7 @@ public class EventController {
         }
         boolean processed = eventService.dequeueById(id, request);
         if (!processed) {
-            return ResponseEntity.badRequest().build(); // request doesn't exist
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND); // request doesn't exist
         }
         // if the request exists...
         boolean positionFilled = eventService.removePositionById(id, request.getPosition());
@@ -201,8 +232,13 @@ public class EventController {
         }
 
         //send notification
-        
-        return ResponseEntity.ok("ACCEPTED");
+        try {
+            String mess = client.post().uri("http://localhost:8085/api/notification/" + id + "/" + request.getName()
+                + "/?outcome=ACCEPTED").retrieve().bodyToMono(String.class).block();
+            return ResponseEntity.ok("ACCEPTED\n" + mess);
+        } catch (Exception e) {
+            return ResponseEntity.ok("ACCEPTED");
+        }
     }
 
     /**
@@ -212,7 +248,7 @@ public class EventController {
      * @param request the request should be rejected
      * @return "NOT_FOUND" if the event doesn't exist, badRequest if there is no matching request, otherwise "REJECTED"
      */
-    @PutMapping("/reject/{id}")
+    @PostMapping("/{id}/reject")
     public ResponseEntity<String> reject(@PathVariable("id") Long id,
                                          @RequestBody Request request) {
         Optional<Event> event = eventService.getById(id);
@@ -223,8 +259,14 @@ public class EventController {
         if (!processed) {
             return ResponseEntity.badRequest().build(); // request doesn't exist
         }
-
         //send notification
-        return ResponseEntity.ok("REJECTED");
+        try {
+            String mess = client.post().uri("http://localhost:8085/api/notification/" + event.get().getId() + "/" + id
+                + "/?outcome=REJECTED").retrieve().bodyToMono(String.class).block();
+            return ResponseEntity.ok("REJECTED\n" + mess);
+        } catch (Exception e) {
+            return ResponseEntity.ok("REJECTED");
+        }
+
     }
 }

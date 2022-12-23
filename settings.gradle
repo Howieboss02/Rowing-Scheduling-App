@@ -6,4 +6,5 @@ include 'user-microservice'
 include 'shared'
 include 'event-microservice'
 include 'notification-microservice'
+include 'api-gateway'
 
