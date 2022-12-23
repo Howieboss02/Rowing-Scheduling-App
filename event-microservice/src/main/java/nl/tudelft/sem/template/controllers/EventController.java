@@ -187,7 +187,7 @@ public class EventController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        //Getting the User info from the database
+        // Getting the User info from the database
         // We recreate the client if it does not exist
         // This makes it easier to test
         if (client == null) {
@@ -204,7 +204,7 @@ public class EventController {
         if (eventService.enqueueById(eventId, user, position, 60 * time.getHours() + time.getMinutes())) {
             return ResponseEntity.ok("ENQUEUED");
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok("NOT ENQUEUED");
     }
 
 

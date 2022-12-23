@@ -34,7 +34,7 @@ public class NotificationController {
     }
     User user = response.block();
 
-    Mono<Event> responseEvent = client.get().uri("http://localhost:8083/" + id).retrieve().bodyToMono(Event.class).log();
+    Mono<Event> responseEvent = client.get().uri("http://localhost:8083/api/event/" + id).retrieve().bodyToMono(Event.class).log();
     if (Boolean.FALSE.equals(responseEvent.hasElement().block())) {
       return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }

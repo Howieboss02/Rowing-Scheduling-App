@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.services;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import nl.tudelft.sem.template.database.EventRepository;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.Request;
@@ -159,7 +160,7 @@ public class EventService {
     }
 
     /**
-     * Adds a request to the queue of an event.
+     * Adds a request to the queue of an event iff the user should be able to join the event.
      *
      * @param id the id of the event
      * @param user the user who wants to enqueue
@@ -170,17 +171,48 @@ public class EventService {
     public boolean enqueueById(Long id, User user, PositionName position, long time) {
         Optional<Event> event = getById(id);
 
-        if (event.isPresent()) {
-            if ((event.get().getType() == EventType.COMPETITION && event.get().getTimeslot().getTime().getFirst()
-                - time > 1440)
+        if ((event.get().getType() == EventType.COMPETITION && event.get().getTimeslot().getTime().getFirst()
+                - time < 1440)
                 || (event.get().getType() == EventType.TRAINING && event.get().getTimeslot().getTime().getFirst()
-                - time > 30)) {
-                event.get().enqueue(user.getNetId(), position);
-                eventRepo.save(event.get());
-                return true;
-            }
+                - time < 30)) {
+                    return false;
+                }
+
+        if (event.isEmpty() || user.getPositions() == null) {
+            return false;
         }
-        return false;
+        Event actualEvent = event.get();
+
+        // Check if user that wants to enqueue is not creator
+        if (user.getId().equals(actualEvent.getOwningUser())) {
+            return false;
+        }
+
+        // Check if event is competitive but user is not
+        List<Position> userPositions = user.getPositions().stream()
+                .filter(u -> u.getName() == position)
+                .collect(Collectors.toList());
+        Position toFind = new Position(position, true);
+        if (actualEvent.getType() == EventType.COMPETITION
+                && actualEvent.isCompetitive() && !userPositions.contains(toFind)) {
+            return false;
+        }
+
+        // Check if gender and organization match in case of competition
+        if (actualEvent.getType() == EventType.COMPETITION
+                && (!actualEvent.getOrganisation().equals(user.getOrganization())
+                || !actualEvent.getGender().equals(user.getGender()))) {
+            return false;
+        }
+
+        // Check if the certificate level is high enough
+        if (user.getCertificate().compareTo(actualEvent.getCertificate()) < 0) {
+            return false;
+        }
+
+        boolean success = actualEvent.enqueue(user.getNetId(), position);
+        eventRepo.save(actualEvent);
+        return success;
     }
 
     /**
@@ -240,8 +272,7 @@ public class EventService {
 
         for (Event e : e1) {
             for (Position p : positions) {
-                if (e.getPositions().contains(p.getName()) && e.isCompetitive() == p.isCompetitive()
-                        && e.getTimeslot().matchSchedule(user.getSchedule())) {
+                if (e.getPositions().contains(p.getName()) && e.getTimeslot().matchSchedule(user.getSchedule())) {
                     matchedEvents.add(e);
                     break;
                 }
@@ -249,7 +280,7 @@ public class EventService {
         }
         for (Event e : e2) {
             for (Position p : positions) {
-                if (e.getPositions().contains(p.getName()) && e.isCompetitive() == p.isCompetitive()
+                if (e.getPositions().contains(p.getName()) && (!e.isCompetitive() || p.isCompetitive())
                         && e.getTimeslot().matchSchedule(user.getSchedule())) {
                     matchedEvents.add(e);
                     break;
