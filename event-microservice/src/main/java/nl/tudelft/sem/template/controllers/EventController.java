@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.controllers;
 
+import java.sql.Timestamp;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.services.EventService;
@@ -7,6 +8,7 @@ import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.EventModel;
 import nl.tudelft.sem.template.shared.entities.User;
+import nl.tudelft.sem.template.shared.enums.EventType;
 import nl.tudelft.sem.template.shared.enums.PositionName;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -197,9 +199,10 @@ public class EventController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         User user = response.block();
+        Timestamp time = (Timestamp) response.timestamp().block().get(0);
+        long weekTime = time.getDay() * 1440L + 60 * time.getHours() + time.getMinutes();
 
-        boolean success = eventService.enqueueById(eventId, user, position);
-        if (success) {
+        if (eventService.enqueueById(eventId, user, position, weekTime)) {
             return ResponseEntity.ok("ENQUEUED");
         }
         return ResponseEntity.ok("NOT ENQUEUED");

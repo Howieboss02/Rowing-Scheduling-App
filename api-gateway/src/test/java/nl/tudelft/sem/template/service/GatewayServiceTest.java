@@ -1,6 +1,8 @@
 package nl.tudelft.sem.template.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
@@ -10,15 +12,13 @@ import java.util.Arrays;
 import java.util.List;
 import nl.tudelft.sem.template.services.GatewayService;
 import nl.tudelft.sem.template.shared.components.RestTemplateResponseErrorHandler;
+import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.EventModel;
 import nl.tudelft.sem.template.shared.entities.User;
-import nl.tudelft.sem.template.shared.enums.Certificate;
-import nl.tudelft.sem.template.shared.enums.EventType;
-import nl.tudelft.sem.template.shared.enums.MicroservicePorts;
-import nl.tudelft.sem.template.shared.enums.PositionName;
+import nl.tudelft.sem.template.shared.enums.*;
 import nl.tudelft.sem.template.shared.models.AuthenticationRequestModel;
 import nl.tudelft.sem.template.shared.models.AuthenticationResponseModel;
 import nl.tudelft.sem.template.shared.models.RegistrationRequestModel;
@@ -49,6 +49,8 @@ public class GatewayServiceTest {
 
     private static final String apiPrefix = "http://localhost:";
     private static final String eventPath = "/api/event";
+
+    private static final String userPath = "/api/user";
     private static final String registerPath = "/register";
     private static final String authenticatePath = "/authenticate";
 
@@ -95,10 +97,11 @@ public class GatewayServiceTest {
             "Test Organisation"
     );
 
+
     private final Request request = new Request("testRequest", PositionName.Coach);
 
     /**
-     * Setup the test.
+     * Set up the test.
      */
     @BeforeEach
     public void setUp() {
@@ -257,4 +260,85 @@ public class GatewayServiceTest {
         server.verify();
     }
 
+    @Test
+    public void testGetAllNotifications() throws JsonProcessingException {
+        List<String> notifications = List.of("user");
+        server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/getNotifications/1"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(JsonUtil.serialize(notifications), MediaType.APPLICATION_JSON));
+
+        assertEquals(notifications, service.getAllNotifications(1L));
+
+        server.verify();
+    }
+
+    @Test
+    public void testDelete() throws JsonProcessingException {
+        server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/delete/1"))
+                .andExpect(method(HttpMethod.DELETE))
+                .andRespond(withSuccess());
+
+        assertTrue(service.deleteUser(1L));
+
+        server.verify();
+    }
+
+    @Test
+    public void testAddRecurring() throws JsonProcessingException {
+        TimeSlot timeSlot = new TimeSlot(1, Day.FRIDAY, new Node(60, 120));
+        server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/schedule/add/1"))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess(JsonUtil.serialize(timeSlot), MediaType.APPLICATION_JSON));
+
+        assertEquals(timeSlot, service.addRecurring(1L, timeSlot));
+
+        server.verify();
+    }
+
+    @Test
+    public void testRemoveRecurring() throws JsonProcessingException {
+        TimeSlot timeSlot = new TimeSlot(1, Day.FRIDAY, new Node(60, 120));
+        server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/schedule/remove/1"))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess(JsonUtil.serialize(timeSlot), MediaType.APPLICATION_JSON));
+
+        assertEquals(timeSlot, service.removeRecurring(1L, timeSlot));
+
+        server.verify();
+    }
+
+    @Test
+    public void testAddOneTime() throws JsonProcessingException {
+        TimeSlot timeSlot = new TimeSlot(1, Day.FRIDAY, new Node(60, 120));
+        server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/schedule/include/1"))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess(JsonUtil.serialize(timeSlot), MediaType.APPLICATION_JSON));
+
+        assertEquals(timeSlot, service.addOneTimeTimeSlot(1L, timeSlot));
+
+        server.verify();
+    }
+
+    @Test
+    public void testRemoveOneTime() throws JsonProcessingException {
+        TimeSlot timeSlot = new TimeSlot(1, Day.FRIDAY, new Node(60, 120));
+        server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/schedule/exclude/1"))
+                .andExpect(method(HttpMethod.POST))
+                .andRespond(withSuccess(JsonUtil.serialize(timeSlot), MediaType.APPLICATION_JSON));
+
+        assertEquals(timeSlot, service.removeOneTimeTimeSlot(1L, timeSlot));
+
+        server.verify();
+    }
+
+    @Test
+    public void testGetUser() throws JsonProcessingException {
+        server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/get/1"))
+                .andExpect(method(HttpMethod.GET))
+                .andRespond(withSuccess(JsonUtil.serialize(user), MediaType.APPLICATION_JSON));
+
+        assertEquals(user, service.getUser(1L));
+
+        server.verify();
+    }
 }
