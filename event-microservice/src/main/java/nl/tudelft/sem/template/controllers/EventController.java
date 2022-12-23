@@ -156,7 +156,7 @@ public class EventController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateEvent(@PathVariable("id") Long id,
                                          @RequestBody EventModel eventModel,
-                                         @RequestParam boolean updateIsCompetitive) {
+                                         @RequestParam(required = false) boolean updateIsCompetitive) {
         Optional<Event> returned = eventService.updateById(eventModel.getOwningUser(), id, eventModel.getLabel(),
             eventModel.getPositions(), eventModel.getTimeslot(),
             eventModel.getCertificate(), eventModel.getType(), eventModel.isCompetitive(),

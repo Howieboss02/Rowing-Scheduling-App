@@ -134,7 +134,7 @@ public class GatewayEventController {
                                           @PathVariable("userId") Long userId,
                                           @RequestParam PositionName position) {
         try {
-            return ResponseEntity.ok(gatewayService.enqueueToEvent(userId, eventId, position));
+            return ResponseEntity.ok(gatewayService.enqueueToEvent(eventId, userId, position));
         } catch (ResponseStatusException e) {
             System.out.println("enqueue exception " + e.getMessage());
             throw e;
