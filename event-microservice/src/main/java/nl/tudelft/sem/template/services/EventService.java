@@ -263,7 +263,8 @@ public class EventService {
 
         for (Event e : e1) {
             for (Position p : positions) {
-                if (e.getPositions().contains(p.getName()) && e.getTimeslot().matchSchedule(user.getSchedule())) {
+                if (e.getPositions().contains(p.getName()) && (!e.isCompetitive() || p.isCompetitive())
+                        && e.getTimeslot().matchSchedule(user.getSchedule())) {
                     matchedEvents.add(e);
                     break;
                 }
