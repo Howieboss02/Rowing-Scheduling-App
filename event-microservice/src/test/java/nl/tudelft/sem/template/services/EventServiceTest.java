@@ -60,10 +60,11 @@ class EventServiceTest {
         User user = new User();
         user.setId(1L);
         user.setNetId("Bob");
+        user.setGender("M");
         user.setPositions(createPositions());
         user.setCertificate(Certificate.B2);
         user.setSchedule(new Schedule());
-        TimeSlot ts = new TimeSlot(1, Day.FRIDAY, new Node(2, 3));
+        TimeSlot ts = new TimeSlot(1, Day.FRIDAY, new Node(1445, 1500));
         user.getSchedule().getRecurringSlots().add(ts);
         return user;
     }
@@ -78,8 +79,8 @@ class EventServiceTest {
      * @return a new event
      */
     private static Event getEvent(String s, Long l, Certificate c, EventType t) {
-        TimeSlot ts = new TimeSlot(1, Day.FRIDAY, new Node(1445, 1500));
-        return new Event(l, s, createPositions(), ts, c, t, true, s, s);
+        TimeSlot ts = new TimeSlot(1, Day.FRIDAY, new Node(1455, 1500));
+        return new Event(l, s, createPositionNames(), ts, c, t, true, s, s);
     }
 
     @BeforeEach
@@ -153,7 +154,7 @@ class EventServiceTest {
     void testUpdateById() {
         Event event = getEvent("A", 1L, Certificate.B2, EventType.COMPETITION);
 
-        TimeSlot ts = new TimeSlot(1, Day.FRIDAY, new Node(1445, 1500));
+        TimeSlot ts = new TimeSlot(1, Day.FRIDAY, new Node(1455, 1500));
 
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
@@ -203,7 +204,7 @@ class EventServiceTest {
     }
 
     @Test
-    void testEnqueueByIdCompetition() {
+    void testEnqueueByIdTraining() {
         Request r = new Request("Bob", PositionName.Cox);
 
         Event correctEvent = getEvent("A", 4L, Certificate.B2, EventType.TRAINING);
@@ -211,47 +212,27 @@ class EventServiceTest {
 
         User user = getUser();
 
-        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
-        when(mockedRepo.existsById(1L)).thenReturn(true);
-        when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
-
-        mockedService.enqueueById(1L, user, PositionName.Cox, 2);
-        verify(mockedRepo, times(1)).save(event);
-        assertEquals(List.of(r), event.getQueue());
-    }
-
-    @Test
-    void testEnqueueByIdTraining() {
-        Event event = new Event(1L, "Bob's training", createPositions(), new TimeSlot(1, Day.FRIDAY,
-            new Node(1300, 1400)), Certificate.B1, EventType.TRAINING, true, "NA", "Bob");
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.TRAINING);
 
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-        User user = new User();
-        user.setNetId("Bob");
-        mockedService.enqueueById(1L, user, PositionName.Cox, 1200);
-
-        Request r = new Request("Bob", PositionName.Cox);
-
-        assertTrue(mockedService.enqueueById(1L, user, PositionName.Cox));
+        assertTrue(mockedService.enqueueById(1L, user, PositionName.Cox, 200));
         verify(mockedRepo, times(1)).save(event);
         assertEquals(List.of(r), event.getQueue());
-    }
 
+    }
 
     @Test
     void testEnqueueEarlyTraining() {
-        Event event = new Event(1L, "Bob's training", createPositions(), new TimeSlot(1, Day.FRIDAY,
-            new Node(1300, 1400)), Certificate.B1, EventType.TRAINING, true, "NA", "Bob");
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+        event.setType(EventType.TRAINING);
 
-        Request r = new Request("Bob", PositionName.Cox);
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-        User user = new User();
-        user.setNetId("Bob");
-        mockedService.enqueueById(1L, user, PositionName.Cox, 1290);
+        User user = getUser();
+        mockedService.enqueueById(1L, user, PositionName.Cox, 1430);
 
         verify(mockedRepo, times(0)).save(event);
         assertEquals(new ArrayList<>(), event.getQueue());
@@ -280,7 +261,7 @@ class EventServiceTest {
 
         mockedService.enqueueById(1L, user, PositionName.Cox, 1430);
 
-        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox));
+        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox, 1450));
         assertEquals(new ArrayList<>(), mockedService.getAllEvents());
     }
 
@@ -293,7 +274,7 @@ class EventServiceTest {
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
         User user = getUser();
-        assertFalse(mockedService.enqueueById(1L, user, PositionName.Coach));
+        assertFalse(mockedService.enqueueById(1L, user, PositionName.Coach, 100));
     }
 
     @Test
@@ -305,7 +286,7 @@ class EventServiceTest {
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox));
+        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox, 100));
     }
 
     @Test
@@ -318,7 +299,7 @@ class EventServiceTest {
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox));
+        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox, 100));
     }
 
     @Test
@@ -331,7 +312,7 @@ class EventServiceTest {
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox));
+        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox, 100));
     }
 
     @Test
@@ -343,7 +324,7 @@ class EventServiceTest {
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox));
+        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox, 100));
     }
 
     @Test

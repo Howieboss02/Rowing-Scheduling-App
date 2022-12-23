@@ -170,18 +170,18 @@ public class EventService {
      */
     public boolean enqueueById(Long id, User user, PositionName position, long time) {
         Optional<Event> event = getById(id);
-
-        if ((event.get().getType() == EventType.COMPETITION && event.get().getTimeslot().getTime().getFirst()
-                - time < 1440)
-                || (event.get().getType() == EventType.TRAINING && event.get().getTimeslot().getTime().getFirst()
-                - time < 30)) {
-                    return false;
-                }
-
         if (event.isEmpty() || user.getPositions() == null) {
             return false;
         }
         Event actualEvent = event.get();
+
+        // Check if the user has time to get to the event
+        if ((actualEvent.getType() == EventType.COMPETITION && actualEvent.getTimeslot().getTime().getFirst()
+            - time < 1440L)
+            || (actualEvent.getType() == EventType.TRAINING && actualEvent.getTimeslot().getTime().getFirst()
+            - time < 30L)) {
+            return false;
+        }
 
         // Check if user that wants to enqueue is not creator
         if (user.getId().equals(actualEvent.getOwningUser())) {
