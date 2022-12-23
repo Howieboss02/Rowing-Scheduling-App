@@ -164,15 +164,23 @@ public class EventService {
      * @param id the id of the event
      * @param user the user who wants to enqueue
      * @param position the position the user wants to fill
+     * @param time the time the request was made
+     * @return whether the user was enqueued or not
      */
-    public void enqueueById(Long id, User user, PositionName position) {
+    public boolean enqueueById(Long id, User user, PositionName position, long time) {
         Optional<Event> event = getById(id);
 
         if (event.isPresent()) {
-            event.get().enqueue(user.getNetId(), position);
-
-            eventRepo.save(event.get());
+            if ((event.get().getType() == EventType.COMPETITION && event.get().getTimeslot().getTime().getFirst()
+                - time > 1440)
+                || (event.get().getType() == EventType.TRAINING && event.get().getTimeslot().getTime().getFirst()
+                - time > 30)) {
+                event.get().enqueue(user.getNetId(), position);
+                eventRepo.save(event.get());
+                return true;
+            }
         }
+        return false;
     }
 
     /**

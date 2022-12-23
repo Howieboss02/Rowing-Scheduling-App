@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.services;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,7 +50,7 @@ class EventServiceTest {
      * @return a new event
      */
     private static Event getEvent(String s, Long l, Certificate c, EventType t) {
-        TimeSlot ts = new TimeSlot(1, Day.FRIDAY, new Node(2, 3));
+        TimeSlot ts = new TimeSlot(1, Day.FRIDAY, new Node(1445, 1500));
         return new Event(l, s, createPositions(), ts, c, t, true, s, s);
     }
 
@@ -124,7 +125,7 @@ class EventServiceTest {
     void testUpdateById() {
         Event event = getEvent("A", 1L, Certificate.B2, EventType.COMPETITION);
 
-        TimeSlot ts = new TimeSlot(1, Day.FRIDAY, new Node(2, 3));
+        TimeSlot ts = new TimeSlot(1, Day.FRIDAY, new Node(1445, 1500));
 
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
@@ -174,7 +175,7 @@ class EventServiceTest {
     }
 
     @Test
-    void testEnqueueById() {
+    void testEnqueueByIdCompetition() {
         Request r = new Request("Bob", PositionName.Cox);
 
         Event correctEvent = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
@@ -184,14 +185,62 @@ class EventServiceTest {
         user.setNetId("Bob");
 
         Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
+
+        mockedService.enqueueById(1L, user, PositionName.Cox, 2);
+        verify(mockedRepo, times(1)).save(event);
+        assertEquals(List.of(r), event.getQueue());
+    }
+
+    @Test
+    void testEnqueueByIdTraining() {
+        Event event = new Event(1L, "Bob's training", createPositions(), new TimeSlot(1, Day.FRIDAY,
+            new Node(1300, 1400)), Certificate.B1, EventType.TRAINING, true, "NA", "Bob");
 
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-        mockedService.enqueueById(1L, user, PositionName.Cox);
+        User user = new User();
+        user.setNetId("Bob");
+        mockedService.enqueueById(1L, user, PositionName.Cox, 1200);
 
+        Request r = new Request("Bob", PositionName.Cox);
         verify(mockedRepo, times(1)).save(event);
         assertEquals(List.of(r), event.getQueue());
+    }
+
+
+    @Test
+    void testEnqueueEarlyTraining() {
+        Event event = new Event(1L, "Bob's training", createPositions(), new TimeSlot(1, Day.FRIDAY,
+            new Node(1300, 1400)), Certificate.B1, EventType.TRAINING, true, "NA", "Bob");
+
+        Request r = new Request("Bob", PositionName.Cox);
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
+
+        User user = new User();
+        user.setNetId("Bob");
+        mockedService.enqueueById(1L, user, PositionName.Cox, 1290);
+
+        verify(mockedRepo, times(0)).save(event);
+        assertEquals(new ArrayList<>(), event.getQueue());
+    }
+
+    @Test
+    void testEnqueueEarlyCompetition() {
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+        Request r = new Request("Bob", PositionName.Cox);
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
+
+        User user = new User();
+        user.setNetId("Bob");
+        mockedService.enqueueById(1L, user, PositionName.Cox, 100);
+
+        verify(mockedRepo, times(0)).save(event);
+        assertEquals(new ArrayList<>(), event.getQueue());
     }
 
     @Test
@@ -201,7 +250,7 @@ class EventServiceTest {
 
         when(mockedRepo.existsById(1L)).thenReturn(false);
 
-        mockedService.enqueueById(1L, user, PositionName.Cox);
+        mockedService.enqueueById(1L, user, PositionName.Cox, 1430);
 
         assertEquals(new ArrayList<>(), mockedService.getAllEvents());
 
