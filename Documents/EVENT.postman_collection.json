@@ -1,0 +1,435 @@
+{
+	"info": {
+		"_postman_id": "656e3dd6-c05e-4d77-9ddd-3dec2a3ea75e",
+		"name": "EVENT",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24641811"
+	},
+	"item": [
+		{
+			"name": "Add new Event",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjcxODQzNzEyLCJpYXQiOjE2NzE3NTczMTJ9.ib8XYCgr8ZDDU9ZdFmhjfCQncdUbyG0xh40u_4z3iFVpaGz1sHod3DEFYrpvHMGnMd1OmflU_0KXOajwLIc2Rw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n    \"owningUser\": 1,\r\n    \"label\": \"Bob's traisnisng23\",\r\n    \"positions\": [\"Cox\", \"Startboard\", \"Startboard\"],\r\n    \"timeslot\": {\"week\": 1, \"day\": \"MONDAY\", \"time\" : {\"first\": 10, \"second\": 14}},\r\n    \"certificate\": \"B1\",\r\n    \"isCompetitive\": \"false\",\r\n    \"type\": \"TRAINING\",\r\n    \"organisation\": \"Bob\" \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9000/api/event/register",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"event",
+						"register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "enqueue",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjcxNzI4MDk0LCJpYXQiOjE2NzE2NDE2OTR9.9dWDpnNe00Kt6xg7l6eyj4lPdNiT5Ggu3EGrCzVnWc20jQ-zLnIWWD8JU3sJjj2rNrBljBod_9xI0e9B7coHxQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9000/api/event/1/enqueue/1?position=Cox",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"event",
+						"1",
+						"enqueue",
+						"1"
+					],
+					"query": [
+						{
+							"key": "position",
+							"value": "Cox"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "accept",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjcxNzM4MjIwLCJpYXQiOjE2NzE2NTE4MjB9.LneJm_8ICcSiI46070KT6rArmG8tGO-QUr3qHAZGlCqmxtCf01sf83OjOjF4Wgo5PmWlaYFA56UvWcp9igfLJQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"test\",\r\n    \"postion\": \"Cox\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9000/api/event/1/accept",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"event",
+						"1",
+						"accept"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "reject",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"test\",\r\n    \"postion\": \"Cox\"\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9000/api/event/1/reject",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"event",
+						"1",
+						"reject"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all events",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjcxNzI4MDk0LCJpYXQiOjE2NzE2NDE2OTR9.9dWDpnNe00Kt6xg7l6eyj4lPdNiT5Ggu3EGrCzVnWc20jQ-zLnIWWD8JU3sJjj2rNrBljBod_9xI0e9B7coHxQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9000/api/event/all",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"event",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all events of user",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjcxNzI4MDk0LCJpYXQiOjE2NzE2NDE2OTR9.9dWDpnNe00Kt6xg7l6eyj4lPdNiT5Ggu3EGrCzVnWc20jQ-zLnIWWD8JU3sJjj2rNrBljBod_9xI0e9B7coHxQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9000/api/event/ownedBy/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"event",
+						"ownedBy",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get matched events",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjcxNzI4MDk0LCJpYXQiOjE2NzE2NDE2OTR9.9dWDpnNe00Kt6xg7l6eyj4lPdNiT5Ggu3EGrCzVnWc20jQ-zLnIWWD8JU3sJjj2rNrBljBod_9xI0e9B7coHxQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9000/api/event/match/2",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"event",
+						"match",
+						"2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get queue",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjcxNzI4MDk0LCJpYXQiOjE2NzE2NDE2OTR9.9dWDpnNe00Kt6xg7l6eyj4lPdNiT5Ggu3EGrCzVnWc20jQ-zLnIWWD8JU3sJjj2rNrBljBod_9xI0e9B7coHxQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9000/api/event/1/queue",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"event",
+						"1",
+						"queue"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete event",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjcxNzM1ODc2LCJpYXQiOjE2NzE2NDk0NzZ9.HY938Je5Z9Q6ifIWvY7XMJoh_b3pYFHoN32_8TFg_0PKQUtmSmqAoT3x6PvRvxfYNH_EDiNTiaLCRhCMh1ZlTQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9000/api/event/3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"event",
+						"3"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update event",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjcxNzM1ODc2LCJpYXQiOjE2NzE2NDk0NzZ9.HY938Je5Z9Q6ifIWvY7XMJoh_b3pYFHoN32_8TFg_0PKQUtmSmqAoT3x6PvRvxfYNH_EDiNTiaLCRhCMh1ZlTQ",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n    \"owningUser\": 1,\r\n    \"label\": \"Bob's training after update 2\",\r\n    \"positions\": [\"Cox\", \"Startboard\", \"Startboard\"],\r\n    \"timeslot\": {\"week\": 1, \"day\": \"Monday\", \"time\" : {\"first\": 10, \"second\": 14}},\r\n    \"certificate\": \"B1\",\r\n    \"isCompetitive\": \"false\",\r\n    \"type\": \"TRAINING\",\r\n    \"organisation\": \"Bob\" \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9000/api/event/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"event",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
