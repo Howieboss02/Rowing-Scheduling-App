@@ -34,11 +34,6 @@ public class GatewayService {
         this.restTemplate = restTemplate;
     }
 
-
-    //TODO: add other services and try catch statements along with proper ResponseEntity return types
-
-    // Authentication microservice
-
     /**
      * Registers a user.
      *

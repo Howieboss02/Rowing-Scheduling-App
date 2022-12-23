@@ -56,6 +56,8 @@ public class EventTest {
     @Test
     public void testEnqueue() {
         Event e = new Event();
+        e.addPosition(PositionName.Cox);
+
         Request r = new Request("Alice", PositionName.Cox);
         e.enqueue("Alice", PositionName.Cox);
 
@@ -77,6 +79,6 @@ public class EventTest {
         Event e = new Event(1L, "competition", new ArrayList<>(),
                 new TimeSlot(-1, Day.FRIDAY, new Node(1, 2)), Certificate.B5, EventType.COMPETITION, true, "A", "A");
 
-        assertEquals("competition - COMPETITION from 1 until 2 in week -1, on FRIDAY.\n", e.messageConverter());
+        assertEquals("competition - COMPETITION from 00:01 until 00:02 in week -1, on FRIDAY.\n", e.messageConverter());
     }
 }

@@ -5,6 +5,7 @@ import java.util.List;
 import javax.persistence.*;
 import lombok.*;
 import nl.tudelft.sem.template.shared.converters.RequestConverter;
+import nl.tudelft.sem.template.shared.converters.StringTimeToMinutesConverter;
 import nl.tudelft.sem.template.shared.converters.TimeSlotConverter;
 import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
@@ -98,8 +99,20 @@ public class Event {
         return positions.remove(position);
     }
 
-    public void enqueue(String name, PositionName position) {
+    /**
+     * Enqueues a user to a position if that position is desired.
+     *
+     * @param name the name of the user that enqueues
+     * @param position position to enqueue for
+     * @return true iff the enqueue was successfull
+     */
+    public boolean enqueue(String name, PositionName position) {
+        if (!positions.contains(position)) {
+            return false;
+        }
+
         queue.add(new Request(name, position));
+        return true;
     }
 
     public boolean dequeue(Request request) {
@@ -112,9 +125,11 @@ public class Event {
      * @return a string containing relevant data for a user
      */
     public String messageConverter() {
-        return getLabel() + " - " + getType() + " from " + timeslot.getTime().getFirst() + " until "
-                + timeslot.getTime().getSecond() + " in week " + timeslot.getWeek() + ", on "
-                + timeslot.getDay().toString() + ".\n";
+        StringTimeToMinutesConverter sc = new StringTimeToMinutesConverter();
+        return getLabel() + " - " + getType() + " from "
+                + sc.convertToEntityAttribute(timeslot.getTime().getFirst()) + " until "
+                + sc.convertToEntityAttribute(timeslot.getTime().getSecond()) + " in week "
+                + timeslot.getWeek() + ", on " + timeslot.getDay().toString() + ".\n";
     }
 }
 
