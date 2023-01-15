@@ -178,10 +178,10 @@ public class EventService {
         long weekTime = dayNumber * 1440L + actualEvent.getTimeslot().getTime().getFirst();
 
         // Check if the user has time to get to the event
-        if ((actualEvent.getType() == EventType.COMPETITION && (time + 1440L) % 10080L > weekTime)
+        /*if ((actualEvent.getType() == EventType.COMPETITION && (time + 1440L) % 10080L > weekTime)
             || (actualEvent.getType() == EventType.TRAINING && (time + 30L) % 10080L > weekTime)) {
             return false;
-        }
+        }*/
 
         // Check if user that wants to enqueue is not creator
         if (user.getId().equals(actualEvent.getOwningUser())) {
