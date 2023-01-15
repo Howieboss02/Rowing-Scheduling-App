@@ -143,7 +143,6 @@ public class Event {
      */
     public Event merge(EventModel eventModel, boolean updateIsCompetitive) {
 
-        boolean isCompetitive = eventModel.isCompetitive();
         if (!eventModel.getOwningUser().equals(this.getOwningUser())) {
             return null;
         }
@@ -163,8 +162,9 @@ public class Event {
         if (type != null) {
             this.setType(type);
         }
+
         if (updateIsCompetitive) {
-            this.setCompetitive(isCompetitive);
+            this.setCompetitive(eventModel.isCompetitive());
         }
         String gender = eventModel.getGender();
         if (gender != null) {
