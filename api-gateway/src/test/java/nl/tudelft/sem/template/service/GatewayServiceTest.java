@@ -38,8 +38,6 @@ import org.springframework.web.client.RestTemplate;
 @RestClientTest
 public class GatewayServiceTest {
 
-    private RestTemplate restTemplate;
-
     private GatewayService service;
 
     @Autowired
@@ -111,11 +109,11 @@ public class GatewayServiceTest {
         user = new User();
         loginResponse = new AuthenticationResponseModel(token);
 
-        this.restTemplate = this.builder
+        RestTemplate restTemplate = this.builder
                 .errorHandler(new RestTemplateResponseErrorHandler())
                 .build();
         server = MockRestServiceServer.createServer(restTemplate);
-        service = new GatewayService(this.restTemplate);
+        service = new GatewayService(restTemplate);
     }
 
     @Test
@@ -201,7 +199,7 @@ public class GatewayServiceTest {
 
     @Test
     public void testAccept() throws JsonProcessingException {
-        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/1/accept"))
+        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/1/accept?outcome=true"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess(JsonUtil.serialize("ACCEPTED"), MediaType.APPLICATION_JSON));
 

@@ -74,7 +74,6 @@ public class EventService {
      *
      * @param id of the event to get
      * @return the event
-     * @throws IllegalArgumentException exception when the event is not found
      */
     public Optional<Event> getById(Long id) {
         if (!eventRepo.existsById(id)) {
@@ -152,6 +151,7 @@ public class EventService {
      * @param id the id of the event
      * @param request the request to remove
      * @return true if the request was removed, otherwise false
+     * @throws NoSuchElementException if the event does not exist or the request is not in the queue
      */
     public boolean dequeueById(Long id, Request request) throws NoSuchElementException {
         Optional<Event> event = getById(id);
@@ -214,11 +214,9 @@ public class EventService {
         List<Event> e1 = eventRepo.findMatchingTrainings(user.getCertificate(), user.getId(), EventType.TRAINING);
         List<Event> e2 = eventRepo.findMatchingCompetitions(user.getCertificate(), user.getOrganization(),
                                                             user.getId(), EventType.COMPETITION, user.getGender());
-        List<Event> allEvents = e1.addAll(e2) ? e1 : e2;
-        return matcher.matchPositions(user.getPositions(), allEvents, user);
+        e2.forEach(e1::add);
 
-
-
+        return PositionMatcher.matchPositions(user.getPositions(), e1, user);
     }
 
     public User getUserById(Long id) {
