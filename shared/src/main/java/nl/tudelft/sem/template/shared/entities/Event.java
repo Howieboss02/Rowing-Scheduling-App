@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.shared.entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import javax.persistence.*;
 import lombok.*;
 import nl.tudelft.sem.template.shared.converters.RequestConverter;
@@ -19,7 +20,6 @@ import nl.tudelft.sem.template.shared.enums.PositionName;
 @ToString
 @Table(name = "event")
 @AllArgsConstructor
-@EqualsAndHashCode
 public class Event {
 
     @Id
@@ -126,5 +126,22 @@ public class Event {
                 + sc.convertToEntityAttribute(timeslot.getTime().getSecond()) + " in week "
                 + timeslot.getWeek() + ", on " + timeslot.getDay().toString() + ".\n";
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Event event = (Event) o;
+        if (event.id == null) {
+            return label.equals(event.label);
+        }
+        return id.equals(event.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
+
 }
 
