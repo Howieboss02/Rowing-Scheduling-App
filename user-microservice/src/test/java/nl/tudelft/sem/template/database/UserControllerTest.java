@@ -143,8 +143,8 @@ public class UserControllerTest {
 
     @Test
     public void testRemoveTimeSlot() {
-        final TimeSlot removedTime = new TimeSlot(1, Day.FRIDAY, new Node(11, 13));
-        final TimeSlot correctTime = new TimeSlot(1, Day.FRIDAY, new Node(11, 12));
+        final TimeSlot removedTime = new TimeSlot(-1, Day.FRIDAY, new Node(11, 13));
+        final TimeSlot correctTime = new TimeSlot(-1, Day.FRIDAY, new Node(11, 12));
 
         User u = getUser("A", Certificate.B1);
 
@@ -156,7 +156,7 @@ public class UserControllerTest {
 
     @Test
     public void testAddRecurringTimeSlot() {
-        TimeSlot time = new TimeSlot(1, Day.FRIDAY, new Node(10, 12));
+        TimeSlot time = new TimeSlot(-1, Day.FRIDAY, new Node(10, 12));
 
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
