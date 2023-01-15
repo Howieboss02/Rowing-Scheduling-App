@@ -107,12 +107,7 @@ public class Event {
      * @return true iff the enqueue was successfull
      */
     public boolean enqueue(String name, PositionName position) {
-        if (!positions.contains(position)) {
-            return false;
-        }
-
-        queue.add(new Request(name, position));
-        return true;
+        return queue.add(new Request(name, position));
     }
 
     public boolean dequeue(Request request) {
