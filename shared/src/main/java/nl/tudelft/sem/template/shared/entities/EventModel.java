@@ -23,8 +23,13 @@ public class EventModel {
     private String gender;
     private String organisation;
 
+    /**
+     * Converter to Event.
+     *
+     * @return Event created from EventModel
+     */
     public Event getEvent() {
-        Event event = new Event(owningUser,
+        return new Event(owningUser,
                 label,
                 positions,
                 timeslot,
@@ -33,7 +38,6 @@ public class EventModel {
                 isCompetitive,
                 gender,
                 organisation);
-        return event;
     }
 
 }

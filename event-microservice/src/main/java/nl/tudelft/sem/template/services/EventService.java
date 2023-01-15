@@ -86,6 +86,7 @@ public class EventService {
 
     /**
      * Update an event.
+     *
      * @param eventId event id
      * @param eventModel the event model
      * @param updateIsCompetitive whether to update the isCompetitive field
@@ -96,7 +97,7 @@ public class EventService {
         Optional<Event> toUpdate = getById(eventId);
         if (toUpdate.isPresent()) {
             event = toUpdate.get().merge(eventModel, updateIsCompetitive);
-            if(event == null) {
+            if (event == null) {
                 return Optional.empty();
             }
             eventRepo.save(event);
@@ -159,7 +160,7 @@ public class EventService {
             throw new NoSuchElementException("Event does not exist");
         } else {
             boolean success = event.get().dequeue(request);
-            if(success) {
+            if (success) {
                 eventRepo.save(event.get());
                 return true;
             } else {

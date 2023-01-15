@@ -13,7 +13,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
 import nl.tudelft.sem.template.services.GatewayService;
 import nl.tudelft.sem.template.shared.authentication.JwtAuthenticationEntryPoint;
 import nl.tudelft.sem.template.shared.authentication.JwtRequestFilter;
@@ -106,7 +105,8 @@ public class EventGatewayControllerTest {
 
     @Test
     public void testGetEventsWithException() throws Exception {
-        when(gatewayService.getAllEvents(Optional.empty(), Optional.empty())).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+        when(gatewayService.getAllEvents(Optional.empty(),
+                Optional.empty())).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         mockMvc.perform(get("/api/event/all"))
                 .andExpect(status().isNotFound());
@@ -117,92 +117,6 @@ public class EventGatewayControllerTest {
         when(gatewayService.getAllEvents(Optional.empty(), Optional.empty())).thenThrow(new IllegalArgumentException());
 
         mockMvc.perform(get("/api/event/all"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void testGetEventsByUser() throws Exception {
-        List<Event> events = Arrays.asList(event1, event2);
-        when(gatewayService.getAllEventsForUser(1L)).thenReturn(events);
-
-        mockMvc.perform(get("/api/event/ownedBy/1"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Event 1")))
-                .andExpect(content().string(containsString("Event 2")));
-    }
-
-    @Test
-    public void testGetEventsByUserWithException() throws Exception {
-        when(gatewayService.getAllEventsForUser(1L))
-                .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-        mockMvc.perform(get("/api/event/ownedBy/1"))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void testGetEventsByUserWithOtherException() throws Exception {
-        when(gatewayService.getAllEventsForUser(1L)).thenThrow(new IllegalArgumentException());
-
-        mockMvc.perform(get("/api/event/ownedBy/1"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void testGetRequests() throws Exception {
-        List<Request> requests = Arrays.asList(new Request("request1", PositionName.Coach),
-                new Request("request2", PositionName.Coach));
-        when(gatewayService.getAllRequestsForEvent(1L)).thenReturn(requests);
-
-        mockMvc.perform(get("/api/event/1/queue"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("request1")))
-                .andExpect(content().string(containsString("request2")));
-    }
-
-    @Test
-    public void testGetRequestsWithException() throws Exception {
-        when(gatewayService.getAllRequestsForEvent(1L))
-                .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-        mockMvc.perform(get("/api/event/1/queue"))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void testGetRequestsWithOtherException() throws Exception {
-        when(gatewayService.getAllRequestsForEvent(1L)).thenThrow(new IllegalArgumentException());
-
-        mockMvc.perform(get("/api/event/1/queue"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void testMatchEvents() throws Exception {
-        List<Event> events = Arrays.asList(event1, event2);
-
-        when(gatewayService.getMatchedEventsForUser(1L)).thenReturn(ResponseEntity.ok(events));
-
-        mockMvc.perform(get("/api/event/match/1"))
-                .andExpect(status().isOk())
-                .andExpect(content().string(containsString("Event 1")))
-                .andExpect(content().string(containsString("Event 2")));
-    }
-
-    @Test
-    public void testMatchEventsWithException() throws Exception {
-        when(gatewayService.getMatchedEventsForUser(1L))
-                .thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
-
-        mockMvc.perform(get("/api/event/match/1"))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void testMatchEventsWithOtherException() throws Exception {
-        when(gatewayService.getMatchedEventsForUser(1L)).thenThrow(new IllegalArgumentException());
-
-        mockMvc.perform(get("/api/event/match/1"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -407,7 +321,7 @@ public class EventGatewayControllerTest {
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson = ow.writeValueAsString(request);
 
-        mockMvc.perform(post("/api/event/1/reject?outcome=false").contentType(APPLICATION_JSON_UTF8)
+        mockMvc.perform(post("/api/event/1/accept?outcome=false").contentType(APPLICATION_JSON_UTF8)
                         .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("REJECTED")));

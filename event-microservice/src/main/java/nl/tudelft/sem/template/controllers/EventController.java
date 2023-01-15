@@ -34,7 +34,8 @@ public class EventController {
      * @return List of events
      */
     @GetMapping("/all")
-    public List<Event> getEvents(@RequestParam(required = false) Optional<Long> owner, @RequestParam(required = false) Optional<Long> match) {
+    public List<Event> getEvents(@RequestParam(required = false) Optional<Long> owner,
+                                 @RequestParam(required = false) Optional<Long> match) {
         if (owner.isPresent()) {
             return eventService.getAllEventsByUser(owner.get());
         } else if (match.isPresent()) {
@@ -47,6 +48,7 @@ public class EventController {
             return eventService.getAllEvents();
         }
     }
+
     /**
      * Get event by id.
      *
@@ -143,6 +145,7 @@ public class EventController {
         }
         return ResponseEntity.ok("NOT ENQUEUED");
     }
+
     /**
      * PUT API for rejecting a user who wants to join an event.
      *
@@ -168,7 +171,7 @@ public class EventController {
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }  catch (Exception e) {
-        return ResponseEntity.ok("REJECTED");
+            return ResponseEntity.ok("REJECTED");
         }
     }
 }
