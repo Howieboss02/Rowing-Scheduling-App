@@ -253,8 +253,9 @@ public class EventControllerTest {
     @Test
     public void rejectTestNoEvent() {
         Request r = new Request("A", PositionName.Cox);
-        when(mockedService.getById(1L)).thenThrow(new NoSuchElementException());
-        assertEquals(mockedSut.accept(1L, r, false).getStatusCode(), HttpStatus.NOT_FOUND);
+        when(mockedService.getById(1L)).thenReturn(Optional.empty());
+        when(mockedService.dequeueById(1L, r)).thenThrow(new NoSuchElementException());
+        assertEquals(HttpStatus.NOT_FOUND, mockedSut.accept(1L, r, false).getStatusCode());
     }
 
     @Test

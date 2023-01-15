@@ -443,7 +443,6 @@ class EventServiceTest {
 
         server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/1"))
                 .andRespond(withSuccess(JsonUtil.serialize(user), MediaType.APPLICATION_JSON));
-        System.out.println(user);
 
         assertEquals(trainings, mockedService.getMatchedEvents(user.getId()));
     }
