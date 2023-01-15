@@ -97,6 +97,7 @@ public class EventController {
             if (response == null || response.size() == 0) {
                 return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
             }
+            System.out.println(response);
             return ResponseEntity.ok(response);
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatus()).build();
@@ -199,10 +200,10 @@ public class EventController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         User user = response.block();
-        Timestamp time = (Timestamp) response.timestamp().block().get(0);
-        long weekTime = time.getDay() * 1440L + 60 * time.getHours() + time.getMinutes();
+        //Timestamp time = (Timestamp) response.timestamp().block().get(0);
+        //long weekTime = time.getDay() * 1440L + 60 * time.getHours() + time.getMinutes();
 
-        if (eventService.enqueueById(eventId, user, position, weekTime)) {
+        if (eventService.enqueueById(eventId, user, position, 0)) {
             return ResponseEntity.ok("ENQUEUED");
         }
         return ResponseEntity.ok("NOT ENQUEUED");

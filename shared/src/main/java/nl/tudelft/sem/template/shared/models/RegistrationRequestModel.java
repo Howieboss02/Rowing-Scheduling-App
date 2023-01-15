@@ -22,7 +22,7 @@ public class RegistrationRequestModel {
     private String name;
 
     public User getUser() {
-        return new User(this.getNetId(), this.getEmail(), this.getName(), this.getOrganization(), this.getGender(),
+        return new User(this.getNetId(), this.getName(), this.getOrganization(),this.getEmail(), this.getGender(),
                 this.getCertificate(), this.getPositions());
     }
 }
