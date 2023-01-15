@@ -1,6 +1,8 @@
 package nl.tudelft.sem.template.controllers;
 
 import java.util.List;
+import java.util.Optional;
+
 import nl.tudelft.sem.template.services.GatewayService;
 import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.entities.Event;
@@ -23,9 +25,9 @@ public class GatewayEventController {
      * Gets all events.
      */
     @GetMapping("/all")
-    public ResponseEntity<List<Event>> getEvents() {
+    public ResponseEntity<List<Event>> getEvents(@RequestParam(required = false) Optional<Long> owner, @RequestParam(required = false) Optional<Long> match) {
         try {
-            return ResponseEntity.ok(gatewayService.getAllEvents());
+            return ResponseEntity.ok(gatewayService.getAllEvents(owner, match));
         } catch (ResponseStatusException e) {
             throw e;
         } catch (Exception e) {
@@ -149,9 +151,10 @@ public class GatewayEventController {
      */
     @PostMapping("{id}/accept")
     public ResponseEntity<String> accept(@PathVariable("id") Long id,
-                                         @RequestBody Request request) {
+                                         @RequestBody Request request,
+                                         @RequestParam() boolean outcome) {
         try {
-            return ResponseEntity.ok(gatewayService.acceptToEvent(id, request));
+            return ResponseEntity.ok(gatewayService.acceptToEvent(id, request, outcome));
         } catch (ResponseStatusException e) {
             System.out.println("accept exception " + e.getMessage());
             throw e;
@@ -160,21 +163,4 @@ public class GatewayEventController {
             return ResponseEntity.badRequest().build();
         }
     }
-
-    /**
-     * Reject an event.
-     */
-    @PostMapping("{id}/reject")
-    public ResponseEntity<String> reject(@PathVariable("id") Long id,
-                                         @RequestBody Request request) {
-        try {
-            return ResponseEntity.ok(gatewayService.rejectFromEvent(id, request));
-        } catch (ResponseStatusException e) {
-            throw e;
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-
 }

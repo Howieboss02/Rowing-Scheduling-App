@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.shared.entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.*;
 import lombok.*;
 import nl.tudelft.sem.template.shared.converters.RequestConverter;
@@ -130,6 +131,37 @@ public class Event {
                 + sc.convertToEntityAttribute(timeslot.getTime().getFirst()) + " until "
                 + sc.convertToEntityAttribute(timeslot.getTime().getSecond()) + " in week "
                 + timeslot.getWeek() + ", on " + timeslot.getDay().toString() + ".\n";
+    }
+
+    public Event merge(EventModel eventModel, boolean updateIsCompetitive) {
+        String label = eventModel.getLabel();
+        TimeSlot timeslot = eventModel.getTimeslot();
+        Certificate certificate = eventModel.getCertificate();
+        EventType type = eventModel.getType();
+        String gender = eventModel.getGender();
+        String organisation = eventModel.getOrganisation();
+        boolean isCompetitive = eventModel.isCompetitive();
+        List<PositionName> positions = eventModel.getPositions();
+        if (!eventModel.getOwningUser().equals(this.getOwningUser())) {
+            return null;
+        } if (label != null) {
+            this.setLabel(label);
+        } if  (timeslot != null) {
+            this.setTimeslot(timeslot);
+        } if (certificate != null) {
+            this.setCertificate(certificate);
+        } if (type != null) {
+            this.setType(type);
+        } if (updateIsCompetitive) {
+            this.setCompetitive(isCompetitive);
+        } if (gender != null) {
+            this.setGender(gender);
+        } if (organisation != null) {
+            this.setOrganisation(organisation);
+        } if (positions != null) {
+            this.setPositions(positions);
+        }
+        return this;
     }
 }
 

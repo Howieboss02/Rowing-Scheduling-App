@@ -12,6 +12,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
 import nl.tudelft.sem.template.services.GatewayService;
 import nl.tudelft.sem.template.shared.authentication.JwtAuthenticationEntryPoint;
 import nl.tudelft.sem.template.shared.authentication.JwtRequestFilter;
@@ -94,7 +96,7 @@ public class EventGatewayControllerTest {
     @Test
     public void testGetEvents() throws Exception {
         List<Event> events = Arrays.asList(event1, event2);
-        when(gatewayService.getAllEvents()).thenReturn(events);
+        when(gatewayService.getAllEvents(Optional.empty(), Optional.empty())).thenReturn(events);
 
         mockMvc.perform(get("/api/event/all"))
                 .andExpect(status().isOk())
@@ -104,7 +106,7 @@ public class EventGatewayControllerTest {
 
     @Test
     public void testGetEventsWithException() throws Exception {
-        when(gatewayService.getAllEvents()).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
+        when(gatewayService.getAllEvents(Optional.empty(), Optional.empty())).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
         mockMvc.perform(get("/api/event/all"))
                 .andExpect(status().isNotFound());
@@ -112,7 +114,7 @@ public class EventGatewayControllerTest {
 
     @Test
     public void testGetEventsWithOtherException() throws Exception {
-        when(gatewayService.getAllEvents()).thenThrow(new IllegalArgumentException());
+        when(gatewayService.getAllEvents(Optional.empty(), Optional.empty())).thenThrow(new IllegalArgumentException());
 
         mockMvc.perform(get("/api/event/all"))
                 .andExpect(status().isBadRequest());
@@ -353,14 +355,14 @@ public class EventGatewayControllerTest {
 
     @Test
     public void testAccept() throws Exception {
-        when(gatewayService.acceptToEvent(1L, request)).thenReturn("ACCEPTED");
+        when(gatewayService.acceptToEvent(1L, request, true)).thenReturn("ACCEPTED");
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson = ow.writeValueAsString(request);
 
-        mockMvc.perform(post("/api/event/1/accept").contentType(APPLICATION_JSON_UTF8)
+        mockMvc.perform(post("/api/event/1/accept?outcome=true").contentType(APPLICATION_JSON_UTF8)
                         .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("ACCEPTED")));
@@ -368,14 +370,14 @@ public class EventGatewayControllerTest {
 
     @Test
     public void testAcceptWithException() throws Exception {
-        doThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST)).when(gatewayService).acceptToEvent(1L, request);
+        doThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST)).when(gatewayService).acceptToEvent(1L, request, true);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson = ow.writeValueAsString(request);
 
-        mockMvc.perform(post("/api/event/1/accept")
+        mockMvc.perform(post("/api/event/1/accept?outcome=true")
                         .contentType(APPLICATION_JSON_UTF8)
                         .content(requestJson))
                 .andExpect(status().isBadRequest());
@@ -383,14 +385,14 @@ public class EventGatewayControllerTest {
 
     @Test
     public void testAcceptWithOtherException() throws Exception {
-        when(gatewayService.acceptToEvent(1L, request)).thenThrow(new IllegalArgumentException());
+        when(gatewayService.acceptToEvent(1L, request, true)).thenThrow(new IllegalArgumentException());
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson = ow.writeValueAsString(request);
 
-        mockMvc.perform(post("/api/event/1/accept")
+        mockMvc.perform(post("/api/event/1/accept?outcome=true")
                         .contentType(APPLICATION_JSON_UTF8)
                         .content(requestJson))
                 .andExpect(status().isBadRequest());
@@ -398,48 +400,16 @@ public class EventGatewayControllerTest {
 
     @Test
     public void testReject() throws Exception {
-        when(gatewayService.rejectFromEvent(1L, request)).thenReturn("REJECTED");
+        when(gatewayService.acceptToEvent(1L, request, false)).thenReturn("REJECTED");
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson = ow.writeValueAsString(request);
 
-        mockMvc.perform(post("/api/event/1/reject").contentType(APPLICATION_JSON_UTF8)
+        mockMvc.perform(post("/api/event/1/reject?outcome=false").contentType(APPLICATION_JSON_UTF8)
                         .content(requestJson))
                 .andExpect(status().isOk())
                 .andExpect(content().string(containsString("REJECTED")));
     }
-
-    @Test
-    public void testRejectWithException() throws Exception {
-        doThrow(new ResponseStatusException(HttpStatus.NOT_FOUND)).when(gatewayService).rejectFromEvent(1L, request);
-
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-        String requestJson = ow.writeValueAsString(request);
-
-        mockMvc.perform(post("/api/event/1/reject")
-                        .contentType(APPLICATION_JSON_UTF8)
-                        .content(requestJson))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void testRejectWithAnotherException() throws Exception {
-        Request request = new Request();
-        doThrow(new IllegalArgumentException()).when(gatewayService).rejectFromEvent(1L, request);
-
-        // Set up JSON representation of the Request object
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
-        ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
-        String requestJson = ow.writeValueAsString(request);
-
-        mockMvc.perform(post("/api/event/1/reject").contentType(APPLICATION_JSON_UTF8)
-                        .content(requestJson))
-                .andExpect(status().isBadRequest());
-    }
-
 }
