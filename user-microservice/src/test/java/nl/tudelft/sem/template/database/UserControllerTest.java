@@ -30,8 +30,6 @@ public class UserControllerTest {
     public TestUserRepository repo;
     public UserService service;
     private UserController sut;
-    private UserTimeSlotService timeService;
-    private UserSetterService setterService;
 
     /**
      * Helper method to create list of positions.
@@ -64,8 +62,8 @@ public class UserControllerTest {
     public void setup() {
         this.repo = new TestUserRepository();
         this.service = new UserService(repo);
-        this.timeService = new UserTimeSlotService(repo, service);
-        this.setterService = new UserSetterService(repo, service);
+        UserTimeSlotService timeService = new UserTimeSlotService(repo, service);
+        UserSetterService setterService = new UserSetterService(repo, service);
         this.sut = new UserController(service, timeService, setterService);
     }
 
@@ -114,27 +112,14 @@ public class UserControllerTest {
         assertEquals(sut.getUsers().get(0).getName(), "A");
     }
 
-    //TODO: fix the tests
-
-    /*@Test
-    public void testAddSchedule() {
-        User u = getUser("A", Certificate.B1);
-        sut.registerNewUser(u);
-        //assertEquals(sut.addRecurringTimeSlot().getStatusCode(), HttpStatus.OK);
-        assertEquals(u.getId(), 1L);
-        assertEquals(sut.getUser(1L).getBody(), u);
-        assertEquals(sut.getUser(1L).getBody().getSchedule().getRecurringSlots().get(0),
-                new TimeSlot(-1, Day.MONDAY, new Node(10, 14)));
-        assertEquals(sut.getUser(1L).getBody().getSchedule().getAddedSlots().size(), 0);
-        assertEquals(sut.getUser(1L).getBody().getSchedule().getRemovedSlots().size(), 0);
-    }*/
-
     @Test
     public void testRemoveSchedule() {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
-        //assertEquals(sut.addRecurringTimeSlot(1L, Day.MONDAY, new Node(10, 14)).getStatusCode(), HttpStatus.OK);
-        //assertEquals(sut.removeRecurringTimeSlot(1L, Day.MONDAY, new Node(10, 14)).getStatusCode(), HttpStatus.OK);
+        assertEquals(sut.addRecurringTimeSlot(1L, new TimeSlot(1, Day.MONDAY, new Node(10, 14))).getStatusCode(),
+            HttpStatus.OK);
+        assertEquals(sut.removeRecurringTimeSlot(1L, new TimeSlot(1, Day.MONDAY, new Node(10, 14))).getStatusCode(),
+            HttpStatus.OK);
         assertEquals(sut.getUser(1L).getBody().getSchedule().getRecurringSlots().size(), 0);
     }
 
@@ -171,7 +156,7 @@ public class UserControllerTest {
 
     @Test
     public void testAddRecurringTimeSlot() {
-        TimeSlot time = new TimeSlot(-1, Day.FRIDAY, new Node(10, 12));
+        TimeSlot time = new TimeSlot(1, Day.FRIDAY, new Node(10, 12));
 
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);

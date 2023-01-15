@@ -21,6 +21,7 @@ public class UserTimeSlotService {
 
     /**
      * Update the availability of a user if timeslot is valid.
+     * Week numbers can't be negative & time hours have to be cursive.
      *
      * @param id the id of the user
      * @param timeSlot to be added
@@ -29,7 +30,7 @@ public class UserTimeSlotService {
     public Optional<User> addRecurringTimeSlot(Long id, TimeSlot timeSlot) {
         Optional<User> user = service.getById(id);
 
-        if (user.isPresent() && timeSlot.getTime().getFirst() < timeSlot.getTime().getSecond()) {
+        if (user.isPresent() && timeSlot.getTime().getFirst() < timeSlot.getTime().getSecond() && timeSlot.getWeek() > 0) {
             user.get().addRecurringSlot(timeSlot);
             userRepo.save(user.get());
         }
@@ -54,6 +55,7 @@ public class UserTimeSlotService {
 
     /**
      * Add a one time slot to a user if timeslot is valid.
+     * Week numbers can't be negative & time hours have to be cursive.
      *
      * @param id the id of the user
      * @param timeSlot to be added
@@ -62,7 +64,7 @@ public class UserTimeSlotService {
     public Optional<User> addTimeSlot(Long id, TimeSlot timeSlot) {
         Optional<User> user = service.getById(id);
 
-        if (user.isPresent() && timeSlot.getTime().getFirst() < timeSlot.getTime().getSecond()) {
+        if (user.isPresent() && timeSlot.getTime().getFirst() < timeSlot.getTime().getSecond() && timeSlot.getWeek() > 0) {
             user.get().addSlot(timeSlot);
             userRepo.save(user.get());
         }
