@@ -2,7 +2,6 @@ package nl.tudelft.sem.template.controllers;
 
 import java.util.List;
 import java.util.Optional;
-
 import nl.tudelft.sem.template.services.GatewayService;
 import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.entities.Event;
@@ -25,7 +24,8 @@ public class GatewayEventController {
      * Gets all events.
      */
     @GetMapping("/all")
-    public ResponseEntity<List<Event>> getEvents(@RequestParam(required = false) Optional<Long> owner, @RequestParam(required = false) Optional<Long> match) {
+    public ResponseEntity<List<Event>> getEvents(@RequestParam(required = false) Optional<Long> owner,
+                                                 @RequestParam(required = false) Optional<Long> match) {
         try {
             return ResponseEntity.ok(gatewayService.getAllEvents(owner, match));
         } catch (ResponseStatusException e) {
@@ -36,52 +36,7 @@ public class GatewayEventController {
     }
 
     /**
-     * Gets all events.
-     */
-    @GetMapping("/ownedBy/{userId}")
-    public ResponseEntity<List<Event>> getEventsByUser(@PathVariable("userId") Long userId) {
-        try {
-            return ResponseEntity.ok(gatewayService.getAllEventsForUser(userId));
-        } catch (ResponseStatusException e) {
-            throw e;
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    /**
-     * get all request for a specific event.
-     */
-    @GetMapping("/{eventId}/queue")
-    public ResponseEntity<List<Request>> getRequests(@PathVariable("eventId") Long eventId) {
-        try {
-            return ResponseEntity.ok(gatewayService.getAllRequestsForEvent(eventId));
-        } catch (ResponseStatusException e) {
-            throw e;
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    /**
-     * Match events to a user.
-     */
-    @GetMapping("/match/{userId}")
-    public ResponseEntity<Object[]> matchEvents(@PathVariable("userId") Long userId) {
-        System.out.println("matchEvents");
-        try {
-            return ResponseEntity.ok(gatewayService.getMatchedEventsForUser(userId));
-        } catch (ResponseStatusException e) {
-            System.out.println("matchEvents exception");
-            throw e;
-        } catch (Exception e) {
-            System.out.println("matchEvents exception 2" + e.getMessage());
-            return ResponseEntity.badRequest().build();
-        }
-    }
-
-    /**
-     * Ragister a new event.
+     * Register a new event.
      */
     @PostMapping("/register")
     public ResponseEntity<Event> registerNewEvent(@RequestBody EventModel eventModel) throws Exception {

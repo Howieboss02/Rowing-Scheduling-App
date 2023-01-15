@@ -188,7 +188,7 @@ public class EventControllerTest {
                 HttpStatus.BAD_REQUEST);
     }
 
-   /* @Test
+    /* @Test
     public void getEventsByUserTest() {
         try {
             TimeSlot t = new TimeSlot(1, Day.MONDAY, new Node(1, 2));
@@ -249,6 +249,7 @@ public class EventControllerTest {
             e.printStackTrace();
         }
     }
+
     @Test
     public void rejectTestNoEvent() {
         Request r = new Request("A", PositionName.Cox);

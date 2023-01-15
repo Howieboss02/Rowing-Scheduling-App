@@ -2,7 +2,6 @@ package nl.tudelft.sem.template.services;
 
 import java.util.List;
 import java.util.Optional;
-
 import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.Event;
@@ -132,8 +131,14 @@ public class GatewayService {
                 + "/get/" + userId, User.class);
     }
 
+    /**
+     * Get all events accordingly to params.
+     *
+     * @param userId the user id
+     * @param matchUserId user id of the user to match with
+     */
     public List<Event> getAllEvents(Optional<Long> userId, Optional<Long> matchUserId) {
-        if(userId.isPresent()) {
+        if (userId.isPresent()) {
             return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
                     + "/all?owner=" + userId.get(), List.class);
         } else if (matchUserId.isPresent()) {
@@ -143,23 +148,6 @@ public class GatewayService {
             return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
                     + "/all", List.class);
         }
-    }
-
-    public List<Event> getAllEventsForUser(Long userId) {
-        return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/ownedBy/" + userId, List.class);
-    }
-
-    public List<Request> getAllRequestsForEvent(Long eventId) {
-        return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/" + eventId + "/queue", List.class);
-    }
-
-    public Object[] getMatchedEventsForUser(Long userId) {
-        var a = restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/match/" + userId, Object[].class);
-        System.out.println(a);
-        return a;
     }
 
     public Event addNewEvent(EventModel eventModel) {

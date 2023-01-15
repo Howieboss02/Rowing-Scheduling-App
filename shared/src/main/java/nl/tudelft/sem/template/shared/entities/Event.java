@@ -133,32 +133,49 @@ public class Event {
                 + timeslot.getWeek() + ", on " + timeslot.getDay().toString() + ".\n";
     }
 
+    /**
+     * Method for updating event with data from another event.
+     *
+     * @param eventModel the event to update from
+     * @param updateIsCompetitive whether to update the competitiveness
+     *
+     * @return a copy of updated event
+     */
     public Event merge(EventModel eventModel, boolean updateIsCompetitive) {
-        String label = eventModel.getLabel();
-        TimeSlot timeslot = eventModel.getTimeslot();
-        Certificate certificate = eventModel.getCertificate();
-        EventType type = eventModel.getType();
-        String gender = eventModel.getGender();
-        String organisation = eventModel.getOrganisation();
+
         boolean isCompetitive = eventModel.isCompetitive();
-        List<PositionName> positions = eventModel.getPositions();
         if (!eventModel.getOwningUser().equals(this.getOwningUser())) {
             return null;
-        } if (label != null) {
+        }
+        String label = eventModel.getLabel();
+        if (label != null) {
             this.setLabel(label);
-        } if  (timeslot != null) {
+        }
+        TimeSlot timeslot = eventModel.getTimeslot();
+        if  (timeslot != null) {
             this.setTimeslot(timeslot);
-        } if (certificate != null) {
+        }
+        Certificate certificate = eventModel.getCertificate();
+        if (certificate != null) {
             this.setCertificate(certificate);
-        } if (type != null) {
+        }
+        EventType type = eventModel.getType();
+        if (type != null) {
             this.setType(type);
-        } if (updateIsCompetitive) {
+        }
+        if (updateIsCompetitive) {
             this.setCompetitive(isCompetitive);
-        } if (gender != null) {
+        }
+        String gender = eventModel.getGender();
+        if (gender != null) {
             this.setGender(gender);
-        } if (organisation != null) {
+        }
+        String organisation = eventModel.getOrganisation();
+        if (organisation != null) {
             this.setOrganisation(organisation);
-        } if (positions != null) {
+        }
+        List<PositionName> positions = eventModel.getPositions();
+        if (positions != null) {
             this.setPositions(positions);
         }
         return this;
