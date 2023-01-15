@@ -149,29 +149,33 @@ public class EventController {
     public ResponseEntity<String> accept(@PathVariable("id") Long id,
                                          @RequestBody Request request,
                                          @RequestParam() boolean outcome) {
-        boolean dequeueSuccess = false;
+        boolean dequeueSuccess;
         try {
             dequeueSuccess = eventService.dequeueById(id, request);
-            if (!outcome && dequeueSuccess) {
-                String mess = eventService.sendNotification(id, request.getName(), "REJECTED");
-                return ResponseEntity.ok("REJECTED\n" + mess);
-            } else if (outcome && dequeueSuccess) {
-                String mess = eventService.sendNotification(id, request.getName(), "ACCEPTED");
-                return ResponseEntity.ok("ACCEPTED\n" + mess);
-            } else {
-                System.out.println("Something went wrong");
-                return ResponseEntity.badRequest().build();
+
+            try {
+                if (!outcome && dequeueSuccess) {
+                    String mess = eventService.sendNotification(id, request.getName(), "REJECTED");
+                    return ResponseEntity.ok("REJECTED\n" + mess);
+                } else if (outcome && dequeueSuccess) {
+                    String mess = eventService.sendNotification(id, request.getName(), "ACCEPTED");
+                    return ResponseEntity.ok("ACCEPTED\n" + mess);
+                } else {
+                    return ResponseEntity.badRequest().build();
+                }
+            } catch (Exception e) {
+                if (dequeueSuccess && !outcome) {
+                    return ResponseEntity.ok("REJECTED, notification not sent");
+                } else if (dequeueSuccess && outcome) {
+                    return ResponseEntity.ok("ACCEPTED, notification not sent");
+                } else {
+                    return ResponseEntity.badRequest().build();
+                }
             }
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }  catch (Exception e) {
-            if(dequeueSuccess && !outcome) {
-                return ResponseEntity.ok("REJECTED, notification not sent");
-            } else if(dequeueSuccess && outcome) {
-                return ResponseEntity.ok("ACCEPTED, notification not sent");
-            } else {
-                return ResponseEntity.badRequest().build();
-            }
+            return ResponseEntity.badRequest().build();
         }
     }
 }

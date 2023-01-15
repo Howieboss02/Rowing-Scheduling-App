@@ -1,5 +1,11 @@
 package utils;
 
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
@@ -12,12 +18,9 @@ import nl.tudelft.sem.template.shared.enums.PositionName;
 import nl.tudelft.sem.template.shared.utils.ValidityChecker;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+
+
 
 public class ValidityCheckerTest {
 

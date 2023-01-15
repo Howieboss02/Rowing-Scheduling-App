@@ -1,23 +1,23 @@
 package utils;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.Certificate;
-import nl.tudelft.sem.template.shared.enums.EventType;
 import nl.tudelft.sem.template.shared.enums.Day;
+import nl.tudelft.sem.template.shared.enums.EventType;
 import nl.tudelft.sem.template.shared.enums.PositionName;
 import nl.tudelft.sem.template.shared.utils.PositionMatcher;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class PositionMatcherTest {
 
@@ -81,7 +81,6 @@ public class PositionMatcherTest {
                 Certificate.B3, Arrays.asList(new Position(PositionName.Coach, false)));
         user.setId(2L);
         user.addRecurringSlot(new TimeSlot(-1, Day.FRIDAY, new Node(1, 2)));
-
 
         List<Event> events = getEvents();
         List<Position> positions = user.getPositions();

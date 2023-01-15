@@ -92,16 +92,16 @@ public class EventService {
      * @return the updated event
      */
     public Optional<Event> updateById(Long eventId, EventModel eventModel, boolean updateIsCompetitive) {
-        Event event = null;
         Optional<Event> toUpdate = getById(eventId);
         if (toUpdate.isPresent()) {
-            event = toUpdate.get().merge(eventModel, updateIsCompetitive);
+            Event event = toUpdate.get().merge(eventModel, updateIsCompetitive);
             if (event == null) {
                 return Optional.empty();
             }
             eventRepo.save(event);
+            return Optional.of(event);
         }
-        return Optional.ofNullable(event);
+        return Optional.empty();
     }
 
     /**
@@ -205,7 +205,6 @@ public class EventService {
         User user = getUserById(userId);
 
         ValidityChecker checker = new ValidityChecker(user);
-        PositionMatcher matcher = new PositionMatcher();
 
         if (!checker.canBeMatched()) {
             throw new IllegalArgumentException("User does not have enough information to be matched");
