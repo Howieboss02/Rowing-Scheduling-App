@@ -10,6 +10,8 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
 import nl.tudelft.sem.template.services.GatewayService;
 import nl.tudelft.sem.template.shared.components.RestTemplateResponseErrorHandler;
 import nl.tudelft.sem.template.shared.domain.Node;
@@ -144,7 +146,7 @@ public class GatewayServiceTest {
         List<Event> expected = Arrays.asList(event1, event2);
         server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/all"))
                 .andRespond(withSuccess(JsonUtil.serialize(expected), MediaType.APPLICATION_JSON));
-        List<Event> actual = service.getAllEvents();
+        List<Event> actual = service.getAllEvents(Optional.empty(), Optional.empty());
 
         assertThat(actual.size()).isEqualTo(2);
         server.verify();

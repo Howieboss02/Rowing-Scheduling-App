@@ -2,28 +2,57 @@ package nl.tudelft.sem.template.services;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
 import nl.tudelft.sem.template.database.EventRepository;
 import nl.tudelft.sem.template.database.TestEventRepository;
+import nl.tudelft.sem.template.shared.components.RestTemplateResponseErrorHandler;
 import nl.tudelft.sem.template.shared.domain.*;
 import nl.tudelft.sem.template.shared.entities.Event;
+import nl.tudelft.sem.template.shared.entities.EventModel;
 import nl.tudelft.sem.template.shared.entities.User;
-import nl.tudelft.sem.template.shared.enums.Certificate;
-import nl.tudelft.sem.template.shared.enums.Day;
-import nl.tudelft.sem.template.shared.enums.EventType;
-import nl.tudelft.sem.template.shared.enums.PositionName;
+import nl.tudelft.sem.template.shared.enums.*;
+import nl.tudelft.sem.template.shared.models.AuthenticationRequestModel;
+import nl.tudelft.sem.template.shared.models.AuthenticationResponseModel;
+import nl.tudelft.sem.template.shared.models.RegistrationRequestModel;
+import nl.tudelft.sem.template.shared.utils.JsonUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.data.util.Pair;
-
+import org.springframework.http.MediaType;
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.RestTemplate;
+@RestClientTest
 class EventServiceTest {
 
     public EventRepository mockedRepo;
     private EventService mockedService;
+    private RestTemplate restTemplate;
+    @Autowired
+    private RestTemplateBuilder builder;
+    @Autowired
+    private MockRestServiceServer server;
+
+    private static final String apiPrefix = "http://localhost:";
+    private static final String eventPath = "/api/event";
+
+    private static final String userPath = "/api/user";
+    private static final String registerPath = "/register";
+    private static final String authenticatePath = "/authenticate";
+
+    private static final String token = "token";
+
 
     /**
      * Method to create a list of position names for testing.
@@ -86,7 +115,11 @@ class EventServiceTest {
     @BeforeEach
     public void setup() {
         mockedRepo = mock(EventRepository.class);
-        mockedService = new EventService(mockedRepo);
+        this.restTemplate = this.builder
+                .errorHandler(new RestTemplateResponseErrorHandler())
+                .build();
+        server = MockRestServiceServer.createServer(restTemplate);
+        this.mockedService = new EventService(mockedRepo, restTemplate);
     }
 
     @Test
@@ -102,15 +135,6 @@ class EventServiceTest {
         when(mockedRepo.findByOwningUser(1L)).thenReturn(List.of(event));
 
         assertEquals(List.of(event), mockedService.getAllEventsByUser(1L));
-    }
-
-    @Test
-    void testInsertFail() {
-        Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-            mockedService.insert(null);
-        });
-
-        assertEquals("Event cannot be null", exception.getMessage());
     }
 
     @Test
@@ -159,8 +183,9 @@ class EventServiceTest {
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-        assertEquals(Optional.of(event), mockedService.updateById(1L, 1L, "B", createPositionNames(), ts,
-                Certificate.B5, EventType.COMPETITION, true, "M", "B", false));
+        EventModel eventModel = new EventModel(1L, "B", createPositionNames(), ts, Certificate.B5, EventType.COMPETITION, true, "M", "B");
+
+        assertEquals(Optional.of(event), mockedService.updateById(1L, eventModel, true));
 
         Event updated = getEvent("B", 1L, Certificate.B5, EventType.COMPETITION);
         updated.setGender("M");
@@ -171,18 +196,21 @@ class EventServiceTest {
     @Test
     void testUpdateByIdNoChanges() {
         Event event = getEvent("A", 1L, Certificate.B2, EventType.COMPETITION);
+        EventModel eventModel = new EventModel();
+        eventModel.setOwningUser(1L);
 
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
+
         assertEquals(Optional.of(event),
-                mockedService.updateById(1L, 1L, null, null, null, null, null, false, null, null, false));
+                mockedService.updateById(1L, eventModel, false));
     }
 
     @Test
     void updateByIdNoEvent() {
         assertEquals(Optional.empty(),
-                mockedService.updateById(null, null, null, null, null, null, null,  false, null, null, false));
+                mockedService.updateById(null, new EventModel(), false));
     }
 
     @Test
@@ -204,7 +232,7 @@ class EventServiceTest {
     }
 
     @Test
-    void testEnqueueByIdTraining() {
+    void testEnqueueByIdTraining() throws JsonProcessingException {
         Request r = new Request("Bob", PositionName.Cox);
 
         Event correctEvent = getEvent("A", 4L, Certificate.B2, EventType.TRAINING);
@@ -214,25 +242,31 @@ class EventServiceTest {
 
         Event event = getEvent("A", 4L, Certificate.B2, EventType.TRAINING);
 
+        server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/1"))
+                .andRespond(withSuccess(JsonUtil.serialize(user), MediaType.APPLICATION_JSON));
+
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-        assertTrue(mockedService.enqueueById(1L, user, PositionName.Cox,
+        assertTrue(mockedService.enqueueById(1L, user.getId(), PositionName.Cox,
                 200 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
+
         verify(mockedRepo, times(1)).save(event);
         assertEquals(List.of(r), event.getQueue());
 
     }
 
     @Test
-    void testEnqueueEarlyTraining() {
+    void testEnqueueEarlyTraining() throws JsonProcessingException {
         Event event = getEvent("A", 4L, Certificate.B2, EventType.TRAINING);
 
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
         User user = getUser();
-        mockedService.enqueueById(1L, user, PositionName.Cox,
+        server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/1"))
+                .andRespond(withSuccess(JsonUtil.serialize(user), MediaType.APPLICATION_JSON));
+        mockedService.enqueueById(1L, user.getId(), PositionName.Cox,
                 1430L + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7));
 
         verify(mockedRepo, times(0)).save(event);
@@ -240,15 +274,20 @@ class EventServiceTest {
     }
 
     @Test
-    void testEnqueueEarlyCompetition() {
+    void testEnqueueEarlyCompetition() throws JsonProcessingException {
         Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
         Request r = new Request("Bob", PositionName.Cox);
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
         User user = new User();
+        user.setId(1L);
         user.setNetId("Bob");
-        mockedService.enqueueById(1L, user, PositionName.Cox,
+
+        server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/1"))
+                .andRespond(withSuccess(JsonUtil.serialize(user), MediaType.APPLICATION_JSON));
+
+        mockedService.enqueueById(1L, user.getId(), PositionName.Cox,
                 100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7));
 
         verify(mockedRepo, times(0)).save(event);
@@ -256,20 +295,20 @@ class EventServiceTest {
     }
 
     @Test
-    void testEnqueueByIdNoEvent() {
+    void testEnqueueByIdNoEvent() throws JsonProcessingException {
         User user = getUser();
 
+        server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/1"))
+                .andRespond(withSuccess(JsonUtil.serialize(user), MediaType.APPLICATION_JSON));
         when(mockedRepo.existsById(1L)).thenReturn(false);
 
-        mockedService.enqueueById(1L, user, PositionName.Cox, 1430);
-
-        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox,
+        assertFalse(mockedService.enqueueById(1L, user.getId(), PositionName.Cox,
                 1450 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
         assertEquals(new ArrayList<>(), mockedService.getAllEvents());
     }
 
     @Test
-    void testEnqueueByIdNotCompetitive() {
+    void testEnqueueByIdNotCompetitive() throws JsonProcessingException {
         Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
         event.setCompetitive(true);
 
@@ -277,61 +316,72 @@ class EventServiceTest {
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
         User user = getUser();
-        assertFalse(mockedService.enqueueById(1L, user, PositionName.Coach,
+
+        server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/1"))
+                .andRespond(withSuccess(JsonUtil.serialize(user), MediaType.APPLICATION_JSON));
+
+        assertFalse(mockedService.enqueueById(1L, user.getId(), PositionName.Coach,
                 100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
     }
 
     @Test
-    void testEnqueueByIdOrganizationNoMatch() {
+    void testEnqueueByIdOrganizationNoMatch() throws JsonProcessingException {
         User user = getUser();
 
         Event event = getEvent("B", 4L, Certificate.B2, EventType.COMPETITION);
 
+        server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/1"))
+                .andRespond(withSuccess(JsonUtil.serialize(user), MediaType.APPLICATION_JSON));
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox,
+
+        assertFalse(mockedService.enqueueById(1L, user.getId(), PositionName.Cox,
                 100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
     }
 
     @Test
-    void testEnqueueByIdGenderNoMatch() {
+    void testEnqueueByIdGenderNoMatch() throws JsonProcessingException {
         User user = getUser();
         user.setOrganization("B");
 
         Event event = getEvent("B", 4L, Certificate.B2, EventType.COMPETITION);
 
+        server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/1"))
+                .andRespond(withSuccess(JsonUtil.serialize(user), MediaType.APPLICATION_JSON));
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox,
+        assertFalse(mockedService.enqueueById(1L, user.getId(), PositionName.Cox,
                 100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
     }
 
     @Test
-    void testEnqueueByIdCertificateNoMatch() {
+    void testEnqueueByIdCertificateNoMatch() throws JsonProcessingException {
         User user = getUser();
         user.setCertificate(Certificate.B1);
 
         Event event = getEvent("A", 4L, Certificate.B2, EventType.TRAINING);
-
+        server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/1"))
+                .andRespond(withSuccess(JsonUtil.serialize(user), MediaType.APPLICATION_JSON));
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox,
+        assertFalse(mockedService.enqueueById(1L, user.getId(), PositionName.Cox,
                 100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
     }
 
     @Test
-    void testEnqueueByIdCreator() {
+    void testEnqueueByIdCreator() throws JsonProcessingException {
         User user = getUser();
 
         Event event = getEvent("A", 1L, Certificate.B2, EventType.TRAINING);
-
+        server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/1"))
+                .andRespond(withSuccess(JsonUtil.serialize(user), MediaType.APPLICATION_JSON));
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
-        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox,
+        assertFalse(mockedService.enqueueById(1L, user.getId(), PositionName.Cox,
                 100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
     }
 
@@ -355,7 +405,7 @@ class EventServiceTest {
     void testDequeueByIdNoEvent() {
         when(mockedRepo.existsById(1L)).thenReturn(false);
         Request r = new Request("Bob", PositionName.Cox);
-        assertFalse(mockedService.dequeueById(1L, r));
+        assertThrows(NoSuchElementException.class, () -> mockedService.dequeueById(1L, r));
     }
 
     @Test
@@ -380,8 +430,9 @@ class EventServiceTest {
     }
 
     @Test
-    void testGetMatchedEventsTrainings() {
+    void testGetMatchedEventsTrainings() throws JsonProcessingException {
         User user = getUser();
+        user.setOrganization("A");
         List<Event> trainings = List.of(getEvent("A", 4L, Certificate.B2, EventType.TRAINING));
 
         when(mockedRepo.findMatchingCompetitions(
@@ -392,12 +443,18 @@ class EventServiceTest {
         when(mockedRepo.findMatchingTrainings(
                 user.getCertificate(), user.getId(), EventType.TRAINING))
                 .thenReturn(trainings);
-        assertEquals(trainings, mockedService.getMatchedEvents(user));
+
+        server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/1"))
+                .andRespond(withSuccess(JsonUtil.serialize(user), MediaType.APPLICATION_JSON));
+        System.out.println(user);
+
+        assertEquals(trainings, mockedService.getMatchedEvents(user.getId()));
     }
 
     @Test
-    void testGetMatchedEventsCompetitions() {
+    void testGetMatchedEventsCompetitions() throws JsonProcessingException {
         User user = getUser();
+        user.setOrganization("A");
         List<Event> competitions = List.of(getEvent("A", 4L, Certificate.B2, EventType.COMPETITION));
 
         when(mockedRepo.findMatchingCompetitions(
@@ -408,6 +465,9 @@ class EventServiceTest {
         when(mockedRepo.findMatchingTrainings(
                 user.getCertificate(), user.getId(), EventType.TRAINING))
                 .thenReturn(new ArrayList<>());
-        assertEquals(competitions, mockedService.getMatchedEvents(user));
+
+        server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/1"))
+                .andRespond(withSuccess(JsonUtil.serialize(user), MediaType.APPLICATION_JSON));
+        assertEquals(competitions, mockedService.getMatchedEvents(user.getId()));
     }
 }

@@ -1,6 +1,8 @@
 package nl.tudelft.sem.template.services;
 
 import java.util.List;
+import java.util.Optional;
+
 import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.Event;
@@ -130,9 +132,17 @@ public class GatewayService {
                 + "/get/" + userId, User.class);
     }
 
-    public List<Event> getAllEvents() {
-        return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/all", List.class);
+    public List<Event> getAllEvents(Optional<Long> userId, Optional<Long> matchUserId) {
+        if(userId.isPresent()) {
+            return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                    + "/all?owner=" + userId.get(), List.class);
+        } else if (matchUserId.isPresent()) {
+            return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                    + "/all?match=" + matchUserId.get(), List.class);
+        } else {
+            return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                    + "/all", List.class);
+        }
     }
 
     public List<Event> getAllEventsForUser(Long userId) {
@@ -183,15 +193,9 @@ public class GatewayService {
     /**
      * Accept to an event.
      */
-    public String acceptToEvent(Long eventId, Request request) {
+    public String acceptToEvent(Long eventId, Request request, boolean outcome) {
         return restTemplate.postForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/" + eventId + "/accept", request, String.class);
+                + "/" + eventId + "/accept?outcome=" + outcome, request, String.class);
     }
-
-    public String rejectFromEvent(Long eventId, Request request) {
-        return restTemplate.postForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/" + eventId + "/reject", request, String.class);
-    }
-
 
 }
