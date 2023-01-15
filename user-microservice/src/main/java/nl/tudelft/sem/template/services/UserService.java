@@ -39,9 +39,8 @@ public class UserService {
     public Optional<User> getById(Long id) {
         if (id < 0 || !userRepo.existsById(id)) {
             return Optional.empty();
-        } else {
-            return userRepo.findById(id);
         }
+        return userRepo.findById(id);
     }
 
     /**
@@ -54,8 +53,7 @@ public class UserService {
         if (name.isEmpty()) {
             return Optional.empty();
         }
-        List<User> all = userRepo.findAll();
-        for (User user : all) {
+        for (User user : userRepo.findAll()) {
             if (user.getNetId().equals(name)) {
                 return Optional.of(user);
             }
@@ -65,16 +63,15 @@ public class UserService {
 
     /**
      * Add user to the database.
+     * If the user already exists, system will give an error
      *
      * @param user full information about a user
      * @return the information of the added user
      */
     public User insert(User user) {
-        if (user == null || user.getNetId().isEmpty()) {
+        if (user == null || user.getNetId().isEmpty() || userRepo.existsById(user.getId())) {
             return null;
         }
-        System.out.println("Inserting user: " + user.getId());
-        //We are currently not checking if the user already exists
         return userRepo.save(user);
     }
 
@@ -87,9 +84,8 @@ public class UserService {
     public boolean deleteById(Long id) {
         if (id < 0 || !userRepo.existsById(id)) {
             return false;
-        } else {
-            userRepo.deleteById(id);
         }
+        userRepo.deleteById(id);
         return true;
     }
 
@@ -106,7 +102,6 @@ public class UserService {
      */
     public Optional<User> updateById(Long id, String name, String organization, String gender,
                                      Certificate certificate, List<Position> positions) {
-        System.out.println("got here 3");
         Optional<User> toUpdate = getById(id);
 
         if (toUpdate.isPresent()) {
@@ -125,7 +120,6 @@ public class UserService {
             if (positions != null) {
                 toUpdate.get().setPositions(positions);
             }
-            System.out.println(toUpdate);
             userRepo.save(toUpdate.get());
         }
         return toUpdate;
