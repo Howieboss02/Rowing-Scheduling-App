@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.shared.entities;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import javax.persistence.*;
 import lombok.*;
 import nl.tudelft.sem.template.shared.converters.RequestConverter;
@@ -130,6 +131,54 @@ public class Event {
                 + sc.convertToEntityAttribute(timeslot.getTime().getFirst()) + " until "
                 + sc.convertToEntityAttribute(timeslot.getTime().getSecond()) + " in week "
                 + timeslot.getWeek() + ", on " + timeslot.getDay().toString() + ".\n";
+    }
+
+    /**
+     * Method for updating event with data from another event.
+     *
+     * @param eventModel the event to update from
+     * @param updateIsCompetitive whether to update the competitiveness
+     *
+     * @return a copy of updated event
+     */
+    public Event merge(EventModel eventModel, boolean updateIsCompetitive) {
+
+        if (!eventModel.getOwningUser().equals(this.getOwningUser())) {
+            return null;
+        }
+        String label = eventModel.getLabel();
+        if (label != null) {
+            this.setLabel(label);
+        }
+        TimeSlot timeslot = eventModel.getTimeslot();
+        if  (timeslot != null) {
+            this.setTimeslot(timeslot);
+        }
+        Certificate certificate = eventModel.getCertificate();
+        if (certificate != null) {
+            this.setCertificate(certificate);
+        }
+        EventType type = eventModel.getType();
+        if (type != null) {
+            this.setType(type);
+        }
+
+        if (updateIsCompetitive) {
+            this.setCompetitive(eventModel.isCompetitive());
+        }
+        String gender = eventModel.getGender();
+        if (gender != null) {
+            this.setGender(gender);
+        }
+        String organisation = eventModel.getOrganisation();
+        if (organisation != null) {
+            this.setOrganisation(organisation);
+        }
+        List<PositionName> positions = eventModel.getPositions();
+        if (positions != null) {
+            this.setPositions(positions);
+        }
+        return this;
     }
 }
 
