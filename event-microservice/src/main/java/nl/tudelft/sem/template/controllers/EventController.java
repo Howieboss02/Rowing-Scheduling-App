@@ -124,13 +124,16 @@ public class EventController {
     public ResponseEntity<String> enqueue(@PathVariable("eventId") Long eventId,
                                           @PathVariable("userId") Long userId,
                                           @RequestParam PositionName position) {
+        System.out.println("Enqueueing user " + userId + " to event " + eventId);
         Optional<Event> event = eventService.getById(eventId);
         if (event.isEmpty()) {
+            System.out.println("Event not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         Timestamp time = new Timestamp(System.currentTimeMillis());
         long weekTime = time.getDay() * 1440L + 60 * time.getHours() + time.getMinutes();
+        System.out.println(time.getDay() + " " + time.getHours() + " " + time.getMinutes());
 
         if (eventService.enqueueById(eventId, userId, position, weekTime)) {
             return ResponseEntity.ok("ENQUEUED");

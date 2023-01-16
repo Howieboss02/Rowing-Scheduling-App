@@ -91,12 +91,10 @@ public class GatewayEventController {
                                           @PathVariable("userId") Long userId,
                                           @RequestParam PositionName position) {
         try {
-            return ResponseEntity.ok(gatewayService.enqueueToEvent(userId, eventId, position));
+            return ResponseEntity.ok(gatewayService.enqueueToEvent(eventId, userId, position));
         } catch (ResponseStatusException e) {
-            System.out.println("enqueue exception " + e.getMessage());
             throw e;
         } catch (Exception e) {
-            System.out.println("enqueue exception " + e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -111,10 +109,8 @@ public class GatewayEventController {
         try {
             return ResponseEntity.ok(gatewayService.acceptToEvent(id, request, outcome));
         } catch (ResponseStatusException e) {
-            System.out.println("accept exception " + e.getMessage());
             throw e;
         } catch (Exception e) {
-            System.out.println("accept exception " + e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
