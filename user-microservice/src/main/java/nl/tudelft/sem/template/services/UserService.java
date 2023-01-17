@@ -36,9 +36,8 @@ public class UserService {
     public Optional<User> getById(Long id) {
         if (id < 0 || !userRepo.existsById(id)) {
             return Optional.empty();
-        } else {
-            return userRepo.findById(id);
         }
+        return userRepo.findById(id);
     }
 
     /**
@@ -51,8 +50,7 @@ public class UserService {
         if (name.isEmpty()) {
             return Optional.empty();
         }
-        List<User> all = userRepo.findAll();
-        for (User user : all) {
+        for (User user : userRepo.findAll()) {
             if (user.getUserInfo().getNetId().equals(name)) {
                 return Optional.of(user);
             }
@@ -62,16 +60,15 @@ public class UserService {
 
     /**
      * Add user to the database.
+     * If the user already exists, system will give an error
      *
      * @param user full information about a user
      * @return the information of the added user
      */
     public User insert(User user) {
-        if (user == null || user.getUserInfo().getNetId().isEmpty()) {
+        if (user == null || user.getUserInfo().getNetId().isEmpty() || userRepo.existsById(user.getId())) {
             return null;
         }
-        System.out.println("Inserting user: " + user.getId());
-        //We are currently not checking if the user already exists
         return userRepo.save(user);
     }
 
@@ -84,9 +81,8 @@ public class UserService {
     public boolean deleteById(Long id) {
         if (id < 0 || !userRepo.existsById(id)) {
             return false;
-        } else {
-            userRepo.deleteById(id);
         }
+        userRepo.deleteById(id);
         return true;
     }
 
@@ -103,7 +99,6 @@ public class UserService {
      */
     public Optional<User> updateById(Long id, String name, String organization, String gender,
                                      Certificate certificate, List<Position> positions) {
-        System.out.println("got here 3");
         Optional<User> toUpdate = getById(id);
 
         if (toUpdate.isPresent()) {
@@ -122,69 +117,9 @@ public class UserService {
             if (positions != null) {
                 toUpdate.get().setPositions(positions);
             }
-            System.out.println(toUpdate);
             userRepo.save(toUpdate.get());
         }
         return toUpdate;
-    }
-
-    /**
-     * Update the availability of a user.
-     *
-     * @param id the id of the user
-     * @param timeSlot to be added
-     * @return the updated user
-     */
-    public Optional<User> addRecurringTimeSlot(Long id, TimeSlot timeSlot) {
-        Optional<User> user = getById(id);
-
-        if (user.isPresent()) {
-            user.get().addRecurringSlot(timeSlot);
-            userRepo.save(user.get());
-        }
-        return user;
-    }
-
-    /**
-     * Remove a recurring time slot from a user.
-     *
-     * @param id the id of the user
-     * @param timeSlot to be removed
-     */
-    public Optional<User> removeRecurringTimeSlot(Long id, TimeSlot timeSlot) {
-        Optional<User> user = getById(id);
-
-        if (user.isPresent()) {
-            user.get().getSchedule().removeRecurringSlot(timeSlot);
-            userRepo.save(user.get());
-        }
-        return user;
-    }
-
-    /**
-     * Add a time slot to a user.
-     */
-    public Optional<User> addTimeSlot(Long id, TimeSlot timeSlot) {
-        Optional<User> user = getById(id);
-
-        if (user.isPresent()) {
-            user.get().getSchedule().addSlot(timeSlot);
-            userRepo.save(user.get());
-        }
-        return user;
-    }
-
-    /**
-     * Remove one time slot from a user.
-     */
-    public Optional<User> removeTimeSlot(Long id, TimeSlot timeSlot) {
-        Optional<User> user = getById(id);
-
-        if (user.isPresent()) {
-            user.get().getSchedule().removeSlot(timeSlot);
-            userRepo.save(user.get());
-        }
-        return user;
     }
 
     /**
@@ -209,73 +144,4 @@ public class UserService {
         return null;
     }
 
-    /**
-     * Set user's name.
-     */
-    public Optional<User> setName(Long id, String name) {
-
-        Optional<User> user = getById(id);
-
-        if (user.isPresent()) {
-            user.get().getUserInfo().setName(name);
-            userRepo.save(user.get());
-        }
-        return user;
-    }
-
-    /**
-     * Set user's organization.
-     */
-    public Optional<User> setOrganization(Long id, String organization) {
-
-        Optional<User> user = getById(id);
-
-        if (user.isPresent()) {
-            user.get().getUserInfo().setOrganization(organization);
-            userRepo.save(user.get());
-        }
-        return user;
-    }
-
-    /**
-     * Set user's gender.
-     */
-    public Optional<User> setGender(Long id, String gender) {
-
-        Optional<User> user = getById(id);
-
-        if (user.isPresent()) {
-            user.get().getUserInfo().setGender(gender);
-            userRepo.save(user.get());
-        }
-        return user;
-    }
-
-    /**
-     * Set user's certificate.
-     */
-    public Optional<User> setCertificate(Long id, Certificate certificate) {
-
-        Optional<User> user = getById(id);
-
-        if (user.isPresent()) {
-            user.get().getUserInfo().setCertificate(certificate);
-            userRepo.save(user.get());
-        }
-        return user;
-    }
-
-    /**
-     * Set user's positions.
-     */
-    public Optional<User> setPositions(Long id, List<Position> positions) {
-
-        Optional<User> user = getById(id);
-
-        if (user.isPresent()) {
-            user.get().setPositions(positions);
-            userRepo.save(user.get());
-        }
-        return user;
-    }
 }

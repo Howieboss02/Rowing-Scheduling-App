@@ -1,19 +1,16 @@
 package nl.tudelft.sem.template.controllers;
 
-import java.sql.Time;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.services.UserService;
-import nl.tudelft.sem.template.shared.domain.Node;
+import nl.tudelft.sem.template.services.UserSetterService;
+import nl.tudelft.sem.template.services.UserTimeSlotService;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
-import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.entities.UserModel;
 import nl.tudelft.sem.template.shared.enums.Certificate;
-import nl.tudelft.sem.template.shared.enums.Day;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,11 +21,22 @@ public class UserController {
 
     private static final String uid = "userId";
     private final transient UserService userService;
+    private final transient UserTimeSlotService timeService;
+    private final transient UserSetterService setterService;
 
 
+    /**
+     * Constructor for this class.
+     *
+     * @param userService the service containing main additions towards a profile
+     * @param timeService the service dealing with the timeslots
+     * @param setterService the service dealing with setting information to the profile
+     */
     @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserTimeSlotService timeService, UserSetterService setterService) {
         this.userService = userService;
+        this.timeService = timeService;
+        this.setterService = setterService;
     }
 
     /**
@@ -145,7 +153,7 @@ public class UserController {
     public ResponseEntity<?> setName(@PathVariable(uid) Long userId,
                                      @RequestParam(required = false) String name
     ) {
-        if (userService.setName(userId, name).isEmpty()) {
+        if (setterService.setName(userId, name).isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok().build();
@@ -158,7 +166,7 @@ public class UserController {
     public ResponseEntity<?> setOrganization(@PathVariable(uid) Long userId,
                                              @RequestParam(required = false) String organization
     ) {
-        if (userService.setOrganization(userId, organization).isEmpty()) {
+        if (setterService.setOrganization(userId, organization).isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok().build();
@@ -172,7 +180,7 @@ public class UserController {
     public ResponseEntity<?> setGender(@PathVariable(uid) Long userId,
                                        @RequestParam(required = false) String gender
     ) {
-        if (userService.setGender(userId, gender).isEmpty()) {
+        if (setterService.setGender(userId, gender).isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok().build();
@@ -185,7 +193,7 @@ public class UserController {
     public ResponseEntity<?> setCertificate(@PathVariable(uid) Long userId,
                                             @RequestParam(required = false) Certificate certificate
     ) {
-        if (userService.setCertificate(userId, certificate).isEmpty()) {
+        if (setterService.setCertificate(userId, certificate).isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok().build();
@@ -198,7 +206,7 @@ public class UserController {
     public ResponseEntity<?> setPositions(@PathVariable(uid) Long userId,
                                           @RequestParam(required = false) List<Position> positions
     ) {
-        if (userService.setPositions(userId, positions).isEmpty()) {
+        if (setterService.setPositions(userId, positions).isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok().build();
@@ -226,7 +234,7 @@ public class UserController {
     @PostMapping(path = "/schedule/add/{userId}")
     public ResponseEntity<TimeSlot> addRecurringTimeSlot(@PathVariable(uid) Long userId,
                                                          @RequestBody TimeSlot timeSlot) {
-        if (userService.addRecurringTimeSlot(userId, timeSlot).isEmpty()) {
+        if (timeService.addRecurringTimeSlot(userId, timeSlot).isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(timeSlot);
@@ -237,9 +245,8 @@ public class UserController {
      */
     @PostMapping(path = "/schedule/remove/{userId}")
     public ResponseEntity<TimeSlot> removeRecurringTimeSlot(@PathVariable(uid) Long userId,
-                                                            @RequestBody TimeSlot timeSlot
-    ) {
-        if (userService.removeRecurringTimeSlot(userId, timeSlot).isEmpty()) {
+                                                            @RequestBody TimeSlot timeSlot) {
+        if (timeService.removeRecurringTimeSlot(userId, timeSlot).isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(timeSlot);
@@ -250,9 +257,8 @@ public class UserController {
      */
     @PostMapping(path = "/schedule/include/{userId}")
     public ResponseEntity<TimeSlot> addTimeSlot(@PathVariable(uid) Long userId,
-                                                @RequestBody TimeSlot timeslot
-    ) {
-        if (userService.addTimeSlot(userId, timeslot).isEmpty()) {
+                                                @RequestBody TimeSlot timeslot) {
+        if (timeService.addTimeSlot(userId, timeslot).isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(timeslot);
@@ -263,9 +269,8 @@ public class UserController {
      */
     @PostMapping(path = "/schedule/exclude/{userId}")
     public ResponseEntity<TimeSlot> removeTimeSlot(@PathVariable(uid) Long userId,
-                                                   @RequestBody TimeSlot timeslot
-    ) {
-        if (userService.removeTimeSlot(userId, timeslot).isEmpty()) {
+                                                   @RequestBody TimeSlot timeslot) {
+        if (timeService.removeTimeSlot(userId, timeslot).isEmpty()) {
             return ResponseEntity.badRequest().build();
         }
         return ResponseEntity.ok(timeslot);
