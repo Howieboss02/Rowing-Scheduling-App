@@ -195,7 +195,7 @@ public class Event {
     }
 
     /**
-     * Hashes te event label, since this is unique and non-null for every event
+     * Hashes te event label, since this is unique and non-null for every event.
      *
      * @return the hashcode for the event
      */
