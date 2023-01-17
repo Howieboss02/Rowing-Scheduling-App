@@ -106,23 +106,28 @@ public class UserService {
      */
     public Optional<User> updateById(Long id, String name, String organization, String gender,
                                      Certificate certificate, List<Position> positions) {
-        System.out.println("got here 3");
         Optional<User> toUpdate = getById(id);
-
+        System.out.println("chuj wam w dupy");
         if (toUpdate.isPresent()) {
+            System.out.println("walzłem do ifa");
             if (name != null) {
+                System.out.println("Updating name to: " + name);
                 toUpdate.get().setName(name);
             }
             if (organization != null) {
+                System.out.println("Updating organization to: " + organization);
                 toUpdate.get().setOrganization(organization);
             }
             if (gender != null) {
+                System.out.println("updating gender:" + gender);
                 toUpdate.get().setGender(gender);
             }
             if (certificate != null) {
+                System.out.println("Updating certificate to: " + certificate);
                 toUpdate.get().setCertificate(certificate);
             }
             if (positions != null) {
+                System.out.println("Updating positions to: " + positions);
                 toUpdate.get().setPositions(positions);
             }
             System.out.println(toUpdate);
