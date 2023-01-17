@@ -18,8 +18,8 @@ public class NotificationController {
     private Notification notification;
 
     private static final String apiPrefix = "http://localhost:";
-    private static final String userPath = "/api/user";
-    private static final String eventPath = "/api/event";
+    private static final String userPath = "/api/user/";
+    private static final String eventPath = "/api/event/";
 
     private RestTemplate restTemplate;
 
@@ -42,11 +42,15 @@ public class NotificationController {
                                                    @PathVariable("netId") String netId,
                                                    @RequestParam("outcome") Outcome outcome) {
 
-        User user = restTemplate.getForObject(apiPrefix + MicroservicePorts.USER.port
-                + "/netId/?netId=" + netId, User.class);
+        User user = restTemplate.getForObject(apiPrefix + MicroservicePorts.USER.port + userPath
+                + "netId/?netId=" + netId, User.class);
 
-        Event event = restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port
+        Event event = restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
                 + id, Event.class);
+
+        if (event == null || user == null) {
+            return ResponseEntity.notFound().build();
+        }
 
         notification.setStrategy(new PlatformStrategy());
         String message = notification.sendNotification(user, event, outcome);
@@ -55,5 +59,4 @@ public class NotificationController {
         message += "\n" + notification.sendNotification(user, event, outcome);
         return ResponseEntity.ok(message);
     }
-
 }
