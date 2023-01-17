@@ -104,28 +104,32 @@ public class UserService {
     public Optional<User> updateById(Long id, UserModel userModel) {
         Optional<User> toUpdate = getById(id);
         if (toUpdate.isPresent()) {
-            String name = userModel.getName();
-            String organization = userModel.getOrganization();
-            String gender = userModel.getGender();
-            Certificate certificate = userModel.getCertificate();
-            List<Position> positions = userModel.getPositions();
-
             User user = toUpdate.get();
+            String name = userModel.getName();
             if (name != null) {
-                user.setNetId(name);
-            } if (organization != null) {
+                user.setName(name);
+            }
+            String organization = userModel.getOrganization();
+            if (organization != null) {
                 user.setOrganization(organization);
-            } if (gender != null) {
+            }
+            String gender = userModel.getGender();
+            if (gender != null) {
                 user.setGender(gender);
-            } if (certificate != null) {
+            }
+            Certificate certificate = userModel.getCertificate();
+            if (certificate != null) {
                 user.setCertificate(certificate);
-            } if (positions != null) {
+            }
+            List<Position> positions = userModel.getPositions();
+            if (positions != null) {
                 user.setPositions(positions);
             }
             userRepo.save(user);
         }
         return toUpdate;
     }
+
     /**
      * Update the availability of a user.
      *

@@ -67,17 +67,17 @@ public class UserControllerTest {
     @Test
     public void testGetAll() {
         sut.registerNewUser(getUser("a", Certificate.B5));
-        assertEquals(sut.getUsers().size(), 1);
+        assertEquals(1, sut.getUsers().size());
         sut.registerNewUser(getUser("B", Certificate.B2));
-        assertEquals(sut.getUsers().size(), 2);
+        assertEquals(2, sut.getUsers().size());
     }
 
     @Test
     public void testAddUser() {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
-        assertEquals(sut.getUsers().size(), 1);
-        assertEquals(sut.getUsers().get(0), u);
+        assertEquals(1, sut.getUsers().size());
+        assertEquals(u, sut.getUsers().get(0));
     }
 
     @Test
@@ -85,8 +85,8 @@ public class UserControllerTest {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
         sut.updateUser(1L, new UserModel("bbb", "Bobs", "MALE",  Certificate.B2, new ArrayList<>()));
-        assertEquals(sut.getUsers().get(1).getName(), "bbb");
-        assertEquals(sut.getUsers().get(0).getCertificate(), Certificate.B2);
+        assertEquals("bbb", sut.getUsers().get(1).getName());
+        assertEquals(Certificate.B2, sut.getUsers().get(0).getCertificate());
     }
 
     @Test
@@ -96,16 +96,16 @@ public class UserControllerTest {
         User u1 = getUser("Bob", Certificate.B6);
         sut.registerNewUser(u1);
         sut.deleteUser(1L);
-        assertEquals(sut.getUsers().size(), 1);
-        assertEquals(sut.getUser(2L).getBody(), u1);
+        assertEquals(1, sut.getUsers().size());
+        assertEquals(u1, sut.getUser(2L).getBody());
     }
 
     @Test
     public void testUpdateNonExistent() {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
-        assertEquals(sut.updateUser(2L, new UserModel("bbb", "Bob", "MALE",
-                Certificate.B1, new ArrayList<>())), ResponseEntity.badRequest().build());
+        assertEquals(ResponseEntity.badRequest().build(), sut.updateUser(2L,
+                new UserModel("bbb", "Bob", "MALE", Certificate.B1, new ArrayList<>())));
         assertEquals(sut.getUsers().get(0).getName(), "A");
     }
 
@@ -146,7 +146,7 @@ public class UserControllerTest {
         TimeSlot time = new TimeSlot(1, Day.FRIDAY, new Node(10, 12));
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
-        assertEquals(sut.addTimeSlot(1L, time).getStatusCode(), HttpStatus.OK);
+        assertEquals(HttpStatus.OK, sut.addTimeSlot(1L, time).getStatusCode());
         assertTrue(sut.getUser(1L).getBody().getSchedule().getAddedSlots().contains(time));
     }
 
@@ -159,7 +159,7 @@ public class UserControllerTest {
 
         sut.registerNewUser(u);
         sut.addRecurringTimeSlot(1L, correctTime);
-        assertEquals(sut.removeTimeSlot(1L, removedTime).getStatusCode(), HttpStatus.OK);
+        assertEquals(HttpStatus.OK, sut.removeTimeSlot(1L, removedTime).getStatusCode());
         assertTrue(Objects.requireNonNull(sut.getUser(1L).getBody()).getSchedule().getRemovedSlots().contains(correctTime));
     }
 
@@ -185,7 +185,7 @@ public class UserControllerTest {
 
     @Test
     public void testGetNotificationsFail() {
-        assertEquals(sut.getNotifications(1L).getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertEquals(HttpStatus.BAD_REQUEST, sut.getNotifications(1L).getStatusCode());
     }
 
     @Test
@@ -194,25 +194,25 @@ public class UserControllerTest {
 
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
-        assertEquals(sut.addNotification(1L, "A").getStatusCode(), HttpStatus.OK);
+        assertEquals(HttpStatus.OK, sut.addNotification(1L, "A").getStatusCode());
         assertEquals(notifications, sut.getUser(1L).getBody().getNotifications());
     }
 
     @Test
     public void testAddNotificationsFail() {
-        assertEquals(sut.addNotification(2L, "A").getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertEquals(HttpStatus.BAD_REQUEST, sut.addNotification(2L, "A").getStatusCode());
     }
 
     @Test
     public void testGetUserByNetId() {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
-        assertEquals(sut.getUserByNetId("A").getStatusCode(), HttpStatus.OK);
+        assertEquals(HttpStatus.OK, sut.getUserByNetId("A").getStatusCode());
         assertEquals(u, sut.getUserByNetId("A").getBody());
     }
 
     @Test
     public void testGetUserByNetIdNotFound() {
-        assertEquals(sut.getUserByNetId("A").getStatusCode(), HttpStatus.NOT_FOUND);
+        assertEquals(HttpStatus.NOT_FOUND, sut.getUserByNetId("A").getStatusCode());
     }
 }
