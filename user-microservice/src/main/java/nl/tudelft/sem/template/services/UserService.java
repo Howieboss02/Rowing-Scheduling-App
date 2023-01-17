@@ -40,9 +40,8 @@ public class UserService {
     public Optional<User> getById(Long id) {
         if (id < 0 || !userRepo.existsById(id)) {
             return Optional.empty();
-        } else {
-            return userRepo.findById(id);
         }
+        return userRepo.findById(id);
     }
 
     /**
@@ -55,8 +54,7 @@ public class UserService {
         if (name.isEmpty()) {
             return Optional.empty();
         }
-        List<User> all = userRepo.findAll();
-        for (User user : all) {
+        for (User user : userRepo.findAll()) {
             if (user.getNetId().equals(name)) {
                 return Optional.of(user);
             }
@@ -66,16 +64,15 @@ public class UserService {
 
     /**
      * Add user to the database.
+     * If the user already exists, system will give an error
      *
      * @param user full information about a user
      * @return the information of the added user
      */
     public User insert(User user) {
-        if (user == null || user.getNetId().isEmpty()) {
+        if (user == null || user.getNetId().isEmpty() || userRepo.existsById(user.getId())) {
             return null;
         }
-        System.out.println("Inserting user: " + user.getId());
-        //We are currently not checking if the user already exists
         return userRepo.save(user);
     }
 
@@ -88,9 +85,8 @@ public class UserService {
     public boolean deleteById(Long id) {
         if (id < 0 || !userRepo.existsById(id)) {
             return false;
-        } else {
-            userRepo.deleteById(id);
         }
+        userRepo.deleteById(id);
         return true;
     }
 
@@ -128,65 +124,6 @@ public class UserService {
             userRepo.save(user);
         }
         return toUpdate;
-    }
-
-    /**
-     * Update the availability of a user.
-     *
-     * @param id the id of the user
-     * @param timeSlot to be added
-     * @return the updated user
-     */
-    public Optional<User> addRecurringTimeSlot(Long id, TimeSlot timeSlot) {
-        Optional<User> user = getById(id);
-
-        if (user.isPresent()) {
-            user.get().addRecurringSlot(timeSlot);
-            userRepo.save(user.get());
-        }
-        return user;
-    }
-
-    /**
-     * Remove a recurring time slot from a user.
-     *
-     * @param id the id of the user
-     * @param timeSlot to be removed
-     */
-    public Optional<User> removeRecurringTimeSlot(Long id, TimeSlot timeSlot) {
-        Optional<User> user = getById(id);
-
-        if (user.isPresent()) {
-            user.get().removeRecurringSlot(timeSlot);
-            userRepo.save(user.get());
-        }
-        return user;
-    }
-
-    /**
-     * Add a one time time slot to a user.
-     */
-    public Optional<User> addTimeSlot(Long id, TimeSlot timeSlot) {
-        Optional<User> user = getById(id);
-
-        if (user.isPresent()) {
-            user.get().addSlot(timeSlot);
-            userRepo.save(user.get());
-        }
-        return user;
-    }
-
-    /**
-     * Remove a one time time slot from a user.
-     */
-    public Optional<User> removeTimeSlot(Long id, TimeSlot timeSlot) {
-        Optional<User> user = getById(id);
-
-        if (user.isPresent()) {
-            user.get().removeSlot(timeSlot);
-            userRepo.save(user.get());
-        }
-        return user;
     }
 
     /**

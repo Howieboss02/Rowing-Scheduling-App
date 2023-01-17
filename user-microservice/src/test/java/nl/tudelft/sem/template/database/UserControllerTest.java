@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Objects;
 import nl.tudelft.sem.template.controllers.UserController;
 import nl.tudelft.sem.template.services.UserService;
+import nl.tudelft.sem.template.services.UserSetterService;
+import nl.tudelft.sem.template.services.UserTimeSlotService;
 import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
@@ -19,7 +21,6 @@ import nl.tudelft.sem.template.shared.enums.Day;
 import nl.tudelft.sem.template.shared.enums.PositionName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -61,7 +62,9 @@ public class UserControllerTest {
     public void setup() {
         this.repo = new TestUserRepository();
         this.service = new UserService(repo);
-        this.sut = new UserController(service);
+        UserTimeSlotService timeService = new UserTimeSlotService(repo, service);
+        UserSetterService setterService = new UserSetterService(repo, service);
+        this.sut = new UserController(service, timeService, setterService);
     }
 
     @Test
@@ -109,27 +112,14 @@ public class UserControllerTest {
         assertEquals(sut.getUsers().get(0).getName(), "A");
     }
 
-    //TODO: fix the tests
-
-    /*@Test
-    public void testAddSchedule() {
-        User u = getUser("A", Certificate.B1);
-        sut.registerNewUser(u);
-        //assertEquals(sut.addRecurringTimeSlot().getStatusCode(), HttpStatus.OK);
-        assertEquals(u.getId(), 1L);
-        assertEquals(sut.getUser(1L).getBody(), u);
-        assertEquals(sut.getUser(1L).getBody().getSchedule().getRecurringSlots().get(0),
-                new TimeSlot(-1, Day.MONDAY, new Node(10, 14)));
-        assertEquals(sut.getUser(1L).getBody().getSchedule().getAddedSlots().size(), 0);
-        assertEquals(sut.getUser(1L).getBody().getSchedule().getRemovedSlots().size(), 0);
-    }*/
-
     @Test
     public void testRemoveSchedule() {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
-        //assertEquals(sut.addRecurringTimeSlot(1L, Day.MONDAY, new Node(10, 14)).getStatusCode(), HttpStatus.OK);
-        //assertEquals(sut.removeRecurringTimeSlot(1L, Day.MONDAY, new Node(10, 14)).getStatusCode(), HttpStatus.OK);
+        assertEquals(sut.addRecurringTimeSlot(1L, new TimeSlot(1, Day.MONDAY, new Node(10, 14))).getStatusCode(),
+            HttpStatus.OK);
+        assertEquals(sut.removeRecurringTimeSlot(1L, new TimeSlot(1, Day.MONDAY, new Node(10, 14))).getStatusCode(),
+            HttpStatus.OK);
         assertEquals(sut.getUser(1L).getBody().getSchedule().getRecurringSlots().size(), 0);
     }
 
@@ -137,7 +127,8 @@ public class UserControllerTest {
     public void testFailedAddSchedule() {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
-        //assertEquals(sut.addRecurringTimeSlot(2L, Day.MONDAY, new Node(10, 14)).getStatusCode(), HttpStatus.BAD_REQUEST);
+        assertEquals(sut.addRecurringTimeSlot(2L, new TimeSlot(1, Day.MONDAY, new Node(10, 9))).getStatusCode(),
+            HttpStatus.BAD_REQUEST);
 
     }
 
@@ -152,8 +143,8 @@ public class UserControllerTest {
 
     @Test
     public void testRemoveTimeSlot() {
-        final TimeSlot removedTime = new TimeSlot(1, Day.FRIDAY, new Node(11, 13));
-        final TimeSlot correctTime = new TimeSlot(1, Day.FRIDAY, new Node(11, 12));
+        final TimeSlot removedTime = new TimeSlot(-1, Day.FRIDAY, new Node(11, 13));
+        final TimeSlot correctTime = new TimeSlot(-1, Day.FRIDAY, new Node(11, 12));
 
         User u = getUser("A", Certificate.B1);
 
@@ -190,7 +181,7 @@ public class UserControllerTest {
 
     @Test
     public void testAddNotifications() {
-        List<String> notifications = new ArrayList<>(Arrays.asList("A"));
+        List<String> notifications = new ArrayList<>(List.of("A"));
 
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);

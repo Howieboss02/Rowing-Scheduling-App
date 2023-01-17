@@ -17,7 +17,7 @@ class TimeSlotTest {
     void matchScheduleRecurrent() {
         TimeSlot ts = new TimeSlot(1, Day.MONDAY, new Node(1, 2));
         Schedule schedule = new Schedule();
-        schedule.addRecurringSlot(new TimeSlot(3, Day.MONDAY, new Node(1, 2)));
+        schedule.addRecurringSlot(new TimeSlot(-1, Day.MONDAY, new Node(1, 2)));
         assertTrue(ts.matchSchedule(schedule));
     }
 
@@ -25,7 +25,7 @@ class TimeSlotTest {
     void matchScheduleRecurrentBiggerInterval() {
         TimeSlot ts = new TimeSlot(1, Day.MONDAY, new Node(1, 2));
         Schedule schedule = new Schedule();
-        schedule.addRecurringSlot(new TimeSlot(3, Day.MONDAY, new Node(0, 5)));
+        schedule.addRecurringSlot(new TimeSlot(-1, Day.MONDAY, new Node(0, 5)));
         assertTrue(ts.matchSchedule(schedule));
     }
 
@@ -33,7 +33,7 @@ class TimeSlotTest {
     void noMatchScheduleRecurrent() {
         TimeSlot ts = new TimeSlot(1, Day.MONDAY, new Node(1, 2));
         Schedule schedule = new Schedule();
-        schedule.addRecurringSlot(new TimeSlot(3, Day.MONDAY, new Node(2, 3)));
+        schedule.addRecurringSlot(new TimeSlot(-1, Day.MONDAY, new Node(2, 3)));
         assertFalse(ts.matchSchedule(schedule));
     }
 
