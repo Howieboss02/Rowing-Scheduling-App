@@ -1,13 +1,10 @@
 package nl.tudelft.sem.template.shared.converters;
 
-import nl.tudelft.sem.template.shared.domain.TimeSlot;
-import nl.tudelft.sem.template.shared.domain.UserInfo;
-import nl.tudelft.sem.template.shared.enums.Certificate;
-import nl.tudelft.sem.template.shared.enums.Day;
-
 import javax.persistence.AttributeConverter;
 import java.util.Arrays;
 import java.util.List;
+import nl.tudelft.sem.template.shared.domain.UserInfo;
+import nl.tudelft.sem.template.shared.enums.Certificate;
 
 public class UserInfoConverter implements AttributeConverter<UserInfo, String> {
 	private static final String SPLIT = ",";
@@ -38,9 +35,18 @@ public class UserInfoConverter implements AttributeConverter<UserInfo, String> {
 			return null;
 		}
 
-		List<String> userInfo = Arrays.asList(dbData.split(SPLIT));
-		return new UserInfo(userInfo.get(0), userInfo.get(1),
-				userInfo.get(2), userInfo.get(3), userInfo.get(4),
-				Certificate.valueOf(userInfo.get(5)));
+		List<String> userInfo = Arrays.asList(dbData.split(SPLIT, -1));
+		UserInfo entity;
+		try {
+			entity = new UserInfo(userInfo.get(0), userInfo.get(1),
+					userInfo.get(2), userInfo.get(3), userInfo.get(4),
+					Certificate.valueOf(userInfo.get(5)));
+		}
+		catch (Exception e) {
+			entity = new UserInfo(userInfo.get(0), userInfo.get(1),
+					userInfo.get(2), userInfo.get(3), userInfo.get(4),
+					null);
+		}
+		return entity;
 	}
 }

@@ -4,8 +4,6 @@ package nl.tudelft.sem.template.shared.entities;
 import java.util.ArrayList;
 import java.util.List;
 import javax.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import nl.tudelft.sem.template.shared.converters.PositionsToFillListConverter;
@@ -13,20 +11,18 @@ import nl.tudelft.sem.template.shared.converters.ScheduleConverter;
 import nl.tudelft.sem.template.shared.converters.UserInfoConverter;
 import nl.tudelft.sem.template.shared.domain.*;
 import nl.tudelft.sem.template.shared.enums.Certificate;
-import nl.tudelft.sem.template.shared.enums.Day;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.springframework.data.util.Pair;
 
-@Entity
 @Getter
-@AllArgsConstructor
+@Entity
 @Table(name = "User")
 public class User {
 
     @Id
+    @Setter
     @Column(name = "id", nullable = false)
     private Long id;
 
@@ -34,6 +30,7 @@ public class User {
     @Convert(converter = UserInfoConverter.class)
     UserInfo userInfo;
 
+    @Setter
     @Column
     @Convert(converter = PositionsToFillListConverter.class)
     private List<Position> positions;
@@ -69,6 +66,7 @@ public class User {
         this.userInfo = new UserInfo(netId, name, organization, email, gender, certificate);
         this.positions = positions;
         this.schedule = new Schedule();
+        this.notifications = new ArrayList<>();
     }
 
     /**
@@ -91,45 +89,12 @@ public class User {
     }
 
     /**
-    * Method to add another position to the list (for editing).
-     *
-    * @param position the new position
-    */
-    public void addPositions(Position position) {
-        this.positions.add(position);
-    }
-
-    /**
     * Add a recurring slot.
     */
     public void addRecurringSlot(TimeSlot timeSlot) {
         schedule.addRecurringSlot(timeSlot);
     }
 
-    /**
-    * Remove a recurring slot.
-    */
-    public void removeRecurringSlot(TimeSlot timeSlot) {
-        schedule.removeRecurringSlot(timeSlot);
-    }
-
-    /**
-    * Temporarily removes slot.
-    *
-    * @param slot the time slot that should be temporarily removed
-    */
-    public void removeSlot(TimeSlot slot) {
-        schedule.removeSlot(slot);
-    }
-
-    /**
-    * Temporarily adds slot.
-    *
-    * @param slot the time slot that should be temporarily added
-    */
-    public void addSlot(TimeSlot slot) {
-        schedule.addSlot(slot);
-    }
 
     /**
     * Method to append a notification.

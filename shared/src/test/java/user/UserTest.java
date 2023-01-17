@@ -17,8 +17,8 @@ public class UserTest {
     public void testConstructor() {
         User u = new User("BobID", "Bob", "Bob@b.ob");
         assertEquals(u.getNotifications().size(), 0);
-        assertEquals(u.getName(), "Bob");
-        assertEquals(u.getEmail(), "Bob@b.ob");
+        assertEquals(u.getUserInfo().getName(), "Bob");
+        assertEquals(u.getUserInfo().getEmail(), "Bob@b.ob");
     }
 
     @Test
@@ -33,11 +33,11 @@ public class UserTest {
         pos.add(new Position(PositionName.Cox, false));
         pos.add(new Position(PositionName.Coach, true));
         User u = new User("BobID", "Bob", "Bob's Organization", "Bob@b.ob", "Male", Certificate.B1, pos);
-        assertEquals(u.getOrganization(), "Bob's Organization");
-        assertEquals(u.getCertificate().toString(), "B1");
+        assertEquals(u.getUserInfo().getOrganization(), "Bob's Organization");
+        assertEquals(u.getUserInfo().getCertificate().toString(), "B1");
         assertEquals(u.getPositions(), pos);
         assertEquals(u.getPositions().get(0).getName(), PositionName.Cox);
-        assertEquals(u.getGender(), "Male");
+        assertEquals(u.getUserInfo().getGender(), "Male");
     }
 
     @Test

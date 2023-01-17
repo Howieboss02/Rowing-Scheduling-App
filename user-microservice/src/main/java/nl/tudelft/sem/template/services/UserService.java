@@ -3,14 +3,11 @@ package nl.tudelft.sem.template.services;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.database.UserRepository;
-import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.Certificate;
-import nl.tudelft.sem.template.shared.enums.Day;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -56,7 +53,7 @@ public class UserService {
         }
         List<User> all = userRepo.findAll();
         for (User user : all) {
-            if (user.getNetId().equals(name)) {
+            if (user.getUserInfo().getNetId().equals(name)) {
                 return Optional.of(user);
             }
         }
@@ -70,7 +67,7 @@ public class UserService {
      * @return the information of the added user
      */
     public User insert(User user) {
-        if (user == null || user.getNetId().isEmpty()) {
+        if (user == null || user.getUserInfo().getNetId().isEmpty()) {
             return null;
         }
         System.out.println("Inserting user: " + user.getId());
@@ -111,16 +108,16 @@ public class UserService {
 
         if (toUpdate.isPresent()) {
             if (name != null) {
-                toUpdate.get().setName(name);
+                toUpdate.get().getUserInfo().setName(name);
             }
             if (organization != null) {
-                toUpdate.get().setOrganization(organization);
+                toUpdate.get().getUserInfo().setOrganization(organization);
             }
             if (gender != null) {
-                toUpdate.get().setGender(gender);
+                toUpdate.get().getUserInfo().setGender(gender);
             }
             if (certificate != null) {
-                toUpdate.get().setCertificate(certificate);
+                toUpdate.get().getUserInfo().setCertificate(certificate);
             }
             if (positions != null) {
                 toUpdate.get().setPositions(positions);
@@ -158,33 +155,33 @@ public class UserService {
         Optional<User> user = getById(id);
 
         if (user.isPresent()) {
-            user.get().removeRecurringSlot(timeSlot);
+            user.get().getSchedule().removeRecurringSlot(timeSlot);
             userRepo.save(user.get());
         }
         return user;
     }
 
     /**
-     * Add a one time time slot to a user.
+     * Add a time slot to a user.
      */
     public Optional<User> addTimeSlot(Long id, TimeSlot timeSlot) {
         Optional<User> user = getById(id);
 
         if (user.isPresent()) {
-            user.get().addSlot(timeSlot);
+            user.get().getSchedule().addSlot(timeSlot);
             userRepo.save(user.get());
         }
         return user;
     }
 
     /**
-     * Remove a one time time slot from a user.
+     * Remove one time slot from a user.
      */
     public Optional<User> removeTimeSlot(Long id, TimeSlot timeSlot) {
         Optional<User> user = getById(id);
 
         if (user.isPresent()) {
-            user.get().removeSlot(timeSlot);
+            user.get().getSchedule().removeSlot(timeSlot);
             userRepo.save(user.get());
         }
         return user;
@@ -220,7 +217,7 @@ public class UserService {
         Optional<User> user = getById(id);
 
         if (user.isPresent()) {
-            user.get().setName(name);
+            user.get().getUserInfo().setName(name);
             userRepo.save(user.get());
         }
         return user;
@@ -234,7 +231,7 @@ public class UserService {
         Optional<User> user = getById(id);
 
         if (user.isPresent()) {
-            user.get().setOrganization(organization);
+            user.get().getUserInfo().setOrganization(organization);
             userRepo.save(user.get());
         }
         return user;
@@ -248,7 +245,7 @@ public class UserService {
         Optional<User> user = getById(id);
 
         if (user.isPresent()) {
-            user.get().setGender(gender);
+            user.get().getUserInfo().setGender(gender);
             userRepo.save(user.get());
         }
         return user;
@@ -262,7 +259,7 @@ public class UserService {
         Optional<User> user = getById(id);
 
         if (user.isPresent()) {
-            user.get().setCertificate(certificate);
+            user.get().getUserInfo().setCertificate(certificate);
             userRepo.save(user.get());
         }
         return user;

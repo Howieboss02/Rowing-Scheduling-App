@@ -205,7 +205,7 @@ public class UserController {
     }
 
     /**
-     * Add a notification to the user's list of notifications.
+     * Add a notification to the (user)'s list of notifications.
      */
     @PutMapping(path = "/notification/{userId}")
     public ResponseEntity<?> addNotification(@PathVariable(uid) Long userId,
