@@ -13,8 +13,6 @@ import nl.tudelft.sem.template.shared.domain.*;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
 @Getter
 @Entity
@@ -48,7 +46,10 @@ public class User {
     */
 
     @SuppressWarnings("unused")
-    public User() {}
+    public User() {
+        userInfo = new UserInfo();
+        schedule = new Schedule();
+    }
 
     /**
     * Constructor for the User class containing all information.
@@ -67,17 +68,6 @@ public class User {
         this.positions = positions;
         this.schedule = new Schedule();
         this.notifications = new ArrayList<>();
-    }
-
-    /**
-    * Constructor for the class used when creating account.
-    *
-    * @param netId the netId of the user
-    * @param name the user's name
-    * @param email the user's email
-    */
-    public User(String netId, String name, String email) {
-        this.userInfo = new UserInfo(netId, name, null, email, null, null);
     }
 
     /**
@@ -102,6 +92,9 @@ public class User {
     * @param notifications a new notification
     */
     public void addNotification(String notifications) {
+        if (this.notifications == null) {
+            this.notifications = new ArrayList<>();
+        }
         this.notifications.add(notifications);
     }
 
@@ -124,16 +117,6 @@ public class User {
     @Override
     public int hashCode() {
         return HashCodeBuilder.reflectionHashCode(this);
-    }
-
-    /**
-    * A method that uses an API supportive method of transforming data into a string.
-    *
-    * @return a string containing every detail about the user
-    */
-    @Override
-    public String toString() {
-        return ToStringBuilder.reflectionToString(this, ToStringStyle.MULTI_LINE_STYLE);
     }
 
 }

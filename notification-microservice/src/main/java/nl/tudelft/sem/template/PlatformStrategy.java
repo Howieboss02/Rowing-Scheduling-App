@@ -40,9 +40,9 @@ public class PlatformStrategy implements Strategy {
     public String sendNotification(User user, Event event, Outcome outcome) {
         String message;
         if (outcome == ACCEPTED) {
-            message = user.getName() + ", you have been accepted to " + event.messageConverter();
+            message = user.getUserInfo().getName() + ", you have been accepted to " + event.messageConverter();
         } else {
-            message = user.getName() + ", you have been rejected from " + event.messageConverter();
+            message = user.getUserInfo().getName() + ", you have been rejected from " + event.messageConverter();
         }
 
         restTemplate.put("http://localhost:8084/api/user/notification/"

@@ -14,14 +14,6 @@ import org.junit.jupiter.api.Test;
 public class UserTest {
 
     @Test
-    public void testConstructor() {
-        User u = new User("BobID", "Bob", "Bob@b.ob");
-        assertEquals(u.getNotifications().size(), 0);
-        assertEquals(u.getUserInfo().getName(), "Bob");
-        assertEquals(u.getUserInfo().getEmail(), "Bob@b.ob");
-    }
-
-    @Test
     public void testConstructorEmpty() {
         User u = new User();
         assertNotNull(u);
@@ -42,8 +34,8 @@ public class UserTest {
 
     @Test
     public void tesEqualHashCode() {
-        User u = new User("BobID", "Bob", "Bob@b.ob");
-        User u1 = new User("BobID", "Bob", "Bob@b.ob");
+        User u = new User("BobID", "Bob", null, "Bob@b.ob", null, null, null);
+        User u1 = new User("BobID", "Bob", null, "Bob@b.ob", null, null, null);
         assertEquals(u, u1);
         assertEquals(u.hashCode(), u1.hashCode());
     }

@@ -19,7 +19,6 @@ import nl.tudelft.sem.template.shared.enums.Day;
 import nl.tudelft.sem.template.shared.enums.PositionName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.util.Pair;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -85,8 +84,8 @@ public class UserControllerTest {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
         sut.updateUser(1L, new UserModel("bbb", "Bobs", "MALE",  Certificate.B2, new ArrayList<>()));
-        assertEquals(sut.getUsers().get(1).getName(), "bbb");
-        assertEquals(sut.getUsers().get(0).getCertificate(), Certificate.B2);
+        assertEquals(sut.getUsers().get(1).getUserInfo().getName(), "bbb");
+        assertEquals(sut.getUsers().get(0).getUserInfo().getCertificate(), Certificate.B2);
     }
 
     @Test
@@ -106,7 +105,7 @@ public class UserControllerTest {
         sut.registerNewUser(u);
         assertEquals(sut.updateUser(2L, new UserModel("bbb", "Bob", "MALE",
                 Certificate.B1, new ArrayList<>())), ResponseEntity.badRequest().build());
-        assertEquals(sut.getUsers().get(0).getName(), "A");
+        assertEquals(sut.getUsers().get(0).getUserInfo().getName(), "A");
     }
 
     //TODO: fix the tests
@@ -175,11 +174,12 @@ public class UserControllerTest {
 
     @Test
     public void testGetNotifications() {
-        List<String> notifications = new ArrayList<>(Arrays.asList("a", "b"));
-
         User u = getUser("A", Certificate.B1);
-        u.setNotifications(notifications);
+        u.addNotification("a");
+        u.addNotification("b");
         sut.registerNewUser(u);
+
+        List<String> notifications = new ArrayList<>(Arrays.asList("a", "b"));
         assertEquals(notifications, sut.getNotifications(1L).getBody());
     }
 
@@ -193,7 +193,7 @@ public class UserControllerTest {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
         assertEquals(sut.setName(1L, "Bob").getStatusCode(), HttpStatus.OK);
-        assertEquals("Bob", sut.getUser(1L).getBody().getName());
+        assertEquals("Bob", sut.getUser(1L).getBody().getUserInfo().getName());
     }
 
     @Test
@@ -206,7 +206,7 @@ public class UserControllerTest {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
         assertEquals(sut.setOrganization(1L, "TU Delft").getStatusCode(), HttpStatus.OK);
-        assertEquals("TU Delft", sut.getUser(1L).getBody().getOrganization());
+        assertEquals("TU Delft", sut.getUser(1L).getBody().getUserInfo().getOrganization());
     }
 
     @Test
@@ -219,7 +219,7 @@ public class UserControllerTest {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
         assertEquals(sut.setGender(1L, "Male").getStatusCode(), HttpStatus.OK);
-        assertEquals("Male", sut.getUser(1L).getBody().getGender());
+        assertEquals("Male", sut.getUser(1L).getBody().getUserInfo().getGender());
     }
 
     @Test
@@ -232,7 +232,7 @@ public class UserControllerTest {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
         assertEquals(sut.setCertificate(1L, Certificate.B2).getStatusCode(), HttpStatus.OK);
-        assertEquals(Certificate.B2, sut.getUser(1L).getBody().getCertificate());
+        assertEquals(Certificate.B2, sut.getUser(1L).getBody().getUserInfo().getCertificate());
     }
 
     @Test

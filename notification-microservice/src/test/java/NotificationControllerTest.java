@@ -47,8 +47,8 @@ public class NotificationControllerTest {
 
     @Test
     public void testSendNotification() throws JsonProcessingException {
-        User user = new User("testNetId", "name", "email");
-        user.setNetId(netId);
+        User user = new User("testNetId", "name", null, "email", null, null, null);
+        user.getUserInfo().setNetId(netId);
         Event event = new Event(
                 1L,
                 "Event 1",
@@ -75,8 +75,8 @@ public class NotificationControllerTest {
 
     @Test
     public void testSendNotification404Event() throws JsonProcessingException {
-        User user = new User("testNetId", "name", "email");
-        user.setNetId(netId);
+        User user = new User("testNetId", "name", null, "email", null, null, null);
+        user.getUserInfo().setNetId(netId);
         Event event = new Event(
                 1L,
                 "Event 1",
@@ -102,8 +102,8 @@ public class NotificationControllerTest {
 
     @Test
     public void testSendNotification404User() throws JsonProcessingException {
-        User user = new User("testNetId", "name", "email");
-        user.setNetId(netId);
+        User user = new User("testNetId", "name", null, "email", null, null, null);
+        user.getUserInfo().setNetId(netId);
         Event event = new Event(
                 1L,
                 "Event 1",

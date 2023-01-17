@@ -62,8 +62,8 @@ public class UserGatewayTest {
     @Test
     void getAllUsersCorrectlyTest() throws Exception {
         List<User> users = new ArrayList<>();
-        users.add(new User("testNetId", "name", "email"));
-        users.add(new User("testNetId2", "name2", "email2"));
+        users.add(new User("testNetId", "name", null, "email", null, null, null));
+        users.add(new User("testNetId2", "name2", null, "email2", null, null, null));
         when(gatewayService.getAllUsers()).thenReturn(users);
         mockMvc.perform(get("/api/user/all").contentType(APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())

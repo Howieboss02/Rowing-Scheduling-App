@@ -81,8 +81,8 @@ public class UsersTests {
         server = MockRestServiceServer.createServer(restTemplate);
         this.server.expect(ExpectedCount.once(), requestTo("http://localhost:8084/api/user/register"))
                 .andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess(JsonUtil.serialize(new User(testUser.getNetIdValue(), "testName",
-                        testEmail.getEmailValue())), MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess(JsonUtil.serialize(new User(testUser.getNetIdValue(), "testName", null,
+                        testEmail.getEmailValue(), null, null, null)), MediaType.APPLICATION_JSON));
 
         RegistrationRequestModel model = new RegistrationRequestModel();
         model.setNetId(testUser.toString());

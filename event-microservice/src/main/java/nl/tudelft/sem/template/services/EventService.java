@@ -4,11 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import nl.tudelft.sem.template.database.EventRepository;
-import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.Request;
-import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.EventModel;
 import nl.tudelft.sem.template.shared.entities.User;
@@ -16,8 +13,6 @@ import nl.tudelft.sem.template.shared.enums.*;
 import nl.tudelft.sem.template.shared.utils.PositionMatcher;
 import nl.tudelft.sem.template.shared.utils.ValidityChecker;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -140,7 +135,7 @@ public class EventService {
             return false;
         }
 
-        boolean success = actualEvent.enqueue(user.getNetId(), position);
+        boolean success = actualEvent.enqueue(user.getUserInfo().getNetId(), position);
         eventRepo.save(actualEvent);
         return success;
     }
@@ -210,9 +205,11 @@ public class EventService {
             throw new IllegalArgumentException("User does not have enough information to be matched");
         }
 
-        List<Event> e1 = eventRepo.findMatchingTrainings(user.getCertificate(), user.getId(), EventType.TRAINING);
-        List<Event> e2 = eventRepo.findMatchingCompetitions(user.getCertificate(), user.getOrganization(),
-                                                            user.getId(), EventType.COMPETITION, user.getGender());
+        List<Event> e1 = eventRepo.findMatchingTrainings(
+                user.getUserInfo().getCertificate(), user.getId(), EventType.TRAINING);
+        List<Event> e2 = eventRepo.findMatchingCompetitions(
+                user.getUserInfo().getCertificate(), user.getUserInfo().getOrganization(), user.getId(),
+                EventType.COMPETITION, user.getUserInfo().getGender());
         e2.forEach(e1::add);
 
         return PositionMatcher.matchPositions(user.getPositions(), e1, user);

@@ -75,13 +75,8 @@ class EventServiceTest {
      * @return the list for positions needed for an event
      */
     private static User getUser() {
-        User user = new User();
+        User user = new User("Bob", null, null, null, "M", Certificate.B2, createPositions());
         user.setId(1L);
-        user.setNetId("Bob");
-        user.setGender("M");
-        user.setPositions(createPositions());
-        user.setCertificate(Certificate.B2);
-        user.setSchedule(new Schedule());
         TimeSlot ts = new TimeSlot(1, Day.FRIDAY, new Node(1445, 1500));
         user.getSchedule().getRecurringSlots().add(ts);
         return user;
@@ -273,13 +268,12 @@ class EventServiceTest {
     @Test
     void testEnqueueEarlyCompetition() throws JsonProcessingException {
         Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
-        Request r = new Request("Bob", PositionName.Cox);
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
         User user = new User();
         user.setId(1L);
-        user.setNetId("Bob");
+        user.getUserInfo().setNetId("Bob");
 
         server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/1"))
                 .andRespond(withSuccess(JsonUtil.serialize(user), MediaType.APPLICATION_JSON));
@@ -340,7 +334,7 @@ class EventServiceTest {
     @Test
     void testEnqueueByIdGenderNoMatch() throws JsonProcessingException {
         User user = getUser();
-        user.setOrganization("B");
+        user.getUserInfo().setOrganization("B");
 
         Event event = getEvent("B", 4L, Certificate.B2, EventType.COMPETITION);
 
@@ -356,7 +350,7 @@ class EventServiceTest {
     @Test
     void testEnqueueByIdCertificateNoMatch() throws JsonProcessingException {
         User user = getUser();
-        user.setCertificate(Certificate.B1);
+        user.getUserInfo().setCertificate(Certificate.B1);
 
         Event event = getEvent("A", 4L, Certificate.B2, EventType.TRAINING);
         server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/1"))
@@ -388,7 +382,7 @@ class EventServiceTest {
         Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
         event.getQueue().add(r);
         User user = new User();
-        user.setNetId("Bob");
+        user.getUserInfo().setNetId("Bob");
 
         when(mockedRepo.existsById(1L)).thenReturn(true);
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
@@ -429,16 +423,16 @@ class EventServiceTest {
     @Test
     void testGetMatchedEventsTrainings() throws JsonProcessingException {
         User user = getUser();
-        user.setOrganization("A");
+        user.getUserInfo().setOrganization("A");
         List<Event> trainings = List.of(getEvent("A", 4L, Certificate.B2, EventType.TRAINING));
 
         when(mockedRepo.findMatchingCompetitions(
-                user.getCertificate(), user.getOrganization(), user.getId(),
-                EventType.COMPETITION, user.getGender()))
+                user.getUserInfo().getCertificate(), user.getUserInfo().getOrganization(), user.getId(),
+                EventType.COMPETITION, user.getUserInfo().getGender()))
                 .thenReturn(new ArrayList<>());
 
         when(mockedRepo.findMatchingTrainings(
-                user.getCertificate(), user.getId(), EventType.TRAINING))
+                user.getUserInfo().getCertificate(), user.getId(), EventType.TRAINING))
                 .thenReturn(trainings);
 
         server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/1"))
@@ -450,16 +444,16 @@ class EventServiceTest {
     @Test
     void testGetMatchedEventsCompetitions() throws JsonProcessingException {
         User user = getUser();
-        user.setOrganization("A");
+        user.getUserInfo().setOrganization("A");
         List<Event> competitions = List.of(getEvent("A", 4L, Certificate.B2, EventType.COMPETITION));
 
         when(mockedRepo.findMatchingCompetitions(
-                user.getCertificate(), user.getOrganization(), user.getId(),
-                EventType.COMPETITION, user.getGender()))
+                user.getUserInfo().getCertificate(), user.getUserInfo().getOrganization(), user.getId(),
+                EventType.COMPETITION, user.getUserInfo().getGender()))
                 .thenReturn(competitions);
 
         when(mockedRepo.findMatchingTrainings(
-                user.getCertificate(), user.getId(), EventType.TRAINING))
+                user.getUserInfo().getCertificate(), user.getId(), EventType.TRAINING))
                 .thenReturn(new ArrayList<>());
 
         server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/1"))
