@@ -2,6 +2,7 @@ package nl.tudelft.sem.template.services;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import nl.tudelft.sem.template.database.EventRepository;
@@ -9,9 +10,14 @@ import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.Event;
+import nl.tudelft.sem.template.shared.entities.EventModel;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.*;
+import nl.tudelft.sem.template.shared.utils.PositionMatcher;
+import nl.tudelft.sem.template.shared.utils.ValidityChecker;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -25,8 +31,9 @@ public class EventService {
     private transient RestTemplate restTemplate;
     
     @Autowired
-    public EventService(EventRepository eventRepo) {
+    public EventService(EventRepository eventRepo, RestTemplate restTemplate) {
         this.eventRepo = eventRepo;
+        this.restTemplate = restTemplate;
     }
 
     public List<Event> getAllEvents() {
@@ -40,16 +47,13 @@ public class EventService {
     /**
      * Insert an event into the database.
      *
-     * @param event the type of event
+     * @param eventModel the type of event
      * @return List of events
      * @throws IllegalArgumentException exception when the event is not found
      */
-    public Event insert(Event event) throws IllegalArgumentException {
-        if (event == null) {
-            throw new IllegalArgumentException("Event cannot be null");
-        } else {
-            return eventRepo.save(event);
-        }
+    public Event insert(EventModel eventModel) throws IllegalArgumentException {
+        Event event = eventModel.getEvent();
+        return eventRepo.save(event);
     }
 
     /**
@@ -70,7 +74,6 @@ public class EventService {
      *
      * @param id of the event to get
      * @return the event
-     * @throws IllegalArgumentException exception when the event is not found
      */
     public Optional<Event> getById(Long id) {
         if (!eventRepo.existsById(id)) {
@@ -83,63 +86,22 @@ public class EventService {
     /**
      * Update an event.
      *
-     * @param userId id of the user
      * @param eventId event id
-     * @param label label of the event
-     * @param positions positions of the event
-     * @param timeslot the time and date of the event
-     * @param certificate certificate of the event
-     * @param type type of the event
-     * @param gender the gender required in case of event
-     * @param organisation organisation of the event
-     * @param updateIsCompetitive helps in deciding weather to update an event or not
+     * @param eventModel the event model
+     * @param updateIsCompetitive whether to update the isCompetitive field
      * @return the updated event
      */
-    public Optional<Event> updateById(Long userId, Long eventId, String label, List<PositionName> positions,
-                                       TimeSlot timeslot, Certificate certificate,
-                                       EventType type, boolean isCompetitive, String gender,
-                                       String organisation, boolean updateIsCompetitive) {
+    public Optional<Event> updateById(Long eventId, EventModel eventModel, boolean updateIsCompetitive) {
         Optional<Event> toUpdate = getById(eventId);
         if (toUpdate.isPresent()) {
-            if (!toUpdate.get().getOwningUser().equals(userId)) {
+            Event event = toUpdate.get().merge(eventModel, updateIsCompetitive);
+            if (event == null) {
                 return Optional.empty();
             }
-
-            if (label != null) {
-                toUpdate.get().setLabel(label);
-            }
-
-            if  (timeslot != null) {
-                toUpdate.get().setTimeslot(timeslot);
-            }
-
-            if (certificate != null) {
-                toUpdate.get().setCertificate(certificate);
-            }
-
-            if (type != null) {
-                toUpdate.get().setType(type);
-            }
-
-            if (updateIsCompetitive) {
-                toUpdate.get().setCompetitive(isCompetitive);
-            }
-
-            if (gender != null) {
-                toUpdate.get().setGender(gender);
-            }
-
-            if (organisation != null) {
-                toUpdate.get().setOrganisation(organisation);
-            }
-
-            if (positions != null) {
-                toUpdate.get().setPositions(positions);
-            }
-
-            eventRepo.save(toUpdate.get());
+            eventRepo.save(event);
+            return Optional.of(event);
         }
-        return toUpdate;
+        return Optional.empty();
     }
 
     /**
@@ -160,53 +122,21 @@ public class EventService {
      * Adds a request to the queue of an event iff the user should be able to join the event.
      *
      * @param id the id of the event
-     * @param user the user who wants to enqueue
+     * @param userId the user who wants to enqueue
      * @param position the position the user wants to fill
-     * @param time the time the request was made
      * @return whether the user was enqueued or not
      */
-    public boolean enqueueById(Long id, User user, PositionName position, long time) {
+    public boolean enqueueById(Long id, Long userId, PositionName position, long time) {
         Optional<Event> event = getById(id);
+        User user = getUserById(userId);
+
         if (event.isEmpty() || user.getPositions() == null) {
             return false;
         }
         Event actualEvent = event.get();
 
-        Day day = actualEvent.getTimeslot().getDay();
-        int dayNumber = (day.ordinal() + 1) % 7;
-
-        long weekTime = dayNumber * 1440L + actualEvent.getTimeslot().getTime().getFirst();
-
-        // Check if the user has time to get to the event
-        if ((actualEvent.getType() == EventType.COMPETITION && (time + 1440L) % 10080L > weekTime)
-            || (actualEvent.getType() == EventType.TRAINING && (time + 30L) % 10080L > weekTime)) {
-            return false;
-        }
-
-        // Check if user that wants to enqueue is not creator
-        if (user.getId().equals(actualEvent.getOwningUser())) {
-            return false;
-        }
-
-        // Check if event is competitive but user is not
-        List<Position> userPositions = user.getPositions().stream()
-                .filter(u -> u.getName() == position)
-                .collect(Collectors.toList());
-        Position toFind = new Position(position, true);
-        if (actualEvent.getType() == EventType.COMPETITION
-                && actualEvent.isCompetitive() && !userPositions.contains(toFind)) {
-            return false;
-        }
-
-        // Check if gender and organization match in case of competition
-        if (actualEvent.getType() == EventType.COMPETITION
-                && (!actualEvent.getOrganisation().equals(user.getOrganization())
-                || !actualEvent.getGender().equals(user.getGender()))) {
-            return false;
-        }
-
-        // Check if the certificate level is high enough
-        if (user.getCertificate().compareTo(actualEvent.getCertificate()) < 0) {
+        ValidityChecker checker = new ValidityChecker(actualEvent, user);
+        if (!checker.canJoin(position, time)) {
             return false;
         }
 
@@ -221,18 +151,26 @@ public class EventService {
      * @param id the id of the event
      * @param request the request to remove
      * @return true if the request was removed, otherwise false
+     * @throws NoSuchElementException if the event does not exist or the request is not in the queue
      */
-    public boolean dequeueById(Long id, Request request) {
+    public boolean dequeueById(Long id, Request request) throws NoSuchElementException {
         Optional<Event> event = getById(id);
 
         if (event.isEmpty()) {
-            return false;
+            throw new NoSuchElementException("Event does not exist");
         } else {
             boolean success = event.get().dequeue(request);
-
-            eventRepo.save(event.get());
-            return success;
+            if (success) {
+                eventRepo.save(event.get());
+                return true;
+            } else {
+                throw new NoSuchElementException("Request does not exist");
+            }
         }
+    }
+
+    public String sendNotification(Long id, String netId, String message) {
+        return restTemplate.postForObject("http://localhost:8085/api/notification/" + id + "/" + netId + "/?outcome=" + message, null, String.class);
     }
 
     /**
@@ -259,36 +197,25 @@ public class EventService {
     /**
      * finds the events a user is suitable for.
      *
-     * @param user the user for which the returned events should match
+     * @param userId the user for which the returned events should match
      * @return events that match the user
      */
-    public List<Event> getMatchedEvents(User user) {
+    public List<Event> getMatchedEvents(Long userId) throws IllegalArgumentException {
+
+        User user = getUserById(userId);
+
+        ValidityChecker checker = new ValidityChecker(user);
+
+        if (!checker.canBeMatched()) {
+            throw new IllegalArgumentException("User does not have enough information to be matched");
+        }
+
         List<Event> e1 = eventRepo.findMatchingTrainings(user.getCertificate(), user.getId(), EventType.TRAINING);
         List<Event> e2 = eventRepo.findMatchingCompetitions(user.getCertificate(), user.getOrganization(),
                                                             user.getId(), EventType.COMPETITION, user.getGender());
-        List<Event> matchedEvents = new ArrayList<>();
-        List<Position> positions = new ArrayList<>();
-        positions.addAll(user.getPositions());
+        e2.forEach(e1::add);
 
-        for (Event e : e1) {
-            for (Position p : positions) {
-                if (e.getPositions().contains(p.getName()) && (!e.isCompetitive() || p.isCompetitive())
-                        && e.getTimeslot().matchSchedule(user.getSchedule())) {
-                    matchedEvents.add(e);
-                    break;
-                }
-            }
-        }
-        for (Event e : e2) {
-            for (Position p : positions) {
-                if (e.getPositions().contains(p.getName()) && (!e.isCompetitive() || p.isCompetitive())
-                        && e.getTimeslot().matchSchedule(user.getSchedule())) {
-                    matchedEvents.add(e);
-                    break;
-                }
-            }
-        }
-        return matchedEvents;
+        return PositionMatcher.matchPositions(user.getPositions(), e1, user);
     }
 
     public User getUserById(Long id) {
