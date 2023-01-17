@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.Objects;
 import nl.tudelft.sem.template.controllers.UserController;
 import nl.tudelft.sem.template.services.UserService;
-import nl.tudelft.sem.template.services.UserSetterService;
 import nl.tudelft.sem.template.services.UserTimeSlotService;
 import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Position;
@@ -63,8 +62,7 @@ public class UserControllerTest {
         this.repo = new TestUserRepository();
         this.service = new UserService(repo);
         UserTimeSlotService timeService = new UserTimeSlotService(repo, service);
-        UserSetterService setterService = new UserSetterService(repo, service);
-        this.sut = new UserController(service, timeService, setterService);
+        this.sut = new UserController(service, timeService);
     }
 
     @Test
@@ -122,6 +120,7 @@ public class UserControllerTest {
             HttpStatus.OK);
         assertEquals(sut.getUser(1L).getBody().getSchedule().getRecurringSlots().size(), 0);
     }
+
 
     @Test
     public void testFailedAddSchedule() {

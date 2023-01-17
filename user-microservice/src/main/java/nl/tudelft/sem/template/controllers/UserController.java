@@ -3,13 +3,10 @@ package nl.tudelft.sem.template.controllers;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.services.UserService;
-import nl.tudelft.sem.template.services.UserSetterService;
 import nl.tudelft.sem.template.services.UserTimeSlotService;
-import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.entities.UserModel;
-import nl.tudelft.sem.template.shared.enums.Certificate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +19,6 @@ public class UserController {
     private static final String uid = "userId";
     private final transient UserService userService;
     private final transient UserTimeSlotService timeService;
-    private final transient UserSetterService setterService;
 
 
     /**
@@ -30,13 +26,11 @@ public class UserController {
      *
      * @param userService the service containing main additions towards a profile
      * @param timeService the service dealing with the timeslots
-     * @param setterService the service dealing with setting information to the profile
      */
     @Autowired
-    public UserController(UserService userService, UserTimeSlotService timeService, UserSetterService setterService) {
+    public UserController(UserService userService, UserTimeSlotService timeService) {
         this.userService = userService;
         this.timeService = timeService;
-        this.setterService = setterService;
     }
 
     /**
