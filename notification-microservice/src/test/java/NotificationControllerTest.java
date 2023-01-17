@@ -22,6 +22,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -36,7 +37,7 @@ public class NotificationControllerTest {
     private Notification notification;
 
     @InjectMocks
-    private NotificationController notificationController = new NotificationController(notification);
+    private NotificationController notificationController = new NotificationController(notification, new RestTemplate());
 
     @Mock
     private WebClient client;
