@@ -7,6 +7,7 @@ import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
+import nl.tudelft.sem.template.shared.entities.UserModel;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.Day;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -96,46 +97,35 @@ public class UserService {
     /**
      * Update information about a user inside the database.
      *
-     * @param id           the id of the user we want to update
-     * @param name         the netId of the user
-     * @param organization the organization the user is part of
-     * @param gender       the gender of the rower
-     * @param certificate  the biggest certificate a user holds
-     * @param positions    the list of position they can fill
+     * @param id the id of the user we want to update
+     * @param userModel the new information about the user
      * @return the new profile
      */
-    public Optional<User> updateById(Long id, String name, String organization, String gender,
-                                     Certificate certificate, List<Position> positions) {
+    public Optional<User> updateById(Long id, UserModel userModel) {
         Optional<User> toUpdate = getById(id);
-        System.out.println("chuj wam w dupy");
         if (toUpdate.isPresent()) {
-            System.out.println("walzłem do ifa");
+            String name = userModel.getName();
+            String organization = userModel.getOrganization();
+            String gender = userModel.getGender();
+            Certificate certificate = userModel.getCertificate();
+            List<Position> positions = userModel.getPositions();
+
+            User user = toUpdate.get();
             if (name != null) {
-                System.out.println("Updating name to: " + name);
-                toUpdate.get().setName(name);
+                user.setNetId(name);
+            } if (organization != null) {
+                user.setOrganization(organization);
+            } if (gender != null) {
+                user.setGender(gender);
+            } if (certificate != null) {
+                user.setCertificate(certificate);
+            } if (positions != null) {
+                user.setPositions(positions);
             }
-            if (organization != null) {
-                System.out.println("Updating organization to: " + organization);
-                toUpdate.get().setOrganization(organization);
-            }
-            if (gender != null) {
-                System.out.println("updating gender:" + gender);
-                toUpdate.get().setGender(gender);
-            }
-            if (certificate != null) {
-                System.out.println("Updating certificate to: " + certificate);
-                toUpdate.get().setCertificate(certificate);
-            }
-            if (positions != null) {
-                System.out.println("Updating positions to: " + positions);
-                toUpdate.get().setPositions(positions);
-            }
-            System.out.println(toUpdate);
-            userRepo.save(toUpdate.get());
+            userRepo.save(user);
         }
         return toUpdate;
     }
-
     /**
      * Update the availability of a user.
      *

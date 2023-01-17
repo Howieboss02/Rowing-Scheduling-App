@@ -117,20 +117,13 @@ public class UserController {
         }
     }
 
-    //TODO REQUEST PARAM !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     /**
      * Update everything about a user at once by giving all possible parameters.
      */
-    @PutMapping(path = "/update/{userId}")
+    @PostMapping(path = "/update/{userId}")
     public ResponseEntity<?> updateUser(@PathVariable(uid) Long userId,
                                         @RequestBody UserModel userModel) {
-        Optional<User> returned = userService.updateById(
-                userId,
-                userModel.getName(),
-                userModel.getOrganization(),
-                userModel.getGender(),
-                userModel.getCertificate(),
-                userModel.getPositions());
+        Optional<User> returned = userService.updateById(userId, userModel);
         if (returned.isPresent()) {
             return ResponseEntity.ok(returned.get());
         } else {
