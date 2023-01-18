@@ -3,28 +3,30 @@ package nl.tudelft.sem.template;
 import lombok.Data;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.User;
+import nl.tudelft.sem.template.shared.enums.MicroservicePorts;
 import nl.tudelft.sem.template.shared.enums.Outcome;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 @Data
 @RestController
 @RequestMapping(path = "api/notification")
 public class NotificationController {
     private Notification notification;
-    public WebClient client;
+
+    private static final String apiPrefix = "http://localhost:";
+    private static final String userPath = "/api/user/";
+    private static final String eventPath = "/api/event/";
+
+    private RestTemplate restTemplate;
 
     @Autowired
-    public NotificationController(Notification notification) {
+    public NotificationController(Notification notification, RestTemplate restTemplate) {
         this.notification = notification;
-    }
-
-    public void setClient(WebClient client) {
-        this.client = client;
+        this.restTemplate = restTemplate;
     }
 
     /**
@@ -39,23 +41,16 @@ public class NotificationController {
     public ResponseEntity<String> sendNotification(@PathVariable ("eventId") Long id,
                                                    @PathVariable("netId") String netId,
                                                    @RequestParam("outcome") Outcome outcome) {
-        if (this.client == null) {
-            this.client = WebClient.create();
-        }
-        //this.client = WebClient.create();
-        Mono<User> response = client.get().uri("http://localhost:8084/api/user/netId/?netId=" + netId)
-                .retrieve().bodyToMono(User.class).log();
-        if (Boolean.FALSE.equals(response.hasElement().block())) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
 
-        Mono<Event> responseEvent = client.get().uri("http://localhost:8083/api/event/" + id).retrieve().bodyToMono(Event.class).log();
-        if (Boolean.FALSE.equals(responseEvent.hasElement().block())) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        User user = restTemplate.getForObject(apiPrefix + MicroservicePorts.USER.port + userPath
+                + "netId/?netId=" + netId, User.class);
 
-        User user = response.block();
-        Event event = responseEvent.block();
+        Event event = restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                + id, Event.class);
+
+        if (event == null || user == null) {
+            return ResponseEntity.notFound().build();
+        }
 
         notification.setStrategy(new PlatformStrategy());
         String message = notification.sendNotification(user, event, outcome);
@@ -64,5 +59,4 @@ public class NotificationController {
         message += "\n" + notification.sendNotification(user, event, outcome);
         return ResponseEntity.ok(message);
     }
-
 }

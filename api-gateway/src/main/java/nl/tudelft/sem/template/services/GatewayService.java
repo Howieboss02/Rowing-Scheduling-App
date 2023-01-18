@@ -89,9 +89,8 @@ public class GatewayService {
      */
     public User updateUser(Long userId, UserModel userModel) {
         HttpEntity<UserModel> requestEntity = new HttpEntity<>(userModel);
-        System.out.println("got here");
-        return restTemplate.exchange(apiPrefix + MicroservicePorts.USER.port + userPath
-                + "/update/" + userId, HttpMethod.PUT, requestEntity, User.class).getBody();
+        return restTemplate.postForObject(apiPrefix + MicroservicePorts.USER.port + userPath
+                + "/update/" + userId, requestEntity, User.class);
     }
 
     /**

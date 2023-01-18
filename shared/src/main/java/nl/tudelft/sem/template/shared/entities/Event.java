@@ -2,7 +2,7 @@ package nl.tudelft.sem.template.shared.entities;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import javax.persistence.*;
 import lombok.*;
 import nl.tudelft.sem.template.shared.converters.RequestConverter;
@@ -20,7 +20,6 @@ import nl.tudelft.sem.template.shared.enums.PositionName;
 @ToString
 @Table(name = "event")
 @AllArgsConstructor
-@EqualsAndHashCode
 public class Event {
 
     @Id
@@ -108,12 +107,7 @@ public class Event {
      * @return true iff the enqueue was successfull
      */
     public boolean enqueue(String name, PositionName position) {
-        if (!positions.contains(position)) {
-            return false;
-        }
-
-        queue.add(new Request(name, position));
-        return true;
+        return queue.add(new Request(name, position));
     }
 
     public boolean dequeue(Request request) {
@@ -179,6 +173,35 @@ public class Event {
             this.setPositions(positions);
         }
         return this;
+    }
+
+    /**
+     * Checks if an object is equal to the event by comparing their labels,
+     * which are unique and non-null for every event.
+     *
+     * @param o the object to compare
+     * @return true iff the object is equal to the event
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Event event = (Event) o;
+        return label.equals(event.label);
+    }
+
+    /**
+     * Hashes te event label, since this is unique and non-null for every event.
+     *
+     * @return the hashcode for the event
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(label);
     }
 }
 

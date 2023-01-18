@@ -6,6 +6,7 @@ import nl.tudelft.sem.template.database.UserRepository;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
+import nl.tudelft.sem.template.shared.entities.UserModel;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -89,35 +90,35 @@ public class UserService {
     /**
      * Update information about a user inside the database.
      *
-     * @param id           the id of the user we want to update
-     * @param name         the netId of the user
-     * @param organization the organization the user is part of
-     * @param gender       the gender of the rower
-     * @param certificate  the biggest certificate a user holds
-     * @param positions    the list of position they can fill
+     * @param id the id of the user we want to update
+     * @param userModel the new information about the user
      * @return the new profile
      */
-    public Optional<User> updateById(Long id, String name, String organization, String gender,
-                                     Certificate certificate, List<Position> positions) {
+    public Optional<User> updateById(Long id, UserModel userModel) {
         Optional<User> toUpdate = getById(id);
-
         if (toUpdate.isPresent()) {
+            User user = toUpdate.get();
+            String name = userModel.getName();
             if (name != null) {
                 toUpdate.get().getUserInfo().setName(name);
             }
+            String organization = userModel.getOrganization();
             if (organization != null) {
                 toUpdate.get().getUserInfo().setOrganization(organization);
             }
+            String gender = userModel.getGender();
             if (gender != null) {
                 toUpdate.get().getUserInfo().setGender(gender);
             }
+            Certificate certificate = userModel.getCertificate();
             if (certificate != null) {
                 toUpdate.get().getUserInfo().setCertificate(certificate);
             }
+            List<Position> positions = userModel.getPositions();
             if (positions != null) {
-                toUpdate.get().setPositions(positions);
+                user.setPositions(positions);
             }
-            userRepo.save(toUpdate.get());
+            userRepo.save(user);
         }
         return toUpdate;
     }
@@ -143,5 +144,4 @@ public class UserService {
         }
         return null;
     }
-
 }
