@@ -3,13 +3,10 @@ package nl.tudelft.sem.template.controllers;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.services.UserService;
-import nl.tudelft.sem.template.services.UserSetterService;
 import nl.tudelft.sem.template.services.UserTimeSlotService;
-import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.entities.UserModel;
-import nl.tudelft.sem.template.shared.enums.Certificate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +19,6 @@ public class UserController {
     private static final String uid = "userId";
     private final transient UserService userService;
     private final transient UserTimeSlotService timeService;
-    private final transient UserSetterService setterService;
 
 
     /**
@@ -30,13 +26,11 @@ public class UserController {
      *
      * @param userService the service containing main additions towards a profile
      * @param timeService the service dealing with the timeslots
-     * @param setterService the service dealing with setting information to the profile
      */
     @Autowired
-    public UserController(UserService userService, UserTimeSlotService timeService, UserSetterService setterService) {
+    public UserController(UserService userService, UserTimeSlotService timeService) {
         this.userService = userService;
         this.timeService = timeService;
-        this.setterService = setterService;
     }
 
     /**
@@ -125,91 +119,18 @@ public class UserController {
         }
     }
 
-    //TODO REQUEST PARAM !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     /**
      * Update everything about a user at once by giving all possible parameters.
      */
-    @PutMapping(path = "/update/{userId}")
+    @PostMapping(path = "/update/{userId}")
     public ResponseEntity<?> updateUser(@PathVariable(uid) Long userId,
                                         @RequestBody UserModel userModel) {
-        Optional<User> returned = userService.updateById(
-                userId,
-                userModel.getName(),
-                userModel.getOrganization(),
-                userModel.getGender(),
-                userModel.getCertificate(),
-                userModel.getPositions());
+        Optional<User> returned = userService.updateById(userId, userModel);
         if (returned.isPresent()) {
             return ResponseEntity.ok(returned.get());
         } else {
             return ResponseEntity.badRequest().build();
         }
-    }
-
-    /**
-     * Update the user's name.
-     */
-    @PutMapping(path = "/name/{userId}")
-    public ResponseEntity<?> setName(@PathVariable(uid) Long userId,
-                                     @RequestParam(required = false) String name
-    ) {
-        if (setterService.setName(userId, name).isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok().build();
-    }
-
-    /**
-     * Update the user's organization.
-     */
-    @PutMapping(path = "/organization/{userId}")
-    public ResponseEntity<?> setOrganization(@PathVariable(uid) Long userId,
-                                             @RequestParam(required = false) String organization
-    ) {
-        if (setterService.setOrganization(userId, organization).isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok().build();
-    }
-
-
-    /**
-     * Update the user's gender.
-     */
-    @PutMapping(path = "/gender/{userId}")
-    public ResponseEntity<?> setGender(@PathVariable(uid) Long userId,
-                                       @RequestParam(required = false) String gender
-    ) {
-        if (setterService.setGender(userId, gender).isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok().build();
-    }
-
-    /**
-     * Update the user's certificate.
-     */
-    @PutMapping(path = "/certificate/{userId}")
-    public ResponseEntity<?> setCertificate(@PathVariable(uid) Long userId,
-                                            @RequestParam(required = false) Certificate certificate
-    ) {
-        if (setterService.setCertificate(userId, certificate).isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok().build();
-    }
-
-    /**
-     * Update the user's positions.
-     */
-    @PutMapping(path = "/positions/{userId}")
-    public ResponseEntity<?> setPositions(@PathVariable(uid) Long userId,
-                                          @RequestParam(required = false) List<Position> positions
-    ) {
-        if (setterService.setPositions(userId, positions).isEmpty()) {
-            return ResponseEntity.badRequest().build();
-        }
-        return ResponseEntity.ok().build();
     }
 
     /**
