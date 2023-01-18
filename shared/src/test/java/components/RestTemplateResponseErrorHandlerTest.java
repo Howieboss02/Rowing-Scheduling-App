@@ -8,6 +8,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.ArrayList;
 import nl.tudelft.sem.template.shared.components.RestTemplateResponseErrorHandler;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.utils.JsonUtil;
@@ -24,7 +25,6 @@ import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
-
 
 @ContextConfiguration(classes = {User.class})
 @RestClientTest
@@ -85,7 +85,7 @@ public class RestTemplateResponseErrorHandlerTest {
 
     @Test
     public void givenRemoteApiCall_when200Error_thenNoError() throws JsonProcessingException {
-        User expected = new User("testNetID", "testName", "testEmail");
+        User expected = new User("testNetID", "testName", null, "testEmail", null, null, new ArrayList<>());
         this.server.expect(ExpectedCount.once(), requestTo("/api/user/ok"))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withSuccess(JsonUtil.serialize(expected), MediaType.APPLICATION_JSON));

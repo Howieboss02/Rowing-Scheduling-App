@@ -3,15 +3,12 @@ package nl.tudelft.sem.template.services;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.database.UserRepository;
-import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.entities.UserModel;
 import nl.tudelft.sem.template.shared.enums.Certificate;
-import nl.tudelft.sem.template.shared.enums.Day;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.util.Pair;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -55,7 +52,7 @@ public class UserService {
             return Optional.empty();
         }
         for (User user : userRepo.findAll()) {
-            if (user.getNetId().equals(name)) {
+            if (user.getUserInfo().getNetId().equals(name)) {
                 return Optional.of(user);
             }
         }
@@ -70,7 +67,7 @@ public class UserService {
      * @return the information of the added user
      */
     public User insert(User user) {
-        if (user == null || user.getNetId().isEmpty() || userRepo.existsById(user.getId())) {
+        if (user == null || user.getUserInfo().getNetId().isEmpty() || userRepo.existsById(user.getId())) {
             return null;
         }
         return userRepo.save(user);
@@ -103,19 +100,19 @@ public class UserService {
             User user = toUpdate.get();
             String name = userModel.getName();
             if (name != null) {
-                user.setName(name);
+                toUpdate.get().getUserInfo().setName(name);
             }
             String organization = userModel.getOrganization();
             if (organization != null) {
-                user.setOrganization(organization);
+                toUpdate.get().getUserInfo().setOrganization(organization);
             }
             String gender = userModel.getGender();
             if (gender != null) {
-                user.setGender(gender);
+                toUpdate.get().getUserInfo().setGender(gender);
             }
             Certificate certificate = userModel.getCertificate();
             if (certificate != null) {
-                user.setCertificate(certificate);
+                toUpdate.get().getUserInfo().setCertificate(certificate);
             }
             List<Position> positions = userModel.getPositions();
             if (positions != null) {

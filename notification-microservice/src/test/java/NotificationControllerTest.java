@@ -40,8 +40,8 @@ public class NotificationControllerTest {
 
     @Test
     public void testSendNotification() {
-        User user = new User("testNetId", "name", "email");
-        user.setNetId(netId);
+        User user = new User("testNetId", "name", null, "email", null, null, null);
+        user.getUserInfo().setNetId(netId);
         Event event = new Event(
                 1L,
                 "Event 1",
@@ -68,8 +68,8 @@ public class NotificationControllerTest {
 
     @Test
     public void testSendNotification404Event() {
-        User user = new User("testNetId", "name", "email");
-        user.setNetId(netId);
+        User user = new User("testNetId", "name", null, "email", null, null, null);
+        user.getUserInfo().setNetId(netId);
         Event event = new Event(
                 1L,
                 "Event 1",
@@ -96,8 +96,8 @@ public class NotificationControllerTest {
 
     @Test
     public void testSendNotification404User() {
-        User user = new User("testNetId", "name", "email");
-        user.setNetId(netId);
+        User user = new User("testNetId", "name", null, "email", null, null, null);
+        user.getUserInfo().setNetId(netId);
         Event event = new Event(
                 1L,
                 "Event 1",

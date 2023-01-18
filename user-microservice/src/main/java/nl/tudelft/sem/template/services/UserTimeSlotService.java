@@ -47,7 +47,7 @@ public class UserTimeSlotService {
         Optional<User> user = service.getById(id);
 
         if (user.isPresent()) {
-            user.get().removeRecurringSlot(timeSlot);
+            user.get().getSchedule().removeRecurringSlot(timeSlot);
             userRepo.save(user.get());
         }
         return user;
@@ -65,7 +65,7 @@ public class UserTimeSlotService {
         Optional<User> user = service.getById(id);
 
         if (user.isPresent() && timeSlot.getTime().getFirst() < timeSlot.getTime().getSecond() && timeSlot.getWeek() > 0) {
-            user.get().addSlot(timeSlot);
+            user.get().getSchedule().addSlot(timeSlot);
             userRepo.save(user.get());
         }
         return user;
@@ -81,7 +81,7 @@ public class UserTimeSlotService {
         Optional<User> user = service.getById(id);
 
         if (user.isPresent()) {
-            user.get().removeSlot(timeSlot);
+            user.get().getSchedule().removeSlot(timeSlot);
             userRepo.save(user.get());
         }
         return user;

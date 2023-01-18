@@ -7,6 +7,7 @@ import nl.tudelft.sem.template.services.UserTimeSlotService;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.entities.UserModel;
+import nl.tudelft.sem.template.shared.enums.Certificate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -134,7 +135,7 @@ public class UserController {
     }
 
     /**
-     * Add a notification to the user's list of notifications.
+     * Add a notification to the (user)'s list of notifications.
      */
     @PutMapping(path = "/notification/{userId}")
     public ResponseEntity<?> addNotification(@PathVariable(uid) Long userId,

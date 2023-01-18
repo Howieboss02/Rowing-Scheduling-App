@@ -38,17 +38,17 @@ public class ValidityChecker {
                 && event.isCompetitive() && !user.getPositions().contains(new Position(position, true));
 
         boolean checkGenderAndOrganization = event.getType() == EventType.COMPETITION
-                && (!event.getOrganisation().equals(user.getOrganization())
-                || !event.getGender().equals(user.getGender()));
+                && (!event.getOrganisation().equals(user.getUserInfo().getOrganization())
+                || !event.getGender().equals(user.getUserInfo().getGender()));
 
-        boolean checkCertificate = user.getCertificate().compareTo(event.getCertificate()) < 0;
+        boolean checkCertificate = user.getUserInfo().getCertificate().compareTo(event.getCertificate()) < 0;
 
         return !checkIfOnTime && !checkIfCreator && !checkIfCompetitive && !checkGenderAndOrganization && !checkCertificate;
     }
 
     public boolean canBeMatched() {
-        return user.getCertificate() != null && user.getPositions() != null && user.getPositions().size() != 0
-                && user.getOrganization() != null;
+        return user.getUserInfo().getCertificate() != null && user.getPositions() != null && user.getPositions().size() != 0
+                && user.getUserInfo().getOrganization() != null;
     }
 
 }

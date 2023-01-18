@@ -86,8 +86,8 @@ public class UserControllerTest {
         User u = getUser("A", Certificate.B1);
         sut.registerNewUser(u);
         sut.updateUser(1L, new UserModel("bbb", "Bobs", "MALE",  Certificate.B2, new ArrayList<>()));
-        assertEquals("bbb", sut.getUsers().get(1).getName());
-        assertEquals(Certificate.B2, sut.getUsers().get(0).getCertificate());
+        assertEquals("bbb", sut.getUsers().get(1).getUserInfo().getName());
+        assertEquals(Certificate.B2, sut.getUsers().get(0).getUserInfo().getCertificate());
     }
 
     @Test
@@ -107,7 +107,7 @@ public class UserControllerTest {
         sut.registerNewUser(u);
         assertEquals(ResponseEntity.badRequest().build(), sut.updateUser(2L,
                 new UserModel("bbb", "Bob", "MALE", Certificate.B1, new ArrayList<>())));
-        assertEquals(sut.getUsers().get(0).getName(), "A");
+        assertEquals(sut.getUsers().get(0).getUserInfo().getName(), "A");
     }
 
     @Test
@@ -165,11 +165,12 @@ public class UserControllerTest {
 
     @Test
     public void testGetNotifications() {
-        List<String> notifications = new ArrayList<>(Arrays.asList("a", "b"));
-
         User u = getUser("A", Certificate.B1);
-        u.setNotifications(notifications);
+        u.addNotification("a");
+        u.addNotification("b");
         sut.registerNewUser(u);
+
+        List<String> notifications = new ArrayList<>(Arrays.asList("a", "b"));
         assertEquals(notifications, sut.getNotifications(1L).getBody());
     }
 
