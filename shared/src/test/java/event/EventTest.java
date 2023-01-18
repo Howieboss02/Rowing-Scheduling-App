@@ -8,6 +8,7 @@ import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.Event;
+import nl.tudelft.sem.template.shared.entities.EventModel;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.Day;
 import nl.tudelft.sem.template.shared.enums.EventType;
@@ -80,5 +81,39 @@ public class EventTest {
                 new TimeSlot(-1, Day.FRIDAY, new Node(1, 2)), Certificate.B5, EventType.COMPETITION, true, "A", "A");
 
         assertEquals("competition - COMPETITION from 00:01 until 00:02 in week -1, on FRIDAY.\n", e.messageConverter());
+    }
+
+    @Test
+    public void testMerge() {
+        Event e = new Event(1L, "competition", new ArrayList<>(),
+                new TimeSlot(-1, Day.FRIDAY, new Node(1, 2)), Certificate.B5, EventType.COMPETITION, true, "A", "A");
+
+        EventModel em = new EventModel(1L, "competition 1", new ArrayList<>(),
+                new TimeSlot(-1, Day.FRIDAY, new Node(1, 2)), Certificate.B3, EventType.TRAINING, false, "B", "B");
+
+        Event mergedEvent = e.merge(em, true);
+
+        assertNotNull(mergedEvent);
+        assertEquals(1L, mergedEvent.getOwningUser());
+        assertEquals("competition 1", mergedEvent.getLabel());
+        assertEquals(em.getTimeslot(), mergedEvent.getTimeslot());
+        assertEquals(Certificate.B3, mergedEvent.getCertificate());
+        assertEquals(EventType.TRAINING, mergedEvent.getType());
+        assertFalse(mergedEvent.isCompetitive());
+        assertEquals("B", mergedEvent.getGender());
+        assertEquals("B", mergedEvent.getOrganisation());
+    }
+
+    @Test
+    public void testMerge_invalidInput() {
+        Event e = new Event(1L, "competition", new ArrayList<>(),
+                new TimeSlot(-1, Day.FRIDAY, new Node(1, 2)), Certificate.B5, EventType.COMPETITION, true, "A", "A");
+
+        EventModel em = new EventModel(2L, "competition 1", new ArrayList<>(),
+                new TimeSlot(-1, Day.FRIDAY, new Node(1, 2)), Certificate.B3, EventType.TRAINING, false, "B", "B");
+
+        Event mergedEvent = e.merge(em, true);
+
+        assertNull(mergedEvent);
     }
 }

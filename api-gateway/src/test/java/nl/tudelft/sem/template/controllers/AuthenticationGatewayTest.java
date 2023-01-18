@@ -53,7 +53,8 @@ public class AuthenticationGatewayTest {
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson = ow.writeValueAsString(request);
-        when(gatewayService.registerUser(request)).thenReturn(new User("testNetId", "name", "email"));
+        when(gatewayService.registerUser(request)).thenReturn(
+                new User("testNetId", "name", null, "email", null, null, null));
         mockMvc.perform(post("/api/auth/register").contentType(APPLICATION_JSON_UTF8)
                         .content(requestJson))
                 .andExpect(status().isOk()).andExpect(content().string(containsString("testNetId")));

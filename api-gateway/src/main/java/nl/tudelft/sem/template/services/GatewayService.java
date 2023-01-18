@@ -1,6 +1,7 @@
 package nl.tudelft.sem.template.services;
 
 import java.util.List;
+import java.util.Optional;
 import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.Event;
@@ -88,9 +89,8 @@ public class GatewayService {
      */
     public User updateUser(Long userId, UserModel userModel) {
         HttpEntity<UserModel> requestEntity = new HttpEntity<>(userModel);
-        System.out.println("got here");
-        return restTemplate.exchange(apiPrefix + MicroservicePorts.USER.port + userPath
-                + "/update/" + userId, HttpMethod.PUT, requestEntity, User.class).getBody();
+        return restTemplate.postForObject(apiPrefix + MicroservicePorts.USER.port + userPath
+                + "/update/" + userId, requestEntity, User.class);
     }
 
     /**
@@ -130,24 +130,23 @@ public class GatewayService {
                 + "/get/" + userId, User.class);
     }
 
-    public List<Event> getAllEvents() {
-        return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/all", List.class);
-    }
-
-    public List<Event> getAllEventsForUser(Long userId) {
-        return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/ownedBy/" + userId, List.class);
-    }
-
-    public List<Request> getAllRequestsForEvent(Long eventId) {
-        return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/" + eventId + "/queue", List.class);
-    }
-
-    public ResponseEntity<List<Event>> getMatchedEventsForUser(Long userId) {
-        return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/match/" + userId, ResponseEntity.class);
+    /**
+     * Get all events accordingly to params.
+     *
+     * @param userId the user id
+     * @param matchUserId user id of the user to match with
+     */
+    public List<Event> getAllEvents(Optional<Long> userId, Optional<Long> matchUserId) {
+        if (userId.isPresent()) {
+            return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                    + "/all?owner=" + userId.get(), List.class);
+        } else if (matchUserId.isPresent()) {
+            return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                    + "/all?match=" + matchUserId.get(), List.class);
+        } else {
+            return restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                    + "/all", List.class);
+        }
     }
 
     public Event addNewEvent(EventModel eventModel) {
@@ -181,15 +180,9 @@ public class GatewayService {
     /**
      * Accept to an event.
      */
-    public String acceptToEvent(Long eventId, Request request) {
+    public String acceptToEvent(Long eventId, Request request, boolean outcome) {
         return restTemplate.postForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/" + eventId + "/accept", request, String.class);
+                + "/" + eventId + "/accept?outcome=" + outcome, request, String.class);
     }
-
-    public String rejectFromEvent(Long eventId, Request request) {
-        return restTemplate.postForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                + "/" + eventId + "/reject", request, String.class);
-    }
-
 
 }

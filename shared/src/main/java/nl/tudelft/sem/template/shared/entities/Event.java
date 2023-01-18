@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.shared.entities;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.persistence.*;
 import lombok.*;
 import nl.tudelft.sem.template.shared.converters.RequestConverter;
@@ -110,8 +111,18 @@ public class Event {
         return queue.add(new Request(name, position));
     }
 
+    /**
+     * Dequeues a user from a position if that position is desired.
+     *
+     * @param request request with position and name to dequeue
+     * @return true iff the dequeue was successfull
+     */
     public boolean dequeue(Request request) {
-        return queue.remove(request);
+        boolean result = queue.remove(request);
+        if (result) {
+            positions.remove(request.getPosition());
+        }
+        return result;
     }
 
     /**
@@ -127,6 +138,61 @@ public class Event {
                 + timeslot.getWeek() + ", on " + timeslot.getDay().toString() + ".\n";
     }
 
+    /**
+     * Method for updating event with data from another event.
+     *
+     * @param eventModel the event to update from
+     * @param updateIsCompetitive whether to update the competitiveness
+     *
+     * @return a copy of updated event
+     */
+    public Event merge(EventModel eventModel, boolean updateIsCompetitive) {
+
+        if (!eventModel.getOwningUser().equals(this.getOwningUser())) {
+            return null;
+        }
+        String label = eventModel.getLabel();
+        if (label != null) {
+            this.setLabel(label);
+        }
+        TimeSlot timeslot = eventModel.getTimeslot();
+        if  (timeslot != null) {
+            this.setTimeslot(timeslot);
+        }
+        Certificate certificate = eventModel.getCertificate();
+        if (certificate != null) {
+            this.setCertificate(certificate);
+        }
+        EventType type = eventModel.getType();
+        if (type != null) {
+            this.setType(type);
+        }
+
+        if (updateIsCompetitive) {
+            this.setCompetitive(eventModel.isCompetitive());
+        }
+        String gender = eventModel.getGender();
+        if (gender != null) {
+            this.setGender(gender);
+        }
+        String organisation = eventModel.getOrganisation();
+        if (organisation != null) {
+            this.setOrganisation(organisation);
+        }
+        List<PositionName> positions = eventModel.getPositions();
+        if (positions != null) {
+            this.setPositions(positions);
+        }
+        return this;
+    }
+
+    /**
+     * Checks if an object is equal to the event by comparing their labels,
+     * which are unique and non-null for every event.
+     *
+     * @param o the object to compare
+     * @return true iff the object is equal to the event
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) {
@@ -136,17 +202,17 @@ public class Event {
             return false;
         }
         Event event = (Event) o;
-
-        if (event.id == null) {
-            return label.equals(event.label);
-        }
-        return id.equals(event.id);
+        return label.equals(event.label);
     }
 
+    /**
+     * Hashes te event label, since this is unique and non-null for every event.
+     *
+     * @return the hashcode for the event
+     */
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return Objects.hash(label);
     }
-
 }
 

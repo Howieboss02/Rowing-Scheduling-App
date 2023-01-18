@@ -15,7 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 public class PlatformStrategyTest {
 
-    public User user = new User("BobID", "Bob", "Bob@b.ob");
+    public User user = new User("BobID", "Bob", null, "Bob@b.ob", null, null, null);
     public Event event = new Event(1L, "Training 1", new ArrayList<>(),
             new TimeSlot(1, Day.MONDAY, new Node(12 * 60, 14 * 60 + 30)), Certificate.B1, EventType.TRAINING,
             true, "M",  "Bob's camp");

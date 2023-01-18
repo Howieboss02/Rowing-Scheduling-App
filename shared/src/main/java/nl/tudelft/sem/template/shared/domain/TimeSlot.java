@@ -25,27 +25,23 @@ public class TimeSlot {
      * @return weather this timeslot is available in the schedule
      */
     public boolean matchSchedule(Schedule schedule) {
-        List<TimeSlot> recurring = new ArrayList<>();
-        recurring.addAll(schedule.getRecurringSlots());
         List<TimeSlot> removed = new ArrayList<>();
         removed.addAll(schedule.getRemovedSlots());
         List<TimeSlot> slots = new ArrayList<>();
         slots.addAll(schedule.getAddedSlots());
+        slots.addAll(schedule.getRecurringSlots());
         for (TimeSlot ts : removed) {
-            if (ts.week.equals(this.week)) {
-                recurring.removeIf(toRemove -> toRemove.day.equals(ts.day) && toRemove.time.equals(ts.time));
+            if (ts.week.equals(this.week) && ts.time.getFirst() <= this.time.getFirst()
+                    && ts.time.getSecond() >= this.time.getSecond()) {
+                return false;
             }
         }
-        for (TimeSlot ts : recurring) {
-            if (!this.day.equals(ts.day)) {
-                continue;
-            }
-            if (ts.time.getFirst() <= this.time.getFirst() && ts.time.getSecond() >= this.time.getSecond()) {
-                return true;
-            }
-        }
+        return checkTsList(slots);
+    }
+
+    private boolean checkTsList(List<TimeSlot> slots) {
         for (TimeSlot ts : slots) {
-            if (!this.week.equals(ts.week)) {
+            if (ts.week != -1 && !this.week.equals(ts.week)) {
                 continue;
             }
             if (!this.day.equals(ts.day)) {

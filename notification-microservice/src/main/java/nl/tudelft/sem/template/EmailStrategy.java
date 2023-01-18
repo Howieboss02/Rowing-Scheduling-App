@@ -41,10 +41,10 @@ public class EmailStrategy implements Strategy {
     public String sendNotification(User user, Event event, Outcome outcome) {
         String message;
         if (outcome == ACCEPTED) {
-            message = user.getName() + ", you have been accepted to " + event.messageConverter();
+            message = user.getUserInfo().getName() + ", you have been accepted to " + event.messageConverter();
         } else {
-            message = user.getName() + ", you have been rejected from " + event.messageConverter();
+            message = user.getUserInfo().getName() + ", you have been rejected from " + event.messageConverter();
         }
-        return "Email has been sent to " + user.getEmail() + " with the message: \n" + message;
+        return "Email has been sent to " + user.getUserInfo().getEmail() + " with the message: \n" + message;
     }
 }

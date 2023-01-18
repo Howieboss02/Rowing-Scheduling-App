@@ -10,6 +10,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import nl.tudelft.sem.template.services.GatewayService;
 import nl.tudelft.sem.template.shared.components.RestTemplateResponseErrorHandler;
 import nl.tudelft.sem.template.shared.domain.Node;
@@ -36,8 +37,6 @@ import org.springframework.web.client.RestTemplate;
 
 @RestClientTest
 public class GatewayServiceTest {
-
-    private RestTemplate restTemplate;
 
     private GatewayService service;
 
@@ -110,11 +109,11 @@ public class GatewayServiceTest {
         user = new User();
         loginResponse = new AuthenticationResponseModel(token);
 
-        this.restTemplate = this.builder
+        RestTemplate restTemplate = this.builder
                 .errorHandler(new RestTemplateResponseErrorHandler())
                 .build();
         server = MockRestServiceServer.createServer(restTemplate);
-        service = new GatewayService(this.restTemplate);
+        service = new GatewayService(restTemplate);
     }
 
     @Test
@@ -144,47 +143,9 @@ public class GatewayServiceTest {
         List<Event> expected = Arrays.asList(event1, event2);
         server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/all"))
                 .andRespond(withSuccess(JsonUtil.serialize(expected), MediaType.APPLICATION_JSON));
-        List<Event> actual = service.getAllEvents();
+        List<Event> actual = service.getAllEvents(Optional.empty(), Optional.empty());
 
         assertThat(actual.size()).isEqualTo(2);
-        server.verify();
-    }
-
-    @Test
-    public void testGetAllEventsForUser() throws JsonProcessingException {
-        List<Request> expected = Arrays.asList(request, request);
-        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/ownedBy/1"))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withSuccess(JsonUtil.serialize(expected), MediaType.APPLICATION_JSON));
-
-        List<Event> actual = service.getAllEventsForUser(1L);
-
-        assertThat(actual.size()).isEqualTo(2);
-        server.verify();
-    }
-
-    @Test
-    public void testGetAllRequestsForUser() throws JsonProcessingException {
-        List<Request> expected = Arrays.asList(request, request);
-        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/1/queue"))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withSuccess(JsonUtil.serialize(expected), MediaType.APPLICATION_JSON));
-
-        List<Request> actual = service.getAllRequestsForEvent(1L);
-
-        assertThat(actual.size()).isEqualTo(2);
-        server.verify();
-    }
-
-    @Test
-    public void testGetMatchedEventsForUser() throws JsonProcessingException {
-        List<Request> expected = Arrays.asList(request, request);
-        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/match/1"))
-                .andExpect(method(HttpMethod.GET))
-                .andRespond(withSuccess());
-
-        service.getMatchedEventsForUser(1L);
-
         server.verify();
     }
 
@@ -238,25 +199,13 @@ public class GatewayServiceTest {
 
     @Test
     public void testAccept() throws JsonProcessingException {
-        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/1/accept"))
+        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath + "/1/accept?outcome=true"))
                 .andExpect(method(HttpMethod.POST))
                 .andRespond(withSuccess(JsonUtil.serialize("ACCEPTED"), MediaType.APPLICATION_JSON));
 
-        String actual = service.acceptToEvent(1L, request);
+        String actual = service.acceptToEvent(1L, request, true);
 
         assertThat(actual).isEqualTo("\"ACCEPTED\"");
-        server.verify();
-    }
-
-    @Test
-    public void testReject() throws JsonProcessingException {
-        server.expect(requestTo(apiPrefix + MicroservicePorts.EVENT.port + eventPath
-                        + "/1/reject")).andExpect(method(HttpMethod.POST))
-                .andRespond(withSuccess(JsonUtil.serialize("REJECTED"), MediaType.APPLICATION_JSON));
-
-        String actual = service.rejectFromEvent(1L, request);
-
-        assertThat(actual).isEqualTo("\"REJECTED\"");
         server.verify();
     }
 
