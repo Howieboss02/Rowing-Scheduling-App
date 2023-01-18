@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.shared.entities;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.persistence.*;
 import lombok.*;
 import nl.tudelft.sem.template.shared.converters.RequestConverter;
@@ -111,7 +112,9 @@ public class Event {
     }
 
     public boolean dequeue(Request request) {
-        return queue.remove(request);
+        boolean result = queue.remove(request);
+        positions.remove(request.getPosition());
+        return result;
     }
 
     /**
