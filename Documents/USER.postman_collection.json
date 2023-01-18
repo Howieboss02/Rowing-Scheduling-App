@@ -1,0 +1,378 @@
+{
+	"info": {
+		"_postman_id": "8ceb09c5-6104-47cb-9aa9-24bbe9d958e9",
+		"name": "USER",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "24641811"
+	},
+	"item": [
+		{
+			"name": "Get all users",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"token\", jsonData.token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjcxODQ1MjYwLCJpYXQiOjE2NzE3NTg4NjB9.cPS6-beTkGwpJn79L1ar6DF3SUsuamrespRzlQPuXMp8dPYaJ7mCHlL4WUanzyWdyKlxclAkxnLylxwVjPUYUg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "localhost:9000/api/user/all",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"user",
+						"all"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all notifications",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"token\", jsonData.token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjcxODQzMDUzLCJpYXQiOjE2NzE3NTY2NTN9.W1-dvQtPL3I_dM-l9eoJsdQX76t1x-aUmQQoeg0SFPK2q8VGv-_hNNfDpobukN07kM6nJR0-APfBF3d-mQI_fg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:9000/api/user/getNotifications/1",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"user",
+						"getNotifications",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete a User",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiIgQm9iMWlmaSIsImV4cCI6MTY3MTc1NzA5NiwiaWF0IjoxNjcxNjcwNjk2fQ.0wQ9g8GLg-AZQHlzxf8NTfYm9yCI7PdYgKMnlq4bBZ3k7vMfcbLdsna9fN-_V4Yenllo2QX2gsW-SAZPKlbZ8Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:9000/api/user/deleteUser/1",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"user",
+						"deleteUser",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update a user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"token\", jsonData.token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjcxODQ2Mzg5LCJpYXQiOjE2NzE3NTk5ODl9.t6P7lV76eftO48xaW-LqPJGVL1_v2zgdF8Fr8F109O-2-vrrolbfDqczjKOvXs6XZ84DbLCD2OKon5mq_m1vtw",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"UserModel\": {\n    \"name\": \"Bobik\",\n    \"organization\": \"Sufjmmer camp\",\n    \"gender\": \"Male\", \n    \"certificate\": \"B3\",\n    \"positions\": \n    [\n        {\"name\": \"Cox\", \"isCompetitive\": \"true\"}\n    ]\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9000/api/user/updateUser/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"user",
+						"updateUser",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Recuring Slot",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"token\", jsonData.token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjcxODQ1MjYwLCJpYXQiOjE2NzE3NTg4NjB9.cPS6-beTkGwpJn79L1ar6DF3SUsuamrespRzlQPuXMp8dPYaJ7mCHlL4WUanzyWdyKlxclAkxnLylxwVjPUYUg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"week\": -1,  //reccuring has to be -1\n    \"day\": \"MONDAY\", \n    \"time\": \n    {\n        \"first\": 60, \n        \"second\": 120\n    }\n    \n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9000/api/user/schedule/addRecurring/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"user",
+						"schedule",
+						"addRecurring",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove Recurring Slot",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjcxNzU5NjAyLCJpYXQiOjE2NzE2NzMyMDJ9.aMfp786aYBNeibeZpndZo5d9lLdr1EQiMbv9K9G6EP8vrZokMFs7iA2PmJGnl_yo1DJeVsSsiAd3q5FNCF5dsA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"week\": -1, \n    \"day\": \"MONDAY\", \n    \"time\": \n    {\n        \"first\": 60, \n        \"second\": 120\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9000/api/user/schedule/removeRecurring/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"user",
+						"schedule",
+						"removeRecurring",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add One TIme Slot",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);",
+							"postman.setEnvironmentVariable(\"token\", jsonData.token);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjcxODQ1MjYwLCJpYXQiOjE2NzE3NTg4NjB9.cPS6-beTkGwpJn79L1ar6DF3SUsuamrespRzlQPuXMp8dPYaJ7mCHlL4WUanzyWdyKlxclAkxnLylxwVjPUYUg",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"week\": 15, \n    \"day\": \"TUESDAY\", \n    \"time\": \n    {\n        \"first\": 360, \n        \"second\": 361\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9000/api/user/schedule/include/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"user",
+						"schedule",
+						"include",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove One TIme Slot",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJ0ZXN0IiwiZXhwIjoxNjcxNzU5NjAyLCJpYXQiOjE2NzE2NzMyMDJ9.aMfp786aYBNeibeZpndZo5d9lLdr1EQiMbv9K9G6EP8vrZokMFs7iA2PmJGnl_yo1DJeVsSsiAd3q5FNCF5dsA",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"week\": 15, \n    \"day\": \"TUESDAY\", \n    \"time\": \n    {\n        \"first\": 360, \n        \"second\": 361\n    }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9000/api/user/schedule/exclude/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9000",
+					"path": [
+						"api",
+						"user",
+						"schedule",
+						"exclude",
+						"1"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
