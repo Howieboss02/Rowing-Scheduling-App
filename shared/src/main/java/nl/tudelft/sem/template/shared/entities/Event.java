@@ -3,6 +3,7 @@ package nl.tudelft.sem.template.shared.entities;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 import javax.persistence.*;
 import lombok.*;
 import nl.tudelft.sem.template.shared.converters.RequestConverter;
@@ -110,8 +111,18 @@ public class Event {
         return queue.add(new Request(name, position));
     }
 
+    /**
+     * Dequeues a user from a position if that position is desired.
+     *
+     * @param request request with position and name to dequeue
+     * @return true iff the dequeue was successfull
+     */
     public boolean dequeue(Request request) {
-        return queue.remove(request);
+        boolean result = queue.remove(request);
+        if (result) {
+            positions.remove(request.getPosition());
+        }
+        return result;
     }
 
     /**
