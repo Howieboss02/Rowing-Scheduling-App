@@ -1,10 +1,8 @@
 import static nl.tudelft.sem.template.shared.enums.Outcome.ACCEPTED;
-import static org.assertj.core.api.FactoryBasedNavigableListAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.Arrays;
 import nl.tudelft.sem.template.Notification;
 import nl.tudelft.sem.template.NotificationController;
@@ -13,40 +11,35 @@ import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.User;
 import nl.tudelft.sem.template.shared.enums.*;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
+import org.springframework.web.client.RestTemplate;
 
-
-@ExtendWith(MockitoExtension.class)
 public class NotificationControllerTest {
     private final Long eventId = 1L;
     private final String netId = "testNetId";
     private final Outcome outcome = ACCEPTED;
 
-    @Mock
+    private static final String apiPrefix = "http://localhost:";
+    private static final String userPath = "/api/user/";
+    private static final String eventPath = "/api/event/";
+
     private Notification notification;
 
-    @InjectMocks
-    private NotificationController notificationController = new NotificationController(notification);
+    RestTemplate restTemplate;
+    NotificationController notificationController;
 
-    @Mock
-    private WebClient client;
-
-    private WebClient.RequestHeadersUriSpec requestHeadersUriSpecMock = Mockito.mock(WebClient.RequestHeadersUriSpec.class);
-    final WebClient.RequestHeadersSpec headersSpecMock = Mockito.mock(WebClient.RequestHeadersSpec.class);
-    final WebClient.ResponseSpec responseSpecMock = Mockito.mock(WebClient.ResponseSpec.class);
+    @BeforeEach
+    void setup() {
+        restTemplate = mock(RestTemplate.class);
+        notification = mock(Notification.class);
+        notificationController = new NotificationController(notification, restTemplate);
+    }
 
     @Test
-    public void testSendNotification() throws JsonProcessingException {
+    public void testSendNotification() {
         User user = new User("testNetId", "name", "email");
         user.setNetId(netId);
         Event event = new Event(
@@ -60,12 +53,12 @@ public class NotificationControllerTest {
                 "M",
                 "Organisation 1"
         );
-        when(client.get()).thenReturn(requestHeadersUriSpecMock);
-        when(requestHeadersUriSpecMock.uri(ArgumentMatchers.<String>notNull())).thenReturn(headersSpecMock);
-        when(headersSpecMock.retrieve()).thenReturn(responseSpecMock);
-        when(responseSpecMock.bodyToMono(User.class)).thenReturn(Mono.just(user));
-        when(responseSpecMock.bodyToMono(Event.class)).thenReturn(Mono.just(event));
-        notificationController.setClient(client);
+        when(restTemplate.getForObject(apiPrefix + MicroservicePorts.USER.port + userPath
+                + "netId/?netId=" + netId, User.class)).thenReturn(user);
+
+        when(restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                + eventId, Event.class)).thenReturn(event);
+
         when(notification.sendNotification(user, event, outcome)).thenReturn("Notification sent");
 
         ResponseEntity<String> response = notificationController.sendNotification(eventId, netId, outcome);
@@ -74,7 +67,7 @@ public class NotificationControllerTest {
     }
 
     @Test
-    public void testSendNotification404Event() throws JsonProcessingException {
+    public void testSendNotification404Event() {
         User user = new User("testNetId", "name", "email");
         user.setNetId(netId);
         Event event = new Event(
@@ -88,12 +81,13 @@ public class NotificationControllerTest {
                 "M",
                 "Organisation 1"
         );
-        when(client.get()).thenReturn(requestHeadersUriSpecMock);
-        when(requestHeadersUriSpecMock.uri(ArgumentMatchers.<String>notNull())).thenReturn(headersSpecMock);
-        when(headersSpecMock.retrieve()).thenReturn(responseSpecMock);
-        when(responseSpecMock.bodyToMono(User.class)).thenReturn(Mono.just(user));
-        when(responseSpecMock.bodyToMono(Event.class)).thenReturn(Mono.empty());
-        notificationController.setClient(client);
+        when(restTemplate.getForObject(apiPrefix + MicroservicePorts.USER.port
+                + "/netId/?netId=" + netId, User.class)).thenReturn(user);
+
+        when(restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port
+                + eventId, Event.class)).thenReturn(null);
+
+        when(notification.sendNotification(user, event, outcome)).thenReturn("Notification sent");
 
         ResponseEntity<String> response = notificationController.sendNotification(eventId, netId, outcome);
 
@@ -101,7 +95,7 @@ public class NotificationControllerTest {
     }
 
     @Test
-    public void testSendNotification404User() throws JsonProcessingException {
+    public void testSendNotification404User() {
         User user = new User("testNetId", "name", "email");
         user.setNetId(netId);
         Event event = new Event(
@@ -115,22 +109,17 @@ public class NotificationControllerTest {
                 "M",
                 "Organisation 1"
         );
-        when(client.get()).thenReturn(requestHeadersUriSpecMock);
-        when(requestHeadersUriSpecMock.uri(ArgumentMatchers.<String>notNull())).thenReturn(headersSpecMock);
-        when(headersSpecMock.retrieve()).thenReturn(responseSpecMock);
-        when(responseSpecMock.bodyToMono(User.class)).thenReturn(Mono.empty());
-        when(responseSpecMock.bodyToMono(Event.class)).thenReturn(Mono.just(event));
-        notificationController.setClient(client);
+        when(restTemplate.getForObject(apiPrefix + MicroservicePorts.USER.port + userPath
+                + "netId/?netId=" + netId, User.class)).thenReturn(null);
+
+        when(restTemplate.getForObject(apiPrefix + MicroservicePorts.EVENT.port + eventPath
+                + eventId, Event.class)).thenReturn(event);
+
+        when(notification.sendNotification(user, event, outcome)).thenReturn("Notification sent");
 
         ResponseEntity<String> response = notificationController.sendNotification(eventId, netId, outcome);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
-
-    @Test
-    public void testWithoutSettingUpWebClientThrowsException() {
-        assertThrows(NullPointerException.class, () -> notificationController.sendNotification(eventId, netId, outcome));
-    }
-
 }
 
