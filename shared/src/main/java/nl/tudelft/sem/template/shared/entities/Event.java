@@ -111,9 +111,17 @@ public class Event {
         return queue.add(new Request(name, position));
     }
 
+    /**
+     * Dequeues a user from a position if that position is desired.
+     *
+     * @param request request with position and name to dequeue
+     * @return true iff the dequeue was successfull
+     */
     public boolean dequeue(Request request) {
         boolean result = queue.remove(request);
-        positions.remove(request.getPosition());
+        if (result) {
+            positions.remove(request.getPosition());
+        }
         return result;
     }
 
