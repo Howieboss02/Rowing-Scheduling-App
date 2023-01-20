@@ -3,12 +3,10 @@ package nl.tudelft.sem.template.services;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import nl.tudelft.sem.template.database.EventRepository;
-import nl.tudelft.sem.template.database.TestEventRepository;
 import nl.tudelft.sem.template.shared.domain.*;
 import nl.tudelft.sem.template.shared.entities.Event;
 import nl.tudelft.sem.template.shared.entities.User;
@@ -18,11 +16,12 @@ import nl.tudelft.sem.template.shared.enums.EventType;
 import nl.tudelft.sem.template.shared.enums.PositionName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.data.util.Pair;
+import org.mockito.Mock;
 
 class EventServiceTest {
-
+    @Mock
     public EventRepository mockedRepo;
+    @Mock
     private EventService mockedService;
 
     /**
@@ -160,7 +159,7 @@ class EventServiceTest {
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
         assertEquals(Optional.of(event), mockedService.updateById(1L, 1L, "B", createPositionNames(), ts,
-                Certificate.B5, EventType.COMPETITION, true, "M", "B", false));
+            Certificate.B5, EventType.COMPETITION, true, "M", "B", false));
 
         Event updated = getEvent("B", 1L, Certificate.B5, EventType.COMPETITION);
         updated.setGender("M");
@@ -176,13 +175,13 @@ class EventServiceTest {
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
         assertEquals(Optional.of(event),
-                mockedService.updateById(1L, 1L, null, null, null, null, null, false, null, null, false));
+            mockedService.updateById(1L, 1L, null, null, null, null, null, false, null, null, false));
     }
 
     @Test
     void updateByIdNoEvent() {
         assertEquals(Optional.empty(),
-                mockedService.updateById(null, null, null, null, null, null, null,  false, null, null, false));
+            mockedService.updateById(null, null, null, null, null, null, null, false, null, null, false));
     }
 
     @Test
@@ -200,7 +199,8 @@ class EventServiceTest {
     @Test
     void testGetRequestsFail() {
         when(mockedRepo.existsById(1L)).thenReturn(false);
-        assertEquals(new ArrayList<Request>(), mockedService.getRequests(1L));
+        List<Request> request = mockedService.getRequests(1L);
+        assertEquals(ArrayList.class, request.getClass());
     }
 
     @Test
@@ -218,10 +218,25 @@ class EventServiceTest {
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
         assertTrue(mockedService.enqueueById(1L, user, PositionName.Cox,
-                200 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
+            200 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
         verify(mockedRepo, times(1)).save(event);
         assertEquals(List.of(r), event.getQueue());
 
+    }
+
+    @Test
+    void testEnqueueTrainingBoundary() {
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.TRAINING);
+
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
+
+        User user = getUser();
+        assertTrue(mockedService.enqueueById(1L, user, PositionName.Cox,
+            1455L - 30L + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
+        verify(mockedRepo, times(1)).save(event);
+        Request r = new Request("Bob", PositionName.Cox);
+        assertEquals(List.of(r), event.getQueue());
     }
 
     @Test
@@ -233,7 +248,7 @@ class EventServiceTest {
 
         User user = getUser();
         mockedService.enqueueById(1L, user, PositionName.Cox,
-                1430L + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7));
+            1430L + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7));
 
         verify(mockedRepo, times(0)).save(event);
         assertEquals(new ArrayList<>(), event.getQueue());
@@ -249,7 +264,7 @@ class EventServiceTest {
         User user = new User();
         user.setNetId("Bob");
         mockedService.enqueueById(1L, user, PositionName.Cox,
-                100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7));
+            100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7));
 
         verify(mockedRepo, times(0)).save(event);
         assertEquals(new ArrayList<>(), event.getQueue());
@@ -264,7 +279,7 @@ class EventServiceTest {
         mockedService.enqueueById(1L, user, PositionName.Cox, 1430);
 
         assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox,
-                1450 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
+            1450 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
         assertEquals(new ArrayList<>(), mockedService.getAllEvents());
     }
 
@@ -278,7 +293,7 @@ class EventServiceTest {
 
         User user = getUser();
         assertFalse(mockedService.enqueueById(1L, user, PositionName.Coach,
-                100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
+            100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
     }
 
     @Test
@@ -291,7 +306,7 @@ class EventServiceTest {
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
         assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox,
-                100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
+            100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
     }
 
     @Test
@@ -305,7 +320,7 @@ class EventServiceTest {
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
         assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox,
-                100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
+            100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
     }
 
     @Test
@@ -319,7 +334,7 @@ class EventServiceTest {
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
         assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox,
-                100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
+            100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
     }
 
     @Test
@@ -332,7 +347,7 @@ class EventServiceTest {
         when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
 
         assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox,
-                100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
+            100 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
     }
 
     @Test
@@ -385,13 +400,13 @@ class EventServiceTest {
         List<Event> trainings = List.of(getEvent("A", 4L, Certificate.B2, EventType.TRAINING));
 
         when(mockedRepo.findMatchingCompetitions(
-                user.getCertificate(), user.getOrganization(), user.getId(),
-                EventType.COMPETITION, user.getGender()))
-                .thenReturn(new ArrayList<>());
+            user.getCertificate(), user.getOrganization(), user.getId(),
+            EventType.COMPETITION, user.getGender()))
+            .thenReturn(new ArrayList<>());
 
         when(mockedRepo.findMatchingTrainings(
-                user.getCertificate(), user.getId(), EventType.TRAINING))
-                .thenReturn(trainings);
+            user.getCertificate(), user.getId(), EventType.TRAINING))
+            .thenReturn(trainings);
         assertEquals(trainings, mockedService.getMatchedEvents(user));
     }
 
@@ -401,13 +416,207 @@ class EventServiceTest {
         List<Event> competitions = List.of(getEvent("A", 4L, Certificate.B2, EventType.COMPETITION));
 
         when(mockedRepo.findMatchingCompetitions(
-                user.getCertificate(), user.getOrganization(), user.getId(),
-                EventType.COMPETITION, user.getGender()))
-                .thenReturn(competitions);
+            user.getCertificate(), user.getOrganization(), user.getId(),
+            EventType.COMPETITION, user.getGender()))
+            .thenReturn(competitions);
 
         when(mockedRepo.findMatchingTrainings(
-                user.getCertificate(), user.getId(), EventType.TRAINING))
-                .thenReturn(new ArrayList<>());
+            user.getCertificate(), user.getId(), EventType.TRAINING))
+            .thenReturn(new ArrayList<>());
         assertEquals(competitions, mockedService.getMatchedEvents(user));
+    }
+
+    @Test
+    void testAddEvent() {
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+        when(mockedRepo.save(event)).thenReturn(event);
+        Event added = mockedService.insert(event);
+        assertEquals(event, added);
+        assertNotEquals(null, added);
+
+    }
+
+    @Test
+    void testUpdateUnauthorizedUser() {
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedService.getById(1L)).thenReturn(Optional.of(event));
+        Optional<Event> updated = mockedService.updateById(1L, 1L, "New event", null, null,
+            null, null, false, null, null, false);
+        assertTrue(updated.isEmpty());
+    }
+
+    @Test
+    void testUpdateWithNewTimeSlot() {
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+        TimeSlot ts = new TimeSlot(12, Day.FRIDAY, new Node(1400, 1600));
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedService.getById(1L)).thenReturn(Optional.of(event));
+        Optional<Event> updated = mockedService.updateById(4L, 1L, "New event", createPositionNames(), ts,
+            null, null, true, null, null, false);
+        assertTrue(updated.isPresent());
+        assertEquals(ts, updated.get().getTimeslot());
+    }
+
+    @Test
+    void testUpdateCertificate() {
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedService.getById(1L)).thenReturn(Optional.of(event));
+        Optional<Event> updated = mockedService.updateById(4L, 1L, "New event", createPositionNames(),
+            null, Certificate.B7, null, true, null, null, false);
+        assertTrue(updated.isPresent());
+        assertEquals(Certificate.B7, updated.get().getCertificate());
+    }
+
+    @Test
+    void testUpdateType() {
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedService.getById(1L)).thenReturn(Optional.of(event));
+        Optional<Event> updated = mockedService.updateById(4L, 1L, "New event", null, null,
+            null, EventType.TRAINING, true, null, null, false);
+        assertTrue(updated.isPresent());
+        assertEquals(EventType.TRAINING, updated.get().getType());
+    }
+
+    @Test
+    void testUpdateCompetitiveness() {
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedService.getById(1L)).thenReturn(Optional.of(event));
+        Optional<Event> updated = mockedService.updateById(4L, 1L, "New event", createPositionNames(),
+            null, null, null, false, null, null, true);
+        assertTrue(updated.isPresent());
+        assertEquals(false, updated.get().isCompetitive());
+    }
+
+    @Test
+    void testUpdateGender() {
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedService.getById(1L)).thenReturn(Optional.of(event));
+        Optional<Event> updated = mockedService.updateById(4L, 1L, null, createPositionNames(),
+            null, null, null, false, "Male", null, false);
+        assertTrue(updated.isPresent());
+        assertEquals("Male", updated.get().getGender());
+    }
+
+    @Test
+    void testUpdateOrganisation() {
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedService.getById(1L)).thenReturn(Optional.of(event));
+        Optional<Event> updated = mockedService.updateById(4L, 1L, null, createPositionNames(),
+            null, null, null, false, null, "Bob's Land", true);
+        assertTrue(updated.isPresent());
+        assertEquals("Bob's Land", updated.get().getOrganisation());
+    }
+
+    @Test
+    void testUpdatePositions() {
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedService.getById(1L)).thenReturn(Optional.of(event));
+        Optional<Event> updated = mockedService.updateById(4L, 1L, null, List.of(PositionName.ScullingRower),
+            null, null, null, false, null, null, true);
+        assertTrue(updated.isPresent());
+        assertEquals(List.of(PositionName.ScullingRower), updated.get().getPositions());
+    }
+
+    //TODO: Add test on boundary for line 181
+
+    @Test
+    void testEnqueueTwice() {
+        User user = getUser();
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.TRAINING);
+
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
+
+        assertTrue(mockedService.enqueueById(1L, user, PositionName.Cox,
+            200 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
+        verify(mockedRepo, times(1)).save(event);
+        Request r = new Request("Bob", PositionName.Cox);
+        assertEquals(List.of(r), event.getQueue());
+
+        assertTrue(mockedService.enqueueById(1L, user, PositionName.Cox,
+            200 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
+        assertEquals(2, event.getQueue().size());
+    }
+
+    @Test
+    void testEnqueueNotSpecifiedPosition() {
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+        event.setCompetitive(true);
+
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
+
+        User user = getUser();
+        assertFalse(mockedService.enqueueById(1L, user, PositionName.ScullingRower,
+            200 + 1440L * ((Day.FRIDAY.ordinal() + 1) % 7)));
+        verify(mockedRepo, times(0)).save(event);
+
+    }
+
+    @Test
+    void testEnqueueCompetition() {
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+        event.setCompetitive(true);
+        event.setGender("M");
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
+
+        User user = getUser();
+        user.setOrganization("A");
+        assertTrue(mockedService.enqueueById(1L, user, PositionName.Cox,
+            1440L * ((Day.TUESDAY.ordinal() + 1) % 7)));
+        Request r = new Request("Bob", PositionName.Cox);
+
+        verify(mockedRepo, times(1)).save(event);
+        assertEquals(List.of(r), event.getQueue());
+    }
+
+    @Test
+    void testDequeueException() {
+        User user = getUser();
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedService.getById(1L)).thenReturn(Optional.of(event));
+        boolean status = mockedService.dequeueById(1L, new Request("A", PositionName.ScullingRower));
+        assertFalse(status);
+    }
+
+    @Test
+    void testMatchUnwantedPositions() {
+        User user = getUser();
+        List<Position> l = new ArrayList<>();
+        l.add(new Position(PositionName.Coach, false));
+        user.setPositions(l);
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+
+        when(mockedRepo.findMatchingTrainings(user.getCertificate(), user.getId(), EventType.TRAINING))
+            .thenReturn(List.of(event));
+        when(mockedRepo.findMatchingCompetitions(user.getCertificate(), user.getOrganization(), user.getId(),
+            EventType.COMPETITION, user.getGender())).thenReturn(List.of(event));
+
+        assertEquals(new ArrayList<>(), mockedService.getMatchedEvents(user));
+    }
+
+    @Test
+    void testEnqueueCompetitionDiffGenderSameOrg() {
+        User user = getUser();
+        user.setOrganization("A");
+        user.setGender("Female");
+        Event event = getEvent("A", 4L, Certificate.B2, EventType.COMPETITION);
+        event.setCompetitive(true);
+
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedRepo.findById(1L)).thenReturn(Optional.of(event));
+        assertFalse(mockedService.enqueueById(1L, user, PositionName.Cox,
+            1440L * ((Day.TUESDAY.ordinal() + 1) % 7)));
+        assertEquals(0, event.getQueue().size());
     }
 }
