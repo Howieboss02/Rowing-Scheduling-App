@@ -1,24 +1,24 @@
 package nl.tudelft.sem.template.database.services;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import nl.tudelft.sem.template.database.UserRepository;
 import nl.tudelft.sem.template.services.UserService;
 import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Position;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
 import nl.tudelft.sem.template.shared.entities.User;
+import nl.tudelft.sem.template.shared.entities.UserModel;
 import nl.tudelft.sem.template.shared.enums.Certificate;
 import nl.tudelft.sem.template.shared.enums.Day;
 import nl.tudelft.sem.template.shared.enums.PositionName;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @RestClientTest
 public class UserServiceTest {
@@ -101,11 +101,128 @@ public class UserServiceTest {
     }
 
     @Test
-    void testInsertUser(){
+    void testInsertUser() {
         User user = getUser();
         when(mockedRepo.existsById(1L)).thenReturn(false);
         when(mockedRepo.save(user)).thenReturn(user);
         assertEquals(user, mockedService.insert(user));
         verify(mockedRepo, times(1)).save(user);
     }
+
+    @Test
+    void testInsertNull() {
+        assertEquals(null, mockedService.insert(null));
+    }
+
+    @Test
+    void testInsertExistent() {
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        assertEquals(null, mockedService.insert(getUser()));
+    }
+
+    @Test
+    void testDeleteById() {
+        User user = getUser();
+        mockedRepo.save(user);
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+
+        assertTrue(mockedService.deleteById(1L));
+        verify(mockedRepo, times(1)).deleteById(1L);
+        assertEquals(0, mockedService.getAllUsers().size());
+        assertFalse(mockedService.getAllUsers().contains(user));
+    }
+
+    @Test
+    void testDeleteNonexistentId() {
+        when(mockedRepo.existsById(1L)).thenReturn(false);
+        assertFalse(mockedService.deleteById(1L));
+    }
+
+    @Test
+    void testDeleteByNegativeId() {
+        assertFalse(mockedService.deleteById(-1L));
+    }
+
+    @Test
+    void testDeleteByZeroId() {
+        assertFalse(mockedService.deleteById(0L));
+    }
+
+    @Test
+    void testUpdateAllComplete() {
+        UserModel toUpdate = new UserModel("Alice", "Alice's team", "F", Certificate.B7,
+            List.of(new Position(PositionName.Coach, false)));
+        User user = getUser();
+
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedService.getById(1L)).thenReturn(Optional.of(user));
+        User updated = mockedService.updateById(1L, toUpdate).get();
+
+        assertEquals(1L, updated.getId());
+        assertEquals("Alice", updated.getUserInfo().getName());
+        assertEquals("Bob", updated.getUserInfo().getNetId());
+        assertEquals(List.of(new Position(PositionName.Coach, false)), updated.getPositions());
+
+        verify(mockedRepo, times(1)).save(user);
+    }
+
+    @Test
+    void testUpdateNonexistentId() {
+        when(mockedRepo.existsById(1L)).thenReturn(false);
+
+        UserModel toUpdate = new UserModel("Alice", "Alice's team", "F", Certificate.B7,
+            List.of(new Position(PositionName.Coach, false)));
+        assertEquals(Optional.empty(), mockedService.updateById(1L, toUpdate));
+    }
+
+    @Test
+    void testUpdateName() {
+        UserModel toUpdate = new UserModel("Alice", null, null, Certificate.B7,
+            null);
+        User user = getUser();
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedService.getById(1L)).thenReturn(Optional.of(user));
+
+        User updated = mockedService.updateById(1L, toUpdate).get();
+        assertEquals("Alice", updated.getUserInfo().getName());
+        assertEquals("Bob's House", updated.getUserInfo().getOrganization());
+    }
+
+    @Test
+    void testUpdateOrganization() {
+        UserModel toUpdate = new UserModel(null, "Alice's team", null, Certificate.B7,
+            null);
+        User user = getUser();
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedService.getById(1L)).thenReturn(Optional.of(user));
+
+        User updated = mockedService.updateById(1L, toUpdate).get();
+        assertEquals("Bob", updated.getUserInfo().getName());
+        assertEquals("Alice's team", updated.getUserInfo().getOrganization());
+    }
+
+    @Test
+    void testUpdateGender() {
+        UserModel toUpdate = new UserModel(null, null, "Female", Certificate.B7,
+            null);
+        User user = getUser();
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedService.getById(1L)).thenReturn(Optional.of(user));
+
+        User updated = mockedService.updateById(1L, toUpdate).get();
+        assertEquals("Female", updated.getUserInfo().getGender());
+        assertEquals("Bob", updated.getUserInfo().getName());
+    }
+
+    @Test
+    void testAddNotification() {
+        User user = getUser();
+        when(mockedRepo.existsById(1L)).thenReturn(true);
+        when(mockedService.getById(1L)).thenReturn(Optional.of(user));
+
+        user.addNotification("Message");
+        assertEquals(user, mockedService.addNotification(1L, "Message"));
+        assertNotNull(mockedService.addNotification(1L, "Message"));
+    }
 }
+
