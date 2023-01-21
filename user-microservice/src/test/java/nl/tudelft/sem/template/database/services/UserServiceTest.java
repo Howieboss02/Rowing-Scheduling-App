@@ -61,7 +61,7 @@ public class UserServiceTest {
     @Test
     void testGetById() {
         when(mockedRepo.existsById(1L)).thenReturn(true);
-        when(mockedRepo.findById(1L)).thenReturn(java.util.Optional.of(getUser()));
+        when(mockedRepo.findById(1L)).thenReturn(Optional.of(getUser()));
         assertEquals(getUser(), mockedService.getById(1L).get());
     }
 
@@ -69,6 +69,13 @@ public class UserServiceTest {
     void testGetByNonexistentId() {
         when(mockedRepo.existsById(1L)).thenReturn(false);
         assertEquals(Optional.empty(), mockedService.getById(1L));
+    }
+
+    @Test
+    void testGetByIdZero() {
+        when(mockedRepo.existsById(0L)).thenReturn(true);
+        when(mockedRepo.findById(0L)).thenReturn(Optional.of(getUser()));
+        assertEquals(getUser(), mockedService.getById(0L).get());
     }
 
     @Test
@@ -97,6 +104,7 @@ public class UserServiceTest {
     void testInsertUser(){
         User user = getUser();
         when(mockedRepo.existsById(1L)).thenReturn(false);
+        when(mockedRepo.save(user)).thenReturn(user);
         assertEquals(user, mockedService.insert(user));
         verify(mockedRepo, times(1)).save(user);
     }
