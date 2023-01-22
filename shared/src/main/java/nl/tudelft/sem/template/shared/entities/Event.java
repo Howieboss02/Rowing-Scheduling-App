@@ -105,17 +105,18 @@ public class Event {
      *
      * @param name the name of the user that enqueues
      * @param position position to enqueue for
-     * @return true iff the enqueue was successfull
+     * @return true iff the enqueue was successful
      */
     public boolean enqueue(String name, PositionName position) {
-        return queue.add(new Request(name, position));
+        Request r = new Request(name, position);
+        return queue.add(r);
     }
 
     /**
      * Dequeues a user from a position if that position is desired.
      *
      * @param request request with position and name to dequeue
-     * @return true iff the dequeue was successfull
+     * @return true iff the dequeue was successful
      */
     public boolean dequeue(Request request) {
         boolean result = queue.remove(request);
