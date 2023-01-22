@@ -1,4 +1,4 @@
-package components;
+package nl.tudelft.sem.template.components;
 
 
 import static org.assertj.core.api.Assertions.*;
