@@ -116,7 +116,7 @@ public class TestEventRepository implements EventRepository {
 
     @Override
     public Optional<Event> findById(Long id) {
-        Predicate<Event> filter = event -> id.equals(event.getId());//event.getId().equals(id);
+        Predicate<Event> filter = event -> event.getId().equals(id);
         List<Event> e = events.stream().filter(filter).collect(Collectors.toList());
         if (e.size() == 0) {
             return Optional.empty();
