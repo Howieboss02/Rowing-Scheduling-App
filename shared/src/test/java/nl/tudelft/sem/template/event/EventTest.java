@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
-
 import nl.tudelft.sem.template.shared.domain.Node;
 import nl.tudelft.sem.template.shared.domain.Request;
 import nl.tudelft.sem.template.shared.domain.TimeSlot;
@@ -39,6 +38,7 @@ public class EventTest {
         e.removePosition(PositionName.Coach);
         assertEquals(4, e.getPositions().size());
     }
+
     @Test
     public void testRemovePositionSucceeds() {
         Event e = new Event();
@@ -214,9 +214,9 @@ public class EventTest {
     public void testToString() {
         Event e = new Event(1L, "A", new ArrayList<>(),
                 new TimeSlot(-1, Day.FRIDAY, new Node(1, 2)), Certificate.B5, EventType.COMPETITION, true, "A", "A");
-        String expected = "Event(id=null, owningUser=1, label=A, positions=[], " +
-                "timeslot=TimeSlot(week=-1, day=FRIDAY, time=Node(first=1, second=2)), " +
-                "certificate=B5, type=COMPETITION, isCompetitive=true, gender=A, organisation=A, queue=[])";
+        String expected = "Event(id=null, owningUser=1, label=A, positions=[], "
+                + "timeslot=TimeSlot(week=-1, day=FRIDAY, time=Node(first=1, second=2)), "
+                + "certificate=B5, type=COMPETITION, isCompetitive=true, gender=A, organisation=A, queue=[])";
         assertEquals(expected, e.toString());
     }
 }
