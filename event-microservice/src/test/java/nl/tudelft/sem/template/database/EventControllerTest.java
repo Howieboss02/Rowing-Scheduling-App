@@ -1,7 +1,6 @@
 package nl.tudelft.sem.template.database;
 
 import static org.hamcrest.Matchers.containsString;
-import static org.hamcrest.Matchers.not;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
@@ -12,7 +11,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import java.nio.charset.StandardCharsets;
-import java.sql.Timestamp;
 import java.util.*;
 import nl.tudelft.sem.template.controllers.EventController;
 import nl.tudelft.sem.template.services.EventService;
@@ -37,8 +35,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -348,6 +346,8 @@ public class EventControllerTest {
         verify(eventService, times(1)).enqueueById(1L, 2L, PositionName.Cox, 1L);
     }
 
+
+
     @Test
     public void enqueueRequestEmpty() throws Exception {
         given(eventService.getById(1L)).willReturn(Optional.empty());
@@ -359,6 +359,95 @@ public class EventControllerTest {
         verify(eventService, times(1)).getById(1L);
     }
 
+    @Test
+    public void acceptEventRequest() throws Exception {
+        Request request = new Request();
+        request.setName("Test");
+        when(eventService.dequeueById(1L, request)).thenReturn(true);
+        when(eventService.sendNotification(1L, request.getName(), "ACCEPTED")).thenReturn("Notification sent successfully");
+        mockMvc.perform(post("/api/event/1/accept")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(request))
+                        .param("outcome", "true"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("ACCEPTED\nNotification sent successfully"));
+    }
+
+    @Test
+    public void acceptEventFailedRequest() throws Exception {
+        Request request = new Request();
+        request.setName("Test");
+        when(eventService.dequeueById(1L, request)).thenReturn(false);
+        mockMvc.perform(post("/api/event/1/accept")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(request))
+                        .param("outcome", "true"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void acceptEventEmptyRequest() throws Exception {
+        Request request = new Request();
+        request.setName("Test");
+        when(eventService.dequeueById(1L, request)).thenThrow(new NoSuchElementException());
+        mockMvc.perform(post("/api/event/1/accept")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(request))
+                        .param("outcome", "true"))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void acceptEventExceptionAcceptedRequest() throws Exception {
+        Request request = new Request();
+        request.setName("Test");
+        when(eventService.dequeueById(1L, request)).thenReturn(true);
+        when(eventService.sendNotification(1L, request.getName(), "ACCEPTED")).thenThrow(new RestClientException("error"));
+        mockMvc.perform(post("/api/event/1/accept")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(request))
+                        .param("outcome", "true"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("ACCEPTED, notification not sent"));
+    }
+
+    @Test
+    public void acceptEventRejectedRequest() throws Exception {
+        Request request = new Request();
+        request.setName("Test");
+        when(eventService.dequeueById(1L, request)).thenReturn(true);
+        when(eventService.sendNotification(1L, request.getName(), "REJECTED")).thenThrow(new RestClientException("error"));
+        mockMvc.perform(post("/api/event/1/accept")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(request))
+                        .param("outcome", "false"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("REJECTED, notification not sent"));
+    }
+
+    @Test
+    public void acceptEventBadRequest() throws Exception {
+        Request request = new Request();
+        request.setName("Test");
+        when(eventService.dequeueById(1L, request)).thenReturn(false);
+        mockMvc.perform(post("/api/event/1/accept")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(request))
+                        .param("outcome", "false"))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void acceptEventBadRequest1() throws Exception {
+        Request request = new Request();
+        request.setName("Test");
+        when(eventService.dequeueById(1L, request)).thenThrow(new IllegalArgumentException());
+        mockMvc.perform(post("/api/event/1/accept")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(request))
+                        .param("outcome", "false"))
+                .andExpect(status().isBadRequest());
+    }
 
     /**
      * Testing if deleting an event has an impact on the database.

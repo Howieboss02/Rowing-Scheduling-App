@@ -164,12 +164,10 @@ public class EventController {
                     return ResponseEntity.badRequest().build();
                 }
             } catch (Exception e) {
-                if (dequeueSuccess && !outcome) {
+                if (!outcome) {
                     return ResponseEntity.ok("REJECTED, notification not sent");
-                } else if (dequeueSuccess && outcome) {
+                } else  {
                     return ResponseEntity.ok("ACCEPTED, notification not sent");
-                } else {
-                    return ResponseEntity.badRequest().build();
                 }
             }
         } catch (NoSuchElementException e) {

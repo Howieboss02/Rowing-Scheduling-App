@@ -15,6 +15,7 @@ import nl.tudelft.sem.template.shared.utils.PositionMatcher;
 import nl.tudelft.sem.template.shared.utils.ValidityChecker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 @Service
@@ -149,7 +150,7 @@ public class EventService {
      * @return true if the request was removed, otherwise false
      * @throws NoSuchElementException if the event does not exist or the request is not in the queue
      */
-    public boolean dequeueById(Long id, Request request) throws NoSuchElementException {
+    public boolean dequeueById(Long id, Request request) throws NoSuchElementException, IllegalArgumentException {
         Optional<Event> event = getById(id);
 
         if (event.isEmpty()) {
@@ -165,7 +166,7 @@ public class EventService {
         }
     }
 
-    public String sendNotification(Long id, String netId, String message) {
+    public String sendNotification(Long id, String netId, String message) throws RestClientException {
         return restTemplate.postForObject("http://localhost:8085/api/notification/" + id + "/" + netId + "/?outcome=" + message, null, String.class);
     }
 
