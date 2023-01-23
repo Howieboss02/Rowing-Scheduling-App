@@ -1,5 +1,6 @@
 package nl.tudelft.sem.template.services;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -217,5 +218,10 @@ public class EventService {
 
     public User getUserById(Long id) {
         return restTemplate.getForObject(apiPrefix + MicroservicePorts.USER.port + userPath + id, User.class);
+    }
+
+    public long getCurrentWeekTime() {
+        Timestamp time = new Timestamp(System.currentTimeMillis());
+        return time.getDay() * 1440L + 60 * time.getHours() + time.getMinutes();
     }
 }
