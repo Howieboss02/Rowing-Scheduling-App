@@ -43,7 +43,8 @@ public class RegistrationServiceTests {
         System.out.println(u.getEmail().equals(testEmail));
         // Assert
         AppUser savedUser = userRepository.findByEmail(testEmail).orElseThrow();
-
+        assertThat(registrationService.checkNetIdIsUnique(new NetId("uniquenetid"))).isTrue();
+        assertThat(registrationService.checkEmailIsUnique(new Email("unique@email.com"))).isTrue();
         assertThat(savedUser.getNetId()).isEqualTo(testUser);
         assertThat(savedUser.getPassword()).isEqualTo(testHashedPassword);
         assertThat(savedUser.getEmail()).isEqualTo(testEmail);
@@ -61,7 +62,7 @@ public class RegistrationServiceTests {
 
         // Act
         ThrowingCallable action = () -> registrationService.registerUser(testUser, newTestPassword, testEmail);
-
+        assertThat(registrationService.checkNetIdIsUnique(testUser)).isFalse();
         // Assert
         assertThatExceptionOfType(Exception.class)
                 .isThrownBy(action);
@@ -85,10 +86,11 @@ public class RegistrationServiceTests {
 
         // Act
         ThrowingCallable action = () -> registrationService.registerUser(newUser, newTestPassword, testEmail);
-
+        assertThat(registrationService.checkEmailIsUnique(testEmail)).isFalse();
         // Assert
         assertThatExceptionOfType(Exception.class)
                 .isThrownBy(action);
+
 
         AppUser savedUser = userRepository.findByNetId(testUser).orElseThrow();
 
