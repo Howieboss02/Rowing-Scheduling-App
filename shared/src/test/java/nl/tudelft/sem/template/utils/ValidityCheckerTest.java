@@ -1,4 +1,4 @@
-package utils;
+package nl.tudelft.sem.template.utils;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
