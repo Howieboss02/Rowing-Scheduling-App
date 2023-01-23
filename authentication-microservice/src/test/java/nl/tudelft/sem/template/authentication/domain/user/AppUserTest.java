@@ -2,11 +2,14 @@ package nl.tudelft.sem.template.authentication.domain.user;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import nl.tudelft.sem.template.authentication.domain.HasEvents;
 import org.assertj.core.api.ThrowableAssert;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
+import org.mockito.Mock;
 
 public class AppUserTest {
     @Test
@@ -86,7 +89,6 @@ public class AppUserTest {
                 new HashedPassword("Hashed Password"),
                 new Email("email@email.com"));
         appUser.changePassword(new HashedPassword("New Password"));
-//        assertEquals("New Password", appUser.getPassword().toString());
     }
 
     @Test
@@ -95,5 +97,16 @@ public class AppUserTest {
         Password password = new Password("Password");
         assertEquals("Password", password.toString());
         HashedPassword hashedPassword = new HashedPassword("Hashed Password");
+    }
+
+    @Test
+    @Timeout(1)
+    public void passwordWasChangedObject() {
+        AppUser appUser = new AppUser(
+                new NetId("Net ID"),
+                new HashedPassword("Hashed Password"),
+                new Email("email@email.com"));
+        PasswordWasChangedEvent passwordWasChangedEvent = new PasswordWasChangedEvent(appUser);
+        assertEquals(appUser, passwordWasChangedEvent.getUser());
     }
 }

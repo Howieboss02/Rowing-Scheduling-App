@@ -98,4 +98,20 @@ public class RegistrationServiceTests {
         assertThat(savedUser.getPassword()).isEqualTo(existingTestPassword);
         assertThat(savedUser.getEmail()).isEqualTo(testEmail);
     }
+
+    @Test
+    public void registerUserDetailsTest() throws Exception {
+        // Arrange
+        final NetId testUser = new NetId("SomeUser");
+        final Password testPassword = new Password("password123");
+        final HashedPassword testHashedPassword = new HashedPassword("hashedTestPassword");
+        final Email testEmail = new Email("email@email.com");
+        when(mockPasswordEncoder.hash(testPassword)).thenReturn(testHashedPassword);
+        // Act
+        var u = registrationService.registerUser(testUser, testPassword, testEmail);
+        // Assert
+        assertThat(u.getNetId()).isEqualTo(testUser);
+        assertThat(u.getPassword()).isEqualTo(testHashedPassword);
+        assertThat(u.getEmail()).isEqualTo(testEmail);
+    }
 }
