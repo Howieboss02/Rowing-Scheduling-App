@@ -1,4 +1,4 @@
-package user;
+package nl.tudelft.sem.template.user;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;

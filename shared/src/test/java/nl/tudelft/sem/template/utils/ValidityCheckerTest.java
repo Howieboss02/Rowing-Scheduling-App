@@ -1,4 +1,4 @@
-package utils;
+package nl.tudelft.sem.template.utils;
 
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -232,4 +232,33 @@ public class ValidityCheckerTest {
 
         assertFalse(vc.canBeMatched());
     }
+
+    @Test
+    public void testCanJoin_onTimeBoundary() {
+        User user = new User("user1", "user1@email.com", "A", "test@email.com", "A",
+                Certificate.B5, List.of(new Position(PositionName.Coach, true)));
+        user.setId(2L);
+        user.addRecurringSlot(new TimeSlot(-1, Day.FRIDAY, new Node(1, 2)));
+        Event event = new Event(1L, "competition", List.of(PositionName.Coach),
+                new TimeSlot(5, Day.FRIDAY, new Node(10, 20)), Certificate.B3, EventType.COMPETITION, true, "A", "A");
+
+        ValidityChecker vc = new ValidityChecker(event, user);
+
+        assertTrue(vc.canJoin(PositionName.Coach, 5770));
+    }
+
+    @Test
+    public void testCanJoin_onTimeBoundaryTraining() {
+        User user = new User("user1", "user1@email.com", "A", "test@email.com", "A",
+                Certificate.B5, List.of(new Position(PositionName.Coach, true)));
+        user.setId(2L);
+        user.addRecurringSlot(new TimeSlot(-1, Day.FRIDAY, new Node(1, 2)));
+        Event event = new Event(1L, "competition", List.of(PositionName.Coach),
+                new TimeSlot(5, Day.FRIDAY, new Node(10, 20)), Certificate.B3, EventType.TRAINING, true, "A", "A");
+
+        ValidityChecker vc = new ValidityChecker(event, user);
+
+        assertTrue(vc.canJoin(PositionName.Coach, 7180));
+    }
+
 }

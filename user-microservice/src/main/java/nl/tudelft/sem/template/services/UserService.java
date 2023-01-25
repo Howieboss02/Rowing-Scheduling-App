@@ -80,7 +80,7 @@ public class UserService {
      * @return whether the user was deleted or not
      */
     public boolean deleteById(Long id) {
-        if (id < 0 || !userRepo.existsById(id)) {
+        if (id <= 0 || !userRepo.existsById(id)) {
             return false;
         }
         userRepo.deleteById(id);

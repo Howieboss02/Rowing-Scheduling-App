@@ -43,7 +43,8 @@ public class RegistrationServiceTests {
         System.out.println(u.getEmail().equals(testEmail));
         // Assert
         AppUser savedUser = userRepository.findByEmail(testEmail).orElseThrow();
-
+        assertThat(registrationService.checkNetIdIsUnique(new NetId("uniquenetid"))).isTrue();
+        assertThat(registrationService.checkEmailIsUnique(new Email("unique@email.com"))).isTrue();
         assertThat(savedUser.getNetId()).isEqualTo(testUser);
         assertThat(savedUser.getPassword()).isEqualTo(testHashedPassword);
         assertThat(savedUser.getEmail()).isEqualTo(testEmail);
@@ -61,7 +62,7 @@ public class RegistrationServiceTests {
 
         // Act
         ThrowingCallable action = () -> registrationService.registerUser(testUser, newTestPassword, testEmail);
-
+        assertThat(registrationService.checkNetIdIsUnique(testUser)).isFalse();
         // Assert
         assertThatExceptionOfType(Exception.class)
                 .isThrownBy(action);
@@ -85,15 +86,32 @@ public class RegistrationServiceTests {
 
         // Act
         ThrowingCallable action = () -> registrationService.registerUser(newUser, newTestPassword, testEmail);
-
+        assertThat(registrationService.checkEmailIsUnique(testEmail)).isFalse();
         // Assert
         assertThatExceptionOfType(Exception.class)
                 .isThrownBy(action);
+
 
         AppUser savedUser = userRepository.findByNetId(testUser).orElseThrow();
 
         assertThat(savedUser.getNetId()).isEqualTo(testUser);
         assertThat(savedUser.getPassword()).isEqualTo(existingTestPassword);
         assertThat(savedUser.getEmail()).isEqualTo(testEmail);
+    }
+
+    @Test
+    public void registerUserDetailsTest() throws Exception {
+        // Arrange
+        final NetId testUser = new NetId("SomeUser");
+        final Password testPassword = new Password("password123");
+        final HashedPassword testHashedPassword = new HashedPassword("hashedTestPassword");
+        final Email testEmail = new Email("email@email.com");
+        when(mockPasswordEncoder.hash(testPassword)).thenReturn(testHashedPassword);
+        // Act
+        var u = registrationService.registerUser(testUser, testPassword, testEmail);
+        // Assert
+        assertThat(u.getNetId()).isEqualTo(testUser);
+        assertThat(u.getPassword()).isEqualTo(testHashedPassword);
+        assertThat(u.getEmail()).isEqualTo(testEmail);
     }
 }

@@ -90,7 +90,7 @@ public class EventController {
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage(), e);
         }
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("DELETED");
     }
 
     /**
@@ -124,16 +124,13 @@ public class EventController {
     public ResponseEntity<String> enqueue(@PathVariable("eventId") Long eventId,
                                           @PathVariable("userId") Long userId,
                                           @RequestParam PositionName position) {
-        System.out.println("Enqueueing user " + userId + " to event " + eventId);
+
         Optional<Event> event = eventService.getById(eventId);
         if (event.isEmpty()) {
-            System.out.println("Event not found");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        Timestamp time = new Timestamp(System.currentTimeMillis());
-        long weekTime = time.getDay() * 1440L + 60 * time.getHours() + time.getMinutes();
-        System.out.println(time.getDay() + " " + time.getHours() + " " + time.getMinutes());
+        long weekTime = eventService.getCurrentWeekTime();
 
         if (eventService.enqueueById(eventId, userId, position, weekTime)) {
             return ResponseEntity.ok("ENQUEUED");
@@ -167,12 +164,10 @@ public class EventController {
                     return ResponseEntity.badRequest().build();
                 }
             } catch (Exception e) {
-                if (dequeueSuccess && !outcome) {
+                if (!outcome) {
                     return ResponseEntity.ok("REJECTED, notification not sent");
-                } else if (dequeueSuccess && outcome) {
+                } else  {
                     return ResponseEntity.ok("ACCEPTED, notification not sent");
-                } else {
-                    return ResponseEntity.badRequest().build();
                 }
             }
         } catch (NoSuchElementException e) {

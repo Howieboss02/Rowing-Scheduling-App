@@ -1,4 +1,4 @@
-package utils;
+package nl.tudelft.sem.template.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -88,5 +88,23 @@ public class PositionMatcherTest {
 
         assertEquals(1, matchedEvents.size());
         assertTrue(matchedEvents.contains(events.get(1)));
+    }
+
+    @Test
+    public void testMatchPosition_checkIfEventIsNotAddedTwice() {
+        User user = new User("user1", "user1@email.com", "A", "test@email.com", "A",
+                Certificate.B3, Arrays.asList(new Position(PositionName.Coach, false),
+                new Position(PositionName.Cox, false)));
+        user.setId(2L);
+        user.addRecurringSlot(new TimeSlot(-1, Day.FRIDAY, new Node(1, 2)));
+
+        Event e1 = new Event(1L, "training", Arrays.asList(PositionName.Coach, PositionName.Coach, PositionName.Cox),
+                new TimeSlot(2, Day.FRIDAY, new Node(1, 2)), Certificate.B3, EventType.TRAINING, false, "A", "A");
+
+        List<Event> events = Arrays.asList(e1);
+        List<Position> positions = user.getPositions();
+        List<Event> matchedEvents = PositionMatcher.matchPositions(positions, events, user);
+        assertEquals(1, matchedEvents.size());
+        assertTrue(matchedEvents.contains(events.get(0)));
     }
 }

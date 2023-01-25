@@ -1,4 +1,4 @@
-package user;
+package nl.tudelft.sem.template.user;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -86,6 +86,15 @@ class TimeSlotTest {
         schedule.addRecurringSlot(new TimeSlot(-1, Day.MONDAY, new Node(1, 2)));
         schedule.removeSlot(new TimeSlot(2, Day.MONDAY, new Node(1, 2)));
         assertTrue(ts.matchSchedule(schedule));
+    }
+
+    @Test
+    void noMatchScheduleRemovedSmallerStart() {
+        TimeSlot ts = new TimeSlot(1, Day.MONDAY, new Node(1, 2));
+        Schedule schedule = new Schedule();
+        schedule.addRecurringSlot(new TimeSlot(-1, Day.MONDAY, new Node(0, 2)));
+        schedule.removeSlot(new TimeSlot(1, Day.MONDAY, new Node(0, 2)));
+        assertFalse(ts.matchSchedule(schedule));
     }
 
     @Test
