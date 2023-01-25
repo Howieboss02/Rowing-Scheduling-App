@@ -460,4 +460,16 @@ class EventServiceTest {
                 .andRespond(withSuccess(JsonUtil.serialize(user), MediaType.APPLICATION_JSON));
         assertEquals(competitions, mockedService.getMatchedEvents(user.getId()));
     }
+
+    @Test
+    void testGetMatchedEventsFailValidityCheck() throws JsonProcessingException {
+        User user = getUser();
+
+        server.expect(requestTo(apiPrefix + MicroservicePorts.USER.port + userPath + "/1"))
+                .andRespond(withSuccess(JsonUtil.serialize(user), MediaType.APPLICATION_JSON));
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            mockedService.getMatchedEvents(user.getId());
+        });
+    }
 }
